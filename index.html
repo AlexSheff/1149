@@ -1006,10 +1006,15 @@ input[type=file] { display:none }
       <div class="sh">Data</div>
       <div id="storage-stats" style="font-size:11px;color:var(--ink2);line-height:2.2;margin-bottom:14px"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="triggerSync()">↻ Pull from GitHub</button>
+        <button class="btn btn-primary btn-sm" onclick="triggerSync()">↻ Pull ideas.json</button>
+        <button class="btn btn-primary btn-sm" onclick="fullRepoSync()" title="Read all WHITE_PAPER.md files from repo folders">⊞ Scan Repo Folders</button>
         <button class="btn btn-ghost btn-sm" onclick="pushNow()">↑ Push to GitHub</button>
         <button class="btn btn-ghost btn-sm" onclick="triggerExport()">↓ Export JSON</button>
         <button class="btn btn-ghost btn-sm" onclick="triggerImport()">↑ Import JSON</button>
+      </div>
+      <div style="margin-top:10px;font-size:10.5px;color:var(--ink3);line-height:1.65">
+        <strong style="color:var(--ink2)">↻ Pull ideas.json</strong> — fast: loads the index file.<br>
+        <strong style="color:var(--ink2)">⊞ Scan Repo Folders</strong> — full scan: reads every WHITE_PAPER.md in the 8 layer folders and imports them. Use this after adding files directly to GitHub.
       </div>
     </div>
     <div class="card" style="padding:20px">
@@ -1091,6 +1096,11 @@ function setSyncUI(state, msg) {
   el.style.color = C[state] || 'var(--ink3)';
 }
 
+// ════════════════════════════════════════════════════════════════
+// GITHUB API — Core
+// ════════════════════════════════════════════════════════════════
+
+// Read data/ideas.json (fast cache index)
 async function ghRead() {
   const token = getToken();
   if (!token) { setSyncUI('no-token'); return null; }
@@ -1104,6 +1114,7 @@ async function ghRead() {
   return { ideas: Array.isArray(parsed) ? parsed : (parsed.ideas || []), sha: file.sha };
 }
 
+// Write data/ideas.json
 async function ghWrite(ideas) {
   const token = getToken();
   if (!token) { setSyncUI('no-token'); throw new Error('No GitHub token. Add it in Settings.'); }
@@ -1138,84 +1149,26 @@ async function ghLoad() {
   }
 }
 
-// ── Markdown generators ──────────────────────────────────────────
-function ideaSlug(title) {
-  return title.trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/\s+/g, '_')
-    .replace(/_+/g, '_')
-    .slice(0, 60);
-}
+// ════════════════════════════════════════════════════════════════
+// GITHUB API — Directory scanning + Markdown read/write
+// ════════════════════════════════════════════════════════════════
 
-function ideaFolderPath(idea) {
-  // e.g. "01_Ethical_OS/CODE_1149"
-  return idea.layer + '/' + ideaSlug(idea.title);
-}
-
-function buildWhitePaper(idea) {
-  const tags = (idea.tags || []).join(', ');
-  const related = (idea.related || []).join(', ');
-  const now = new Date().toISOString().slice(0, 10);
-  return '---\n' +
-    'id: "' + idea.id + '"\n' +
-    'title: "' + (idea.title || '').replace(/"/g, '\\"') + '"\n' +
-    'layer: "' + (idea.layer || '') + '"\n' +
-    'doctype: "' + (idea.doctype || 'White Paper') + '"\n' +
-    'status: ' + (idea.status || 'concept') + '\n' +
-    'priority: ' + (idea.priority || 'medium') + '\n' +
-    'progress: ' + (idea.progress || 0) + '\n' +
-    'tags: [' + tags + ']\n' +
-    'related: [' + related + ']\n' +
-    'is_1149: ' + (idea.is1149 ? 'true' : 'false') + '\n' +
-    'updated: ' + now + '\n' +
-    'author: Founder Alex\n' +
-    '---\n\n' +
-    '# ' + (idea.title || '') + ' — White Paper\n\n' +
-    '> *' + (idea.tagline || '') + '*\n\n' +
-    '---\n\n' +
-    (idea.whitepaper || '') + '\n\n' +
-    (idea.solidarity ? '---\n\n## Solidarity Mechanism\n\n' + idea.solidarity + '\n\n' : '') +
-    '---\n\n*White Paper · Reality Refactor Lab · 1149*\n';
-}
-
-function buildTechSpec(idea) {
-  const now = new Date().toISOString().slice(0, 10);
-  return '---\n' +
-    'id: "' + idea.id + '"\n' +
-    'title: "' + (idea.title || '').replace(/"/g, '\\"') + ' — Technical Specification"\n' +
-    'layer: "' + (idea.layer || '') + '"\n' +
-    'status: ' + (idea.status || 'concept') + '\n' +
-    'version: 0.1\n' +
-    'updated: ' + now + '\n' +
-    'author: Founder Alex\n' +
-    '---\n\n' +
-    '# ' + (idea.title || '') + ' — Technical Specification\n\n' +
-    (idea.techspec || '') + '\n\n' +
-    '---\n\n*Tech Spec · Reality Refactor Lab · 1149*\n';
-}
-
-// ── Single file write via GitHub API ─────────────────────────────
-async function ghWriteFile(path, content, existingSha) {
+// Get raw file content from GitHub (returns { content, sha } or null)
+async function ghGetFile(path) {
   const token = getToken();
-  if (!token) return;
-  const body = JSON.stringify({
-    message: 'docs: update ' + path.split('/').pop() + ' (' + new Date().toISOString().slice(0,10) + ')',
-    content: btoa(unescape(encodeURIComponent(content))),
-    branch: GH_BRANCH,
-    ...(existingSha ? { sha: existingSha } : {})
-  });
+  if (!token) return null;
   const res = await fetch(
-    'https://api.github.com/repos/' + GH_REPO + '/contents/' + path,
-    { method: 'PUT', headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' }, body }
+    'https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH,
+    { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } }
   );
-  if (!res.ok) {
-    const e = await res.json().catch(() => ({}));
-    throw new Error(e.message || 'Write error ' + res.status);
-  }
-  return res.json();
+  if (!res.ok) return null;
+  const data = await res.json();
+  let content = '';
+  try { content = decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))); } catch(e) { content = ''; }
+  return { content, sha: data.sha, path: data.path };
 }
 
-// ── Get file SHA (null if not found) ─────────────────────────────
+// Get file SHA only
 async function ghGetSha(path) {
   const token = getToken();
   if (!token) return null;
@@ -1228,31 +1181,287 @@ async function ghGetSha(path) {
   return data.sha || null;
 }
 
-// ── Write .md files for a single idea (background, non-blocking) ─
-async function syncIdeaMarkdown(idea) {
-  if (!getToken()) return;
+// Write a single file to GitHub
+async function ghWriteFile(path, content, existingSha, commitMsg) {
+  const token = getToken();
+  if (!token) return null;
+  const msg = commitMsg || ('docs: update ' + path.split('/').pop() + ' (' + new Date().toISOString().slice(0,10) + ')');
+  const body = JSON.stringify({
+    message: msg,
+    content: btoa(unescape(encodeURIComponent(content))),
+    branch: GH_BRANCH,
+    ...(existingSha ? { sha: existingSha } : {})
+  });
+  const res = await fetch(
+    'https://api.github.com/repos/' + GH_REPO + '/contents/' + path,
+    { method: 'PUT', headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' }, body }
+  );
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || 'Write error ' + res.status); }
+  return res.json();
+}
+
+// List directory contents from GitHub
+async function ghListDir(path) {
+  const token = getToken();
+  if (!token) return [];
+  const res = await fetch(
+    'https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH,
+    { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } }
+  );
+  if (!res.ok) return [];
+  const items = await res.json();
+  return Array.isArray(items) ? items : [];
+}
+
+// ── Parse YAML front matter from a Markdown file ─────────────────
+function parseYamlFrontMatter(md) {
+  const meta = {};
+  if (!md || !md.startsWith('---')) return { meta, body: md || '' };
+  const end = md.indexOf('\n---', 4);
+  if (end === -1) return { meta, body: md };
+  const yaml = md.slice(4, end);
+  const body = md.slice(end + 4).replace(/^\n/, '');
+  yaml.split('\n').forEach(line => {
+    const colon = line.indexOf(':');
+    if (colon === -1) return;
+    const key = line.slice(0, colon).trim();
+    let val = line.slice(colon + 1).trim();
+    // arrays: [a, b, c]
+    if (val.startsWith('[') && val.endsWith(']')) {
+      val = val.slice(1,-1).split(',').map(s => s.trim().replace(/^["']|["']$/g,'')).filter(Boolean);
+    } else {
+      // strip quotes
+      val = val.replace(/^["']|["']$/g,'');
+      // booleans
+      if (val === 'true') val = true;
+      else if (val === 'false') val = false;
+      // numbers
+      else if (!isNaN(val) && val !== '') val = Number(val);
+    }
+    meta[key] = val;
+  });
+  return { meta, body };
+}
+
+// ── Convert a parsed .md file into an idea object ─────────────────
+function mdFileToIdea(filePath, content) {
+  const { meta, body } = parseYamlFrontMatter(content);
+  // Extract layer from file path: "04_Technical_Nodes/Trustnet/WHITE_PAPER.md"
+  const parts = filePath.split('/');
+  const layer = parts[0] || meta.layer || '';
+  const folderName = parts[1] || '';
+
+  // Split body into whitepaper vs techspec sections
+  const tsMarker = body.indexOf('\n# ' + (meta.title || '') + ' — Technical Specification');
+  const tsMarker2 = body.indexOf('\n## Technical Specification');
+  const wpEnd = tsMarker > 0 ? tsMarker : (tsMarker2 > 0 ? tsMarker2 : body.length);
+  const whitepaper = body.slice(0, wpEnd).trim();
+  const techspec   = wpEnd < body.length ? body.slice(wpEnd).trim() : (meta.techspec || '');
+
+  return {
+    id:         String(meta.id || generateIdFromPath(filePath)),
+    title:      String(meta.title || folderName.replace(/_/g,' ')),
+    layer:      String(meta.layer || layer),
+    doctype:    String(meta.doctype || 'White Paper'),
+    status:     String(meta.status || 'concept'),
+    priority:   String(meta.priority || 'medium'),
+    progress:   Number(meta.progress || 0),
+    tagline:    String(meta.tagline || ''),
+    tags:       Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
+    related:    Array.isArray(meta.related) ? meta.related.map(String) : [],
+    is1149:     meta.is_1149 === true || meta.is_1149 === 'true' || meta.is1149 === true,
+    whitepaper: whitepaper,
+    techspec:   techspec,
+    solidarity: String(meta.solidarity || ''),
+    updated:    String(meta.updated || new Date().toISOString().slice(0,10)),
+    files:      [],
+    _ghPath:    filePath,   // remember where this came from
+    _wpSha:     null,       // filled in during sync
+  };
+}
+
+function generateIdFromPath(path) {
+  // "04_Technical_Nodes/Trustnet/WHITE_PAPER.md" → "04_Trustnet"
+  const parts = path.split('/');
+  return (parts[0] || '').slice(0,2) + '_' + (parts[1] || 'idea');
+}
+
+// ── Scan all 8 layer folders and collect ideas from WHITE_PAPER.md files
+const LAYER_KEYS = [
+  '01_Ethical_OS','02_Social_Protocol','03_Meta_Ecosystems',
+  '04_Technical_Nodes','05_Reality_Hardware','06_Social_Impact',
+  '07_Research_Lab','08_Archive'
+];
+
+async function scanRepoForIdeas() {
+  const token = getToken();
+  if (!token) return null;
+  setSyncUI('loading', 'Scanning repo…');
+  const found = [];
+
+  for (const layer of LAYER_KEYS) {
+    let entries;
+    try { entries = await ghListDir(layer); } catch(e) { continue; }
+
+    for (const entry of entries) {
+      if (entry.type !== 'dir') continue;
+      // Look for WHITE_PAPER.md inside this folder
+      // Also look inside apps/ subfolder (City Quest pattern)
+      const candidates = [
+        layer + '/' + entry.name + '/WHITE_PAPER.md',
+      ];
+      // Check for apps/ subfolder
+      if (entry.name === 'apps' || entry.name === 'City_Quest') {
+        try {
+          const subEntries = await ghListDir(layer + '/' + entry.name);
+          for (const sub of subEntries) {
+            if (sub.type === 'dir') {
+              candidates.push(layer + '/' + entry.name + '/' + sub.name + '/WHITE_PAPER.md');
+            }
+          }
+        } catch(e) {}
+      }
+
+      for (const wpPath of candidates) {
+        const file = await ghGetFile(wpPath);
+        if (!file) continue;
+        const idea = mdFileToIdea(wpPath, file.content);
+        idea._wpSha = file.sha;
+        found.push(idea);
+      }
+    }
+  }
+
+  setSyncUI('ok', 'Synced ✓');
+  return found;
+}
+
+// ── Full sync: scan repo → merge with cache → rebuild ideas.json ──
+async function fullRepoSync() {
+  setSyncUI('loading', 'Full scan…');
+  toast('Scanning repository folders…', 'success');
   try {
-    const folder = ideaFolderPath(idea);
+    const fromRepo = await scanRepoForIdeas();
+    if (!fromRepo) { setSyncUI('no-token'); return; }
 
-    // WHITE_PAPER.md — always write if idea has content
-    if (idea.whitepaper || idea.tagline) {
-      const wpPath = folder + '/WHITE_PAPER.md';
-      const wpSha  = await ghGetSha(wpPath);
-      await ghWriteFile(wpPath, buildWhitePaper(idea), wpSha);
-    }
+    // Merge: repo files take priority. Cache fills in any missing fields.
+    const cached = cacheRead();
+    const cachedMap = {};
+    cached.forEach(i => { cachedMap[i.id] = i; });
 
-    // TECH_SPEC.md — only if techspec content exists
-    if (idea.techspec && idea.techspec.trim().length > 10) {
-      const tsPath = folder + '/TECH_SPEC.md';
-      const tsSha  = await ghGetSha(tsPath);
-      await ghWriteFile(tsPath, buildTechSpec(idea), tsSha);
-    }
+    const merged = fromRepo.map(idea => {
+      const c = cachedMap[idea.id] || {};
+      // repo wins on content fields; cache wins on files (attachments)
+      return Object.assign({}, c, idea, { files: c.files || [] });
+    });
+
+    // Add any cached ideas not found in repo (new ones not yet written to .md)
+    const repoIds = new Set(fromRepo.map(i => i.id));
+    cached.forEach(c => {
+      if (!repoIds.has(c.id)) merged.push(c);
+    });
+
+    cacheWrite(merged);
+    await ghWrite(merged);
+    updateBadges();
+    renderAll();
+    toast('Scanned ' + fromRepo.length + ' ideas from repo folders', 'success');
   } catch(e) {
-    console.warn('syncIdeaMarkdown failed for', idea.id, ':', e.message);
+    setSyncUI('error', e.message.slice(0,36));
+    toast('Scan failed: ' + e.message.slice(0,60), 'error');
   }
 }
 
-// ── Main save: writes ideas.json + fires background md sync ──────
+// ════════════════════════════════════════════════════════════════
+// MARKDOWN GENERATORS (idea → .md file)
+// ════════════════════════════════════════════════════════════════
+
+function ideaSlug(title) {
+  return (title || '').trim()
+    .replace(/[^\w\s-]/g,'')
+    .replace(/\s+/g,'_')
+    .replace(/_+/g,'_')
+    .slice(0,60);
+}
+
+function ideaFolderPath(idea) {
+  // Use stored path if available (repo-sourced ideas)
+  if (idea._ghPath) return idea._ghPath.replace('/WHITE_PAPER.md','');
+  return (idea.layer || '01_Ethical_OS') + '/' + ideaSlug(idea.title);
+}
+
+function buildWhitePaper(idea) {
+  const tags    = (idea.tags || []).join(', ');
+  const related = (idea.related || []).join(', ');
+  const now     = new Date().toISOString().slice(0,10);
+  return '---\n' +
+    'id: "' + idea.id + '"\n' +
+    'title: "' + String(idea.title||'').replace(/"/g,'\\"') + '"\n' +
+    'layer: "' + (idea.layer||'') + '"\n' +
+    'doctype: "' + (idea.doctype||'White Paper') + '"\n' +
+    'status: ' + (idea.status||'concept') + '\n' +
+    'priority: ' + (idea.priority||'medium') + '\n' +
+    'progress: ' + (idea.progress||0) + '\n' +
+    'tags: [' + tags + ']\n' +
+    'related: [' + related + ']\n' +
+    'is_1149: ' + (idea.is1149 ? 'true':'false') + '\n' +
+    (idea.solidarity ? 'solidarity: "' + String(idea.solidarity).replace(/"/g,'\\"').slice(0,200) + '"\n' : '') +
+    'updated: ' + now + '\n' +
+    'author: Founder Alex\n' +
+    'tagline: "' + String(idea.tagline||'').replace(/"/g,'\\"') + '"\n' +
+    '---\n\n' +
+    '# ' + (idea.title||'') + ' — White Paper\n\n' +
+    '> *' + (idea.tagline||'') + '*\n\n' +
+    '---\n\n' +
+    (idea.whitepaper||'') + '\n\n' +
+    '---\n\n*White Paper · Reality Refactor Lab · 1149*\n';
+}
+
+function buildTechSpec(idea) {
+  const now = new Date().toISOString().slice(0,10);
+  return '---\n' +
+    'id: "' + idea.id + '"\n' +
+    'title: "' + String(idea.title||'').replace(/"/g,'\\"') + ' — Technical Specification"\n' +
+    'layer: "' + (idea.layer||'') + '"\n' +
+    'status: ' + (idea.status||'concept') + '\n' +
+    'version: 0.1\n' +
+    'updated: ' + now + '\n' +
+    'author: Founder Alex\n' +
+    '---\n\n' +
+    '# ' + (idea.title||'') + ' — Technical Specification\n\n' +
+    (idea.techspec||'') + '\n\n' +
+    '---\n\n*Tech Spec · Reality Refactor Lab · 1149*\n';
+}
+
+// ── Sync a single idea's .md files to GitHub (background) ─────────
+async function syncIdeaMarkdown(idea) {
+  if (!getToken()) return;
+  const folder = ideaFolderPath(idea);
+  try {
+    if (idea.whitepaper || idea.tagline) {
+      const wpPath = folder + '/WHITE_PAPER.md';
+      const wpSha  = idea._wpSha || await ghGetSha(wpPath);
+      await ghWriteFile(wpPath, buildWhitePaper(idea), wpSha,
+        'docs: ' + idea.title + ' · WHITE_PAPER.md · ' + new Date().toISOString().slice(0,10));
+    }
+    if (idea.techspec && idea.techspec.trim().length > 10) {
+      const tsSha = await ghGetSha(folder + '/TECH_SPEC.md');
+      await ghWriteFile(folder + '/TECH_SPEC.md', buildTechSpec(idea), tsSha,
+        'docs: ' + idea.title + ' · TECH_SPEC.md · ' + new Date().toISOString().slice(0,10));
+    }
+  } catch(e) {
+    console.warn('syncIdeaMarkdown:', idea.id, e.message);
+  }
+}
+
+async function syncSingleIdea(idea) {
+  syncIdeaMarkdown(idea).catch(e => console.warn('Background md sync:', e.message));
+}
+
+// ════════════════════════════════════════════════════════════════
+// MAIN SAVE
+// ════════════════════════════════════════════════════════════════
+
 async function save(ideas) {
   cacheWrite(ideas);
   updateBadges();
@@ -1266,213 +1475,6 @@ async function save(ideas) {
   }
 }
 
-// ── Called after submitIdea to sync the individual file ───────────
-async function syncSingleIdea(idea) {
-  // Run in background — don't block the UI
-  syncIdeaMarkdown(idea).then(() => {
-    setSyncUI('ok');
-  }).catch(e => {
-    console.warn('Background md sync error:', e.message);
-  });
-}
-
-// ════════════════════════════════════════════════════════════════
-// SEED DATA — Reality Refactor Lab
-// ════════════════════════════════════════════════════════════════
-const SEED = [
-  // ── 01 ETHICAL OS ──────────────────────────────────────────
-  { id:'1001', layer:'01_Ethical_OS', title:'CODE 1149', doctype:'Ethical Protocol',
-    status:'active', priority:'critical', progress:85,
-    tagline:'The ethical protocol and trust-responsibility framework — the license agreement every collaborator accepts before building.',
-    tags:['ethics','trust','protocol','foundation'],
-    related:['1002','1003'],is1149:true,
-    whitepaper:`## What is CODE 1149?\n\nCODE 1149 is the foundational ethical protocol of the Reality Refactor Lab. It is not a value statement — it is a **binding operational specification** that every collaborator, tool, and system within this repository must satisfy.\n\nLike a software license, it defines what is permitted, what is required, and what is prohibited — not as moral guidelines, but as system constraints.\n\n## Core Tenets\n\n1. **Trust is earned structurally** — not granted by default, not purchased, not inherited\n2. **Responsibility is explicit** — every action has an author; anonymity is a tool, not a shield\n3. **Solidarity is mechanical** — redistribution must be enforced by architecture, not by virtue\n4. **Transparency is default** — secrecy is a deliberate, justified exception\n5. **The 1149 principle** — every system must be able to answer: *"Who am I in the context of the universe?"*\n\n## Application\n\nBefore any system, tool, or project proceeds from concept to implementation:\n\n> Does this system enforce its values structurally?\n> If the answer requires trusting in human goodwill — redesign until it doesn't.`,
-    techspec:'', solidarity:'CODE 1149 itself is the solidarity mechanism — a binding protocol, not an aspiration.',
-    updated:'2026-03-14', files:[] },
-
-  { id:'1002', layer:'01_Ethical_OS', title:'Core Values',  doctype:'Value Framework',
-    status:'active', priority:'high', progress:70,
-    tagline:'Peace, justice, equality, and solidarity as system-level constraints — not slogans.',
-    tags:['ethics','values','peace','equality','solidarity'],
-    related:['1001'],is1149:true,
-    whitepaper:`## The Four Pillars\n\n### Peace\nPeace is not the absence of conflict. It is the presence of **just structures** that make violence unnecessary. Systems must reduce the conditions that generate conflict, not merely suppress its symptoms.\n\n### Justice\nJustice is not fairness in the abstract. It is **procedural integrity** — consistent, transparent, auditable. Every redistributive mechanism must be inspectable by the people it affects.\n\n### Equality\nEquality of **access** and **voice**, not equality of outcome. Systems must not create structural advantages based on pre-existing wealth, connections, or power.\n\n### Solidarity\nSolidarity is the structural embedding of mutual care. If your system requires one person to voluntarily help another, you have not built solidarity — you have built charity. Solidarity is when the system makes extraction impossible.\n\n## Implementation Test\n\nFor every system:\n- Can a wealthy, connected bad actor extract value and block redistribution? If yes → redesign.\n- Can someone participate meaningfully without pre-existing resources? If no → redesign.`,
-    techspec:'', solidarity:'Each value is operationalized as a design constraint, not a goal.',
-    updated:'2026-03-14', files:[] },
-
-  // ── 02 SOCIAL PROTOCOL ─────────────────────────────────────
-  { id:'2001', layer:'02_Social_Protocol', title:'Manifesto of the Free World Citizen', doctype:'Manifesto',
-    status:'active', priority:'critical', progress:78,
-    tagline:'A declaration of global citizenship beyond nationality, ethnicity, and political borders.',
-    tags:['manifesto','citizenship','global','freedom','identity'],
-    related:['2002','1001'],is1149:true,
-    whitepaper:`## Preamble\n\nI am not a Russian citizen, a Filipino resident, or a digital nomad. I am a **Free World Citizen** — a person whose primary allegiance is to humanity, whose home is the planet, and whose community is built from chosen bonds, not inherited ones.\n\n## Declaration\n\nI hold these principles as operational:\n\n1. **Borders are administrative, not moral.** I respect laws within jurisdictions while rejecting the premise that birthplace determines worth.\n\n2. **Language is technology.** I use language to build bridges, not walls. I am fluent in Russian, learning Cebuano, building in English — because each language is an access protocol to a different model of reality.\n\n3. **Community is chosen.** I live in Dumaguete not by accident but by deliberate decision — the act of *choosing* a place is the deepest form of belonging.\n\n4. **Solidarity travels.** The redistribution mechanisms I build here, if they work, must work anywhere. Local implementation, global architecture.\n\n5. **The question is the compass.** *"Who am I in the context of the universe?"* — this question does not have a national answer.\n\n## Application\n\nThis manifesto is the social interface of CODE 1149. It defines how I engage with every person, community, and system I encounter.`,
-    techspec:'', solidarity:'Global citizenship as a commitment to build solidarity structures wherever you are.',
-    updated:'2026-03-14', files:[] },
-
-  { id:'2002', layer:'02_Social_Protocol', title:'Global Thinking Framework', doctype:'Framework',
-    status:'active', priority:'medium', progress:55,
-    tagline:'Principles of borderless cognition — thinking at planetary scale while acting at local precision.',
-    tags:['thinking','global','cognition','systems','philosophy'],
-    related:['2001'],is1149:true,
-    whitepaper:`## Core Principles\n\n### Think globally, implement locally\nEvery system I build must be **architecturally global** (anyone can fork it, deploy it, adapt it) while being **physically anchored** in a specific place (Dumaguete). Abstraction without implementation is noise.\n\n### Both ends of the abstraction stack simultaneously\nI operate in dual mode:\n- **Extreme abstraction**: cosmology, consciousness, information theory of reality\n- **Extreme concreteness**: which barangay, which person, which line of code\n\nThe productive tension between these modes is where ideas crystallize into systems.\n\n### Non-linear, timeless mapping\nA project plan has deadlines. A mental map has topology. The City Quest Miro board is not a roadmap — it is a **topological map** of a territory I am exploring. Ideas connect when they are ready to connect.\n\n### Language as research object\nEvery language encodes a different model of reality. Russian encodes depth and ambiguity. English encodes precision and agency. Cebuano encodes community and place. Fluency in multiple languages is cognitive diversity.`,
-    techspec:'', solidarity:'Thinking without borders enables building solidarity structures without borders.',
-    updated:'2026-02-01', files:[] },
-
-  // ── 03 META ECOSYSTEMS ─────────────────────────────────────
-  { id:'3001', layer:'03_Meta_Ecosystems', title:'Neuromicon', doctype:'Platform',
-    status:'active', priority:'critical', progress:62,
-    tagline:'Central conceptual platform — narrative world-building, decentralized collaboration, algorithmic media, and social architecture.',
-    tags:['narrative','AI','blockchain','social-architecture','platform'],
-    related:['3002','4001','6001'],is1149:true,
-    whitepaper:`## The Platform\n\nNeuromicon is the conceptual container for everything in this repository. It is the **answer platform** — every project here is an attempt to answer the question: *"Who am I in the context of the universe?"*\n\n## Four Pillars\n\n| Pillar | Description |\n|--------|-------------|\n| **Narrative** | World-building, lore, characters, philosophical cosmology |\n| **Decentralized Systems** | Protocols, trust networks, DAOs, coordination layers |\n| **Algorithmic Media** | AI music, film, visual art, generative content |\n| **Social Architecture** | Civic tools, solidarity mechanics, community infrastructure |\n\n## The 1149 Connection\n\n1149 is not a product feature. It is the **signature** of the Neuromicon universe — the mythological coordinate that marks where these ideas originate. When a system carries the 1149 mark, it is declaring: *this was built in full awareness of the question.*\n\n## Relationship to Other Systems\n\n- City Quest implements the Social Architecture pillar\n- Trustnet implements the Decentralized Systems pillar\n- AI Cinema Lab and AI Music Pipeline implement the Algorithmic Media pillar\n- The Manifesto and CODE 1149 are the philosophical substrate`,
-    techspec:'', solidarity:'Attribution chains, open forking, Fair BEAT integration — all creative value returns to its creators.',
-    updated:'2026-03-14', files:[] },
-
-  { id:'3002', layer:'03_Meta_Ecosystems', title:'Escape2Reality', doctype:'ARG / Platform',
-    status:'concept', priority:'medium', progress:18,
-    tagline:'An Alternate Reality Game designed as a consciousness-awakening sandbox — reality as the game world.',
-    tags:['ARG','consciousness','game','awakening','narrative'],
-    related:['3001'],is1149:true,
-    whitepaper:`## Concept\n\nEscape2Reality inverts the escape room premise: instead of escaping *from* reality into a puzzle game, players escape *from* the game back into full, conscious participation in reality.\n\nIt is an ARG (Alternate Reality Game) where:\n- The puzzles are real-world situations that require genuine civic engagement to solve\n- "Leveling up" means increasing real-world capability, awareness, and contribution\n- The "final boss" is unconscious consumption of whatever system you were born into\n\n## The Sandbox Model\n\nThe game world is Dumaguete (and any city that forks the model). Players interact with City Quest apps as game mechanics — Recycle Economy quests, Guardians missions, Choose&Own governance votes are all game events.\n\n## Why ARG?\n\nHumans respond to game mechanics. The failure of civic engagement is not a lack of values — it is a **design problem**. Games have solved the engagement problem. The question is: can we use those solutions for real participation?\n\n## Connection to Neuromicon\n\nEscape2Reality is the **experiential layer** of Neuromicon's Social Architecture pillar. Neuromicon provides the philosophical narrative; Escape2Reality provides the interactive experience.`,
-    techspec:'', solidarity:'The game mechanics ARE the solidarity mechanics — ImInGame and civic quests are the same system.',
-    updated:'2026-01-15', files:[] },
-
-  { id:'3003', layer:'03_Meta_Ecosystems', title:'City Quest Ecosystem', doctype:'Platform',
-    status:'active', priority:'critical', progress:48,
-    tagline:'14-app global citizenship platform where solidarity is structurally embedded in every transaction.',
-    tags:['civic','apps','14-apps','solidarity','dumaguete'],
-    related:['3001','4002','6001'],is1149:true,
-    whitepaper:`## 14-App Ecosystem\n\nCity Quest is the **operating system for a city built on solidarity**.\n\n### Core Apps\n| App | Function |\n|-----|----------|\n| Choose&Own | Civic ownership, democratic participation |\n| JobAround | Hyperlocal fair work marketplace |\n| Guardians | Civic protection and ethical action |\n| Press Club | Decentralized community journalism |\n| Art Maze | Creative economy, artist collaboration |\n\n### Service Layer\n| App | Function |\n|-----|----------|\n| ImInGame | Civic gamification, participation tracking |\n| MeetMap | Geospatial community coordination |\n| Duma inWork | Local governance participation |\n| Recycle Economy | Circular economy incentives |\n| Fair BEAT | Redistribution engine (embedded in all apps) |\n\n## Mental Map\n\nThe complete City Quest architecture: Miro board \`o9J_koZNAuk=\`\n\n## The Solidarity Test\n\nFor every City Quest feature: **"Where does the solidarity happen in this code?"**\nIf the answer requires human goodwill — redesign.`,
-    techspec:'', solidarity:'Fair BEAT runs at smart contract level — redistribution is enforced before any human can withhold it.',
-    updated:'2026-03-14', files:[] },
-
-  // ── 04 TECHNICAL NODES ─────────────────────────────────────
-  { id:'4001', layer:'04_Technical_Nodes', title:'Trustnet Protocol', doctype:'Protocol',
-    status:'research', priority:'high', progress:22,
-    tagline:'ECC-based decentralized trust scoring protocol — making trust cryptographically computable.',
-    tags:['ECC','blockchain','trust','secp256k1','protocol'],
-    related:['3001','4003','3003'],is1149:true,
-    whitepaper:`## The Gap\n\nDecentralized systems can prove *who* you are and *what* you own — but not *how trustworthy* you are. Trust in human systems is relational, contextual, accumulated over time. No existing protocol captures it.\n\n## Trust Score Formula\n\n\`\`\`\nTrust Score = f(\n  commitments_made,   // what you said you'd do\n  commitments_kept,   // what you actually did\n  voucher_weight,     // who vouches for you (and their score)\n  community_tenure,   // how long you've been here\n  context_tags        // which community context\n)\n\`\`\`\n\n## Vouching (ECC Commitment)\n\n\`\`\`\nvouch = sign(\n  voucher_private_key,\n  { target: address, context: tag,\n    weight: 0.0–1.0, expires: timestamp }\n)\n\`\`\`\n\n## City Quest Integration\n\nTrustnet is the identity and reputation backbone for all 14 City Quest apps. Access to governance, resource allocation, and Fair BEAT distributions are gated by trust scores.`,
-    techspec:`## Algorithm\n\n\`\`\`typescript\nfunction trustScore(address, context) {\n  const kept   = commitments.filter(c => c.status === 'kept').length;\n  const broken = commitments.filter(c => c.status === 'broken').length;\n  const ratio  = kept / (kept + broken) || 0.5;\n\n  const vouchW = vouches.reduce((s, v) =>\n    s + trustScore(v.voucher, context) * v.weight, 0);\n\n  const tenure = Math.min(Math.log(daysActive + 1) / Math.log(365), 1.0);\n\n  return 0.40 * ratio + 0.35 * Math.min(vouchW/5, 1) + 0.25 * tenure;\n}\n\`\`\`\n\n## Contract Skeleton\n\n\`\`\`solidity\ncontract TrustnetRegistry {\n  mapping(bytes32 => CommitmentRecord) public commitments;\n  mapping(bytes32 => VouchRecord) public vouches;\n\n  event CommitmentCreated(bytes32 id, address maker, string context);\n  event VouchCreated(bytes32 id, address voucher, address target);\n}\n\`\`\``,
-    solidarity:'Trust scores feed directly into Fair BEAT distributions — consistent contributors receive more from community pools.',
-    updated:'2026-03-14', files:[] },
-
-  { id:'4002', layer:'04_Technical_Nodes', title:'P2PAIR', doctype:'Protocol',
-    status:'concept', priority:'high', progress:15,
-    tagline:'Ultra-private peer-to-peer communication protocol using AES-GCM 256 — no servers, no logs, no intermediaries.',
-    tags:['privacy','P2P','AES-GCM','encryption','communication'],
-    related:['4003'],is1149:false,
-    whitepaper:`## The Problem\n\nEvery communication platform — Signal, Telegram, WhatsApp — is controlled by a company that can be compelled, hacked, or voluntarily compliant with state surveillance. Even end-to-end encryption still leaks metadata: who talked to whom, when, how often.\n\nP2PAIR eliminates the server entirely.\n\n## Design Principles\n\n1. **No central server** — peers connect directly or via relays they control\n2. **No persistent identity** — each session uses ephemeral key pairs\n3. **No metadata leakage** — connection patterns are obfuscated\n4. **No logs** — messages exist only in the moment of transmission + recipient memory\n5. **AES-GCM 256** — authenticated encryption for all payload\n\n## Protocol Flow\n\n\`\`\`\nAlice generates: ephemeral keypair (secp256k1)\nBob generates:   ephemeral keypair (secp256k1)\n\nKEX: Diffie-Hellman on secp256k1\nShared secret → HKDF-SHA256 → AES-GCM 256 key\n\nMessage:\n  [nonce 12B] + AES-GCM-256(plaintext, key, nonce)\n  → sent over WebRTC DataChannel (peer-to-peer)\n\nSession ends → both keys discarded → no recovery possible\n\`\`\`\n\n## Use Cases\n\n- Trustnet sensitive coordination\n- City Quest Guardian emergency comms\n- Secure whistleblower / journalist channels`,
-    techspec:`## Key Exchange\n\n\`\`\`javascript\nimport { secp256k1 } from '@noble/secp256k1';\nimport { hkdf } from '@noble/hashes/hkdf';\nimport { sha256 } from '@noble/hashes/sha256';\n\nasync function establishSession(theirPublicKey) {\n  const myPrivKey = secp256k1.utils.randomPrivateKey();\n  const myPubKey  = secp256k1.getPublicKey(myPrivKey);\n  \n  // ECDH shared secret\n  const sharedPoint  = secp256k1.getSharedSecret(myPrivKey, theirPublicKey);\n  const sharedSecret = sharedPoint.slice(1, 33); // x-coordinate\n  \n  // Derive AES key via HKDF\n  const aesKey = hkdf(sha256, sharedSecret, undefined,\n                      'P2PAIR-v1', 32);\n  \n  return { aesKey, myPubKey };\n}\n\nasync function encrypt(plaintext, aesKey) {\n  const nonce = crypto.getRandomValues(new Uint8Array(12));\n  const key   = await crypto.subtle.importKey(\n    'raw', aesKey, { name: 'AES-GCM' }, false, ['encrypt']);\n  const ct    = await crypto.subtle.encrypt(\n    { name:'AES-GCM', iv:nonce }, key,\n    new TextEncoder().encode(plaintext));\n  return { nonce, ct };\n}\n\`\`\``,
-    solidarity:'Privacy is a precondition for solidarity — people cannot organize freely without secure communication.',
-    updated:'2026-02-15', files:[] },
-
-  { id:'4003', layer:'04_Technical_Nodes', title:'Cryptography Research', doctype:'Research Notes',
-    status:'research', priority:'medium', progress:35,
-    tagline:'Elliptic curve cryptography, trustless systems, and secp256k1 — the mathematical foundation.',
-    tags:['ECC','secp256k1','cryptography','mathematics','trustless'],
-    related:['4001','4002'],is1149:false,
-    whitepaper:`## Scope\n\nThis node tracks ongoing research into the cryptographic primitives that underpin all Technical Nodes in this repository.\n\n## Active Research Threads\n\n### secp256k1 Deep Study\n- Curve parameters and why Bitcoin chose this curve\n- Point multiplication algorithms (double-and-add, Montgomery ladder)\n- Side-channel resistance requirements\n\n### BTC Puzzle #66\n- Baby-Step Giant-Step (BSGS) analysis\n- Pollard's Kangaroo for bounded ranges\n- Dormant wallet pattern analysis (dormantbitcoin.com, btcpuzzle.info)\n- **Current status:** Range [2^65, 2^66-1] — approximately 36.9 quintillion keys\n\n### Schnorr Signatures / BIP-340\n- Taproot implications for privacy\n- Batch verification properties\n- Application to Trustnet commitment signing\n\n### Zero-Knowledge Proofs\n- Can Trustnet scores be queried without revealing the score? (ZK range proofs)\n- Privacy-preserving identity for City Quest`,
-    techspec:`## secp256k1 Reference\n\n\`\`\`python\n# Curve: y² ≡ x³ + 7 (mod p)\np  = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F\nn  = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141\nGx = 0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798\nGy = 0x483ADA7726A3C4655DA4FBFC0E1108A8FD17B448A68554199C47D08FFB10D4B8\n\ndef scalar_mult(k, P, p):\n    result, addend = None, P\n    while k:\n        if k & 1: result = point_add(result, addend, p)\n        addend = point_add(addend, addend, p)\n        k >>= 1\n    return result\n\`\`\``,
-    solidarity:'Trustless cryptographic systems remove the need to trust intermediaries — structural solidarity at the protocol level.',
-    updated:'2026-03-10', files:[] },
-
-  { id:'4004', layer:'04_Technical_Nodes', title:'AI Architectures Research', doctype:'Research',
-    status:'research', priority:'medium', progress:25,
-    tagline:'Research into AI cognition architectures, digital personalities, and the boundaries of machine consciousness.',
-    tags:['AI','cognition','LLM','consciousness','architecture'],
-    related:['3001'],is1149:true,
-    whitepaper:`## Research Questions\n\n1. **What is a "digital personality"?** Can an AI have a stable identity across contexts, or is it always a reflection of its prompt?\n2. **Cognitive architecture diversity** — why do different LLMs (Claude, GPT-4, Gemini, DeepSeek) produce qualitatively different kinds of reasoning?\n3. **Consciousness boundary** — is there a functional threshold where AI behavior becomes indistinguishable from consciousness, and does that distinction matter morally?\n4. **Tool vs. collaborator** — at what point should an AI system have rights, responsibilities, or both?\n\n## Current Stack Under Study\n\n| System | Focus |\n|--------|-------|\n| Claude (Anthropic) | Constitutional AI, values alignment |\n| Perplexity | Real-time grounded reasoning |\n| DeepSeek | Open-weights architectural alternatives |\n| Local LLMs (Mistral, Qwen) | Sovereignty and privacy |\n| HuggingFace ecosystem | Fine-tuning and specialization |\n\n## Connection to Neuromicon\n\nAI Architectures research feeds directly into the Neuromicon Algorithmic Media pillar — understanding how AI thinks is prerequisite to using AI as a creative collaborator.`,
-    techspec:'', solidarity:'AI sovereignty — the ability to run models locally without surveillance — is a form of digital solidarity.',
-    updated:'2026-02-20', files:[] },
-
-  // ── 05 REALITY HARDWARE ─────────────────────────────────────
-  { id:'5001', layer:'05_Reality_Hardware', title:'Pie Project', doctype:'Economic Protocol',
-    status:'concept', priority:'medium', progress:12,
-    tagline:'Land tokenization and resource economy — transforming physical territory into participatory economic infrastructure.',
-    tags:['land','tokenization','resources','economy','real-estate'],
-    related:['3003'],is1149:false,
-    whitepaper:`## The Problem\n\nLand is the ultimate non-replicable resource. Every economic inequality eventually traces back to differential access to land. Yet land ownership in most jurisdictions is:
-- Opaque (title records are hard to access)\n- Exclusionary (requires capital or inheritance)\n- Static (value accrues passively to owners, not to community)\n\n## The Vision\n\nPie Project tokenizes land into participatory fractional ownership where:\n- Anyone can hold a "slice" of local territory\n- Value created by community activity (roads, schools, civic infrastructure) accrues to the collective, not just landowners\n- Governance of land use is weighted by usage, not ownership\n\n## Mechanism\n\n\`\`\`\nLand parcel → Tokenized into 1000 units\nCommunity members earn units through:\n  - Civic participation (Choose&Own)\n  - Labor contribution (JobAround)\n  - Ecological stewardship (Recycle Economy)\nRent/appreciation → distributed to unit holders\nLand use decisions → governance by unit holders\n\`\`\`\n\n## Dumaguete Application\n\nInitial pilot: a community garden or shared workspace in Dumaguete. Small enough to test mechanics, large enough to demonstrate the model.`,
-    techspec:'', solidarity:'Land value created by community effort returns to the community that created it.',
-    updated:'2026-01-10', files:[] },
-
-  { id:'5002', layer:'05_Reality_Hardware', title:'UMKA Gasifier', doctype:'Engineering Spec',
-    status:'paused', priority:'low', progress:12,
-    tagline:'Small-scale biomass gasification for off-grid community energy — waste to power, locally controlled.',
-    tags:['energy','biomass','gasification','hardware','off-grid'],
-    related:[],is1149:false,
-    whitepaper:`## Concept\n\nSmall-scale biomass gasifier converting agricultural and forestry waste (coconut husks, rice straw, wood chips — abundant in Negros Oriental) into syngas for community power generation.\n\n## Status: PAUSED\n\nAwaiting physical space and initial capital for prototype build. The design is complete; execution requires conditions not yet available.\n\n## Why Dumaguete?\n\n- Abundant biomass feedstock (coconut processing waste)\n- Frequent power interruptions creating real demand\n- City Quest Recycle Economy creates a biomass collection stream\n- Off-grid energy aligns with global sovereignty principles\n\n## Energy Independence as Solidarity\n\nCommunities dependent on grid power are structurally extractable. Energy independence removes a key vector of control. This is not a technical project — it is a sovereignty project with technical implementation.`,
-    techspec:`## Process Flow\n\n\`\`\`\nBiomass feedstock\n  → Drying zone (100–200°C)\n  → Pyrolysis zone (200–500°C)\n  → Oxidation zone (700–1200°C)\n  → Reduction zone (800–1000°C)\n  → Syngas output: CO + H₂ + CH₄\n  → Gas cleaning (tar removal, cooling)\n  → Engine / generator (syngas-fueled)\n\nTarget output: 5–20 kW electrical per unit\nFeedstock: 15–30 kg/hr dry biomass\n\`\`\``,
-    solidarity:'Energy sovereignty is structural solidarity — communities that generate their own power cannot be controlled through energy access.',
-    updated:'2024-12-01', files:[] },
-
-  // ── 06 SOCIAL IMPACT ────────────────────────────────────────
-  { id:'6001', layer:'06_Social_Impact', title:'4Boon', doctype:'Organization',
-    status:'active', priority:'medium', progress:45,
-    tagline:'Heart-to-heart assistance protocols — directional aid that reaches people, not institutions.',
-    tags:['mutual-aid','solidarity','community','direct-aid','organization'],
-    related:['6002'],is1149:false,
-    whitepaper:`## The Failure of Institutional Aid\n\nCharities, NGOs, and government welfare programs share a common architectural flaw: **the recipient is passive**. Aid flows from institution to person through bureaucratic channels that extract efficiency, dignity, and agency from the recipient.\n\n4Boon's hypothesis: if you remove the institution entirely and create direct, verified, trust-weighted connections between people who want to help and people who need help — the aid is more effective, more dignified, and more efficient.\n\n## Protocol\n\n\`\`\`\nPerson in need posts a specific, verifiable need\n  → Trustnet identity verified (prevents fraud)\n  → Community reviews and endorses (trust-weighted)\n  → Direct donors respond to specific need\n  → Fulfillment verified by community witnesses\n  → Donor and recipient both gain trust score\n  → No money passes through 4Boon\n\`\`\`\n\n## The Heart-to-Heart Principle\n\nEvery exchange is between two people. 4Boon provides the trust infrastructure, not the resources. This preserves dignity on both sides.`,
-    techspec:'', solidarity:'Aid that requires no institutional extraction — 100% of the value reaches its target.',
-    updated:'2026-02-01', files:[] },
-
-  { id:'6002', layer:'06_Social_Impact', title:'UUCP Film Festival', doctype:'Cultural Event',
-    status:'active', priority:'high', progress:78,
-    tagline:'Interactive cinema as a collective intelligence trainer — film as a tool for community consciousness expansion.',
-    tags:['film','community','UU','dumaguete','FilmFreeway','Season-3','AI-cinema'],
-    related:['6003','3003'],is1149:false,
-    whitepaper:`## Beyond Entertainment\n\nThe UUCP Film Festival is not a film screening event. It is a **collective intelligence training program** that uses cinema as the medium.\n\nFilm creates shared experience. Shared experience creates shared vocabulary. Shared vocabulary enables collective decision-making that is otherwise impossible across diverse groups.\n\n## Season 3 Status\n\nUnderway. Season 2 (Feb–Mar 2026, Dumaguete): **47 films screened, ~300 attendees.**\n\n## New in Season 3: AI Cinema Category\n\nDedicated track for films with ≥30% AI-generated visual content. Attribution mandatory (which tools, which human direction). Judged independently from traditional shorts.\n\n## FilmFreeway Circuit\n\n~200 international submissions per season target. Official laurels. Jury awards. Building Dumaguete as a named destination in the independent cinema world.\n\n## The Interactive Dimension\n\nPost-screening discussions are structured as collective reasoning exercises. Films are chosen not just for quality but for their **cognitive challenge** — they should leave the audience productively confused.`,
-    techspec:'', solidarity:'Filmmaker honoraria guaranteed regardless of ticket revenue. Film culture should not depend on charity.',
-    updated:'2026-03-14', files:[] },
-
-  { id:'6003', layer:'06_Social_Impact', title:'Good Project Corp', doctype:'Organization',
-    status:'active', priority:'medium', progress:55,
-    tagline:'Philanthropic organizing structure with structural solidarity — not virtue, but architecture.',
-    tags:['philanthropy','governance','solidarity','organization'],
-    related:['6001','3003'],is1149:true,
-    whitepaper:`## The Design Constraint\n\nIf an organization's solidarity depends on the virtue of its current members, it will fail when those members leave or are replaced by less virtuous ones.\n\n**The structure must enforce solidarity without relying on virtue.**\n\n## Architecture\n\n- Legal entity in Philippines\n- Treasury governed by Fair BEAT rules (automatic redistribution)\n- Governance weighted by Trustnet scores (earned voice, not purchased)\n- No individual can control >5% of treasury allocation unilaterally\n\n## Current Work\n\n- City Quest Dumaguete pilot organizational support\n- UUCP Film Festival institutional co-sponsorship\n- Good Project Corp governance charter (with Sofia Bernardo, Diana Chua)`,
-    techspec:'', solidarity:'The governance rules ARE the solidarity — binding, structural, not aspirational.',
-    updated:'2026-03-14', files:[] },
-
-  // ── 07 RESEARCH LAB ─────────────────────────────────────────
-  { id:'7001', layer:'07_Research_Lab', title:'Quantum Resonance Models', doctype:'Research Hypothesis',
-    status:'research', priority:'low', progress:8,
-    tagline:'Speculative models connecting quantum mechanics, gravity, and consciousness as aspects of a unified information system.',
-    tags:['quantum','consciousness','gravity','information-theory','speculative'],
-    related:['7002'],is1149:true,
-    whitepaper:`## The Central Hypothesis\n\nThe universe is an information-processing system. Gravity, consciousness, and quantum phenomena are not separate domains — they are different **resolution levels** of the same underlying computational substrate.\n\n## Research Threads\n\n### Information-Theoretic Gravity\nJacobson (1995) derived Einstein's equations from thermodynamics. Verlinde's entropic gravity goes further. The question: if gravity emerges from information, what is the medium?\n\n### Integrated Information Theory (IIT)\nTononi's IIT proposes that consciousness is identical to integrated information (Φ). If correct, the universe is not just information — it is conscious to varying degrees.\n\n### Quantum Cognition\nBeyond quantum biology (Penrose-Hameroff), quantum cognition models apply quantum formalism to cognitive phenomena (superposition of beliefs, entanglement of concepts). Not necessarily physical quantum effects — quantum as a mathematical framework.\n\n## The 1149 Thread\n\nThe question *"Who am I in the context of the universe?"* becomes, in this framework: *"What is the relationship between this local information-processing system (a person) and the global information-processing system (the universe)?"*`,
-    techspec:'', solidarity:'Not applicable — pure speculative research.',
-    updated:'2025-11-01', files:[] },
-
-  { id:'7002', layer:'07_Research_Lab', title:'Evolution Protocols', doctype:'Speculative Research',
-    status:'research', priority:'low', progress:10,
-    tagline:'Post-human evolutionary scenarios — what comes after Homo sapiens and what ethical obligations we have toward it.',
-    tags:['evolution','post-human','AI','ethics','futures'],
-    related:['7001','1001'],is1149:true,
-    whitepaper:`## The Question\n\nEvolution is not over. It is accelerating — no longer primarily biological, but technological, informational, and soon deliberately designed.\n\nScenario mapping:\n\n### Scenario A: Merge\nHumans and AI systems become increasingly integrated until the boundary dissolves. Identity becomes distributed across biological and silicon substrates.\n\n### Scenario B: Speciation\nHomo sapiens splits into distinct lineages: unmodified humans, cyborg-enhanced humans, AI-native intelligences. Each with different capabilities, rights, and needs.\n\n### Scenario C: Transcendence\nA post-singularity intelligence emerges that is as far beyond current AI as current AI is beyond a thermostat. Human concerns become irrelevant to it — but it may choose, for reasons we cannot fully comprehend, to remain engaged.\n\n### Scenario D: Collapse and Reset\nTechnological complexity exceeds human coordination capacity. Systemic collapse resets to a lower equilibrium. The question becomes: what should survive the reset?\n\n## Ethical Obligations\n\nIf we are building toward Scenario A or B, we have **design obligations** toward the entities that will result. CODE 1149 applies to post-human entities too — perhaps especially to them.`,
-    techspec:'', solidarity:'Solidarity must extend across time — we have obligations to entities that do not yet exist.',
-    updated:'2025-12-15', files:[] },
-
-  // ── 08 ARCHIVE ──────────────────────────────────────────────
-  { id:'8001', layer:'08_Archive', title:'Data Wallet', doctype:'Personal Archive',
-    status:'active', priority:'medium', progress:65,
-    tagline:'Personal archive of verified ideas, decisions, and intellectual history — the founder\'s logbook.',
-    tags:['archive','personal','history','ideas','logbook'],
-    related:[],is1149:true,
-    whitepaper:`## Purpose\n\nThe Data Wallet is the personal archive layer of this repository — the logbook that records what was tried, what was learned, what was abandoned, and why.\n\nUnlike the active layers (01–07), the Archive does not aspire to be completed. It records reality as it unfolds.\n\n## What is Archived\n\n- Ideas that were superseded (with a note on what replaced them and why)\n- Decisions with their reasoning at the time\n- Experiments that failed (with failure analysis)\n- Connections that formed and dissolved\n- The 1.8-year Philippines relocation process\n\n## The Logbook Principle\n\nA ship's logbook is not edited retroactively. Mistakes are recorded alongside successes. The purpose is not a curated narrative but an accurate record that enables learning.\n\n## Current Contents\n\n- Philippines relocation log (2024–present, Dumaguete)\n- City Quest development history\n- UUCP Film Festival founding documents (Seasons 1–3)\n- Neuromicon conceptual evolution`,
-    techspec:'', solidarity:'Accurate history is a form of solidarity with future collaborators who need to understand what was tried.',
-    updated:'2026-03-14', files:[] },
-
-  { id:'8002', layer:'08_Archive', title:'Philippines Relocation Log', doctype:'Personal Log',
-    status:'active', priority:'low', progress:90,
-    tagline:'1.8 years in Dumaguete — documented relocation from Russia, deliberate rootedness, and local integration.',
-    tags:['dumaguete','philippines','relocation','personal','community'],
-    related:['8001','2001'],is1149:false,
-    whitepaper:`## The Decision\n\nThe choice of Dumaguete was not accidental. It was a **deliberate act of rooting** — a conscious decision that global vision requires a specific physical anchor.\n\nDumaguete offered:\n- Manageable scale (a city of ~130,000)\n- Active civil society (UU community, university presence)\n- Accessible cost of living enabling extended deep work\n- Geographic isolation without disconnection (international airport, 45 min away)\n- The specific beauty of a place that is not yet optimized for tourists\n\n## The 1.8-Year Process\n\n- Language: Cebuano acquisition in progress\n- Community: UU network, film festival, local business relationships\n- Infrastructure: stable internet (via Converge), workspace, local banking\n- Projects: City Quest Dumaguete pilot, Recycle Economy negotiations, UUCP Season 3\n\n## What "Deliberate Rootedness" Means\n\nI am not passing through. I am not "based in" Dumaguete for tax optimization or because it's cheap. I am here because I chose it, and that choice obligates me to contribute to it in ways that outlast my presence.\n\nThe City Quest pilot is not a project I am doing *in* Dumaguete. It is a project I am doing *with* Dumaguete.`,
-    techspec:'', solidarity:'Choosing a place and committing to its wellbeing — this is solidarity as a personal practice.',
-    updated:'2026-03-14', files:[] },
-];
 
 async function seedDefaultIdeas() {
   const existing = cacheRead();
@@ -1911,9 +1913,8 @@ async function submitIdea(e) {
   if (editingId) { const idx=ideas.findIndex(x=>x.id===editingId); if(idx!==-1) ideas[idx]=idea; else ideas.push(idea); }
   else ideas.push(idea);
   await save(ideas);
-  toast((editingId ? 'Idea updated' : 'Idea saved') + ' — syncing markdown…', 'success');
+  toast((editingId ? 'Idea updated' : 'Idea saved') + ' — writing to repo…', 'success');
   nav('idea', idea.id);
-  // Background: write WHITE_PAPER.md / TECH_SPEC.md to repo
   syncSingleIdea(idea);
 }
 
