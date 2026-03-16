@@ -1906,7 +1906,7 @@
           style="padding:22px;margin-bottom:20px;border-left:3px solid var(--gold);border-radius:0 var(--r2) var(--r2) 0">
           <div class="sh">GitHub Sync</div>
           <p style="font-size:11px;color:var(--ink2);line-height:1.7;margin-bottom:16px">Every saved idea is committed
-            to <strong style="color:var(--ink)">github.com/YourGitHubName/1149</strong> as <code
+            to <strong style="color:var(--ink)">github.com/AlexSheff/1149</strong> as <code
               style="font-size:10px;background:var(--surface2);border:1px solid var(--brd2);border-radius:3px;padding:1px 5px">data/ideas.json</code>.
             Ideas are version-controlled and accessible from any device.</p>
           <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
@@ -1970,9 +1970,9 @@
         <div class="card" style="padding:20px">
           <div class="sh">About</div>
           <div style="font-size:11px;color:var(--ink2);line-height:2.4">
-            <div>Repo: <a href="https://github.com/YourGitHubName/1149" target="_blank"
-                style="color:var(--gold)">github.com/YourGitHubName/1149</a></div>
-            <div>Live: <a href="https://yourgithubname.github.io/1149" target="_blank"
+            <div>Repo: <a href="https://github.com/AlexSheff/1149" target="_blank"
+                style="color:var(--gold)">github.com/AlexSheff/1149</a></div>
+            <div>Live: <a href="https://alexsheff.github.io/1149" target="_blank"
                 style="color:var(--gold)">yourgithubname.github.io/1149</a></div>
             <div>Founder: Founder Name (Founder) · The City, Host Country</div>
             <div>Version: 3.1.0 — Reality Refactor Lab + GitHub Sync</div>
@@ -3145,7 +3145,7 @@
       const token = getToken();
       const el = document.getElementById('gh-status');
       if (!token) { if (el) el.innerHTML = '<span style="color:var(--orange)">No token set.</span>'; return; }
-      if (el) el.innerHTML = '<span style="color:var(--blue)">Connecting to github.com/YourGitHubName/1149…</span>';
+      if (el) el.innerHTML = '<span style="color:var(--blue)">Connecting to github.com/AlexSheff/1149…</span>';
       try {
         const res = await fetch('https://api.github.com/repos/' + GH_REPO, {
           headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
@@ -3205,7 +3205,7 @@
     // ════════════════════════════════════════════════════════════════
     function triggerExport() {
       const ideas = getIdeas();
-      const json = JSON.stringify({ version: 3, structure: 'reality-refactor-lab', repo: 'github.com/YourGitHubName/1149', exported: new Date().toISOString(), ideas }, null, 2);
+      const json = JSON.stringify({ version: 3, structure: 'reality-refactor-lab', repo: 'github.com/AlexSheff/1149', exported: new Date().toISOString(), ideas }, null, 2);
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
       a.download = `rrl-1149-${new Date().toISOString().split('T')[0]}.json`;
