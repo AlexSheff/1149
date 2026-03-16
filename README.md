@@ -108,7 +108,7 @@ Add a single row to `IDEAS_REGISTRY.md` with status `🟡 Concept` and just a ti
 1. **Solidarity is structural** — not rhetorical. Every product spec must describe *the mechanism*, not the intention.
 2. **1149** — this number is a reference point, not a counter. When an idea connects to the 1149 mythological thread, note it in the front matter.
 3. **Timeless map** — this repo is a mental map, not a sprint backlog. Ideas do not expire. They wait.
-4. **Local anchor** —  Global vision, local mechanics.
+4. **Local anchor** — Dumaguete is the implementation ground. Global vision, local mechanics.
 
 ---
 
