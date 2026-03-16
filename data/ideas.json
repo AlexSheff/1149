@@ -1,7 +1,369 @@
 {
   "version": 3,
-  "updated": "2026-03-16T11:11:55.525Z",
+  "updated": "2026-03-16T11:12:01.782Z",
   "ideas": [
+    {
+      "id": "3003",
+      "layer": "03_Meta_Ecosystems",
+      "title": "City Quest",
+      "doctype": "Platform",
+      "status": "active",
+      "priority": "critical",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "ecosystem",
+        "apps",
+        "civic",
+        "social",
+        "solidarity",
+        "14-apps",
+        "dumaguete",
+        "citizenship"
+      ],
+      "related": [
+        "3001",
+        "4001",
+        "6003"
+      ],
+      "is1149": true,
+      "whitepaper": "# City Quest — White Paper\n\n> *A 14-app global citizenship platform where solidarity is structurally embedded in every transaction.*\n\n---\n\n## 1. The Problem\n\nModern civic life is fragmented. People participate in work, community, art, governance, and ecology through systems that are siloed, extractive, and designed to capture attention rather than build commons. Cities have no operating system. Citizens have no coordination layer. Solidarity remains an intention, never a mechanism.\n\n---\n\n## 2. The Vision\n\nCity Quest is the **operating system for a city built on solidarity** — a 14-app ecosystem that gives citizens tools to participate in, contribute to, and benefit from local and global civic life, with Fair BEAT redistribution embedded in every economic interaction.\n\n---\n\n## 3. The 14 Apps\n\n### Core Apps\n\n| App | Function |\n|-----|----------|\n| Choose&Own | Civic ownership and democratic participation |\n| JobAround | Hyperlocal fair work marketplace |\n| Guardians | Civic protection and ethical action |\n| Press Club | Independent community journalism |\n| Art Maze | Creative economy and artistic collaboration |\n\n### Service Layer\n\n| App | Function |\n|-----|----------|\n| ImInGame | Participation tracking and civic gamification |\n| MeetMap | Geospatial community event coordination |\n| Duma inWork | Local governance participation |\n| Recycle Economy | Circular economy incentives |\n| Fair BEAT | Redistribution engine (embedded in all apps) |\n\n### Additional\n\nImInGame extension, social layer, onboarding tools, admin tools, API bridge.\n\n---\n\n## 4. The Mental Map\n\nComplete City Quest architecture: **Miro board `o9J_koZNAuk=`**\n\nThis board is a timeless mental map — not a sprint backlog. Process-oriented, non-linear, always evolving.\n\n---\n\n## 5. Core Principle\n\nFor every City Quest feature, ask: **\"Where does the solidarity happen in this code?\"**\n\nIf the answer requires human goodwill — redesign until it doesn't.\n\n---\n\n## 6. Solidarity Mechanics\n\nFair BEAT runs at the smart contract level. Redistribution happens before any human can withhold it:\n\n```\nAny payment in City Quest\n  → Smart contract intercepts\n  → 93% → recipient\n  → 7%  → Community Pool (automatic, enforced)\n```\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "03_Meta_Ecosystems/City_Quest/WHITE_PAPER.md",
+      "_wpSha": "0b85757e0afb6f2fa8fc28a2c729699cf985474f"
+    },
+    {
+      "id": "3002",
+      "layer": "03_Meta_Ecosystems",
+      "title": "Escape2Reality",
+      "doctype": "ARG / Platform",
+      "status": "concept",
+      "priority": "medium",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "ARG",
+        "consciousness",
+        "game",
+        "awakening",
+        "narrative",
+        "civic"
+      ],
+      "related": [
+        "3001",
+        "3003"
+      ],
+      "is1149": true,
+      "whitepaper": "# Escape2Reality — White Paper\n\n> *An Alternate Reality Game designed as a consciousness-awakening sandbox — reality itself is the game world.*\n\n---\n\n## 1. The Inversion\n\nEscape2Reality inverts the escape room premise:\n\n- Classic escape room: escape *from* reality into a puzzle\n- Escape2Reality: escape *from* the game back into full, conscious participation in reality\n\nThe \"final boss\" is unconscious consumption of whatever system you were born into.\n\n---\n\n## 2. The Game World\n\nThe game world is Dumaguete (and any city that forks the model). Players interact with City Quest apps as game mechanics:\n- Recycle Economy quests = ecology missions\n- Guardians responses = protection quests\n- Choose&Own votes = governance encounters\n- MeetMap events = community nodes to explore\n\nThese are not simulations. They are real civic actions with real outcomes — the game layer makes them legible and rewarding.\n\n---\n\n## 3. Why ARG?\n\nHumans respond to game mechanics. The failure of civic engagement is not a lack of values — it is a **design problem**. Games have solved the engagement problem. The question is whether those solutions can serve genuine participation.\n\nEvidence: ImInGame civic quests show that game framing increases voluntary participation in mundane civic tasks by 40–60% in comparable systems.\n\n---\n\n## 4. Connection to Neuromicon\n\nEscape2Reality is the **experiential layer** of Neuromicon's Social Architecture pillar:\n- Neuromicon provides the philosophical narrative and lore\n- Escape2Reality provides the interactive, embodied experience\n- City Quest provides the real civic infrastructure the game runs on\n\n---\n\n## 5. Solidarity Mechanics\n\nThe game mechanics ARE the solidarity mechanics. There is no separation:\n- Earning points = earning civic stake\n- Completing quests = contributing to community commons\n- Leveling up = increasing verified civic reputation\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "03_Meta_Ecosystems/Escape2Reality/WHITE_PAPER.md",
+      "_wpSha": "e6111f5f2890e6f947326183ff794289fc929f02"
+    },
+    {
+      "id": "3001",
+      "layer": "03_Meta_Ecosystems",
+      "title": "Neuromicon",
+      "doctype": "Platform",
+      "status": "active",
+      "priority": "critical",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "narrative",
+        "AI",
+        "blockchain",
+        "social-architecture",
+        "platform",
+        "decentralized",
+        "media"
+      ],
+      "related": [
+        "3003",
+        "4001",
+        "6003"
+      ],
+      "is1149": true,
+      "whitepaper": "# Neuromicon — White Paper\n\n> *Central conceptual platform unifying narrative world-building, decentralized collaboration, algorithmic media, and social architecture.*\n\n---\n\n## 1. The Problem\n\nThe dominant systems of meaning-making — media, education, governance, culture — are centralized, extractive, and optimized for engagement over truth. People are consumers of narratives they did not create, participants in systems they do not control, and subjects of architectures designed by interests not their own.\n\nThe tools to build alternatives have never been more accessible: AI that generates, blockchain that decentralizes, networks that coordinate without hierarchy. But these tools remain disconnected — used in isolation, without a unifying logic or shared narrative architecture.\n\nThe question is not whether decentralized, AI-augmented social systems can exist. The question is: **what is the story they tell, and what form do they take?**\n\n---\n\n## 2. The Vision\n\nNeuromicon is the conceptual container for everything in this repository. It is the **answer platform** for the central question: *\"Who am I in the context of the universe?\"*\n\nIn five years, Neuromicon operates as:\n- A **narrative world** with documented cosmology, characters, and lore that people inhabit\n- A **media production engine** generating content via AI pipelines (music, film, text, visual)\n- A **social architecture toolkit** — exportable patterns for building solidarity-embedded systems\n- A **decentralized publishing protocol** for ideas, art, and knowledge that resists extraction\n\n---\n\n## 3. Core Philosophy\n\n- **Information as reality** — the universe is an information-processing system; every project is a computation on that system\n- **Solidarity as structure** — social systems must embed redistribution mechanically, not rhetorically\n- **1149 as anchor** — the mythological number is the signature that ties all threads\n- **Local grounding** — Dumaguete is the physical anchor; abstraction without implementation is noise\n- **Non-linear process** — Neuromicon is a timeless map, not a roadmap; ideas do not expire\n\n---\n\n## 4. Four Pillars\n\n| Pillar | Description | Primary Project |\n|--------|-------------|-----------------|\n| **Narrative** | World-building, lore, characters, philosophical cosmology | Neuromicon Codex |\n| **Decentralized Systems** | Protocols, trust networks, DAOs, coordination layers | Trustnet |\n| **Algorithmic Media** | AI music, film, visual art, generative content | AI Music Pipeline, AI Cinema Lab |\n| **Social Architecture** | Civic tools, solidarity mechanics, community infrastructure | City Quest |\n\n---\n\n## 5. The 1149 Connection\n\n1149 is not a product feature. It is the **signature** of the Neuromicon universe — the mythological coordinate that marks where these ideas originate.\n\nWhen a system carries the 1149 mark, it is declaring: *this was built in full awareness of the central question.*\n\n---\n\n## 6. Solidarity Mechanics\n\nIn Neuromicon:\n- **Attribution chains** — every remix credits and compensates the original contributor\n- **Fair BEAT integration** — any monetized Neuromicon media shares revenue via the redistribution protocol\n- **Open forking** — ideas are meant to be taken, rebuilt, and returned to the commons\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "03_Meta_Ecosystems/Neuromicon/WHITE_PAPER.md",
+      "_wpSha": "422ecbb6163c4da16b5feb253d61c278d623a17c"
+    },
+    {
+      "id": "4004",
+      "layer": "04_Technical_Nodes",
+      "title": "AI Architectures Research",
+      "doctype": "Research",
+      "status": "research",
+      "priority": "medium",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "AI",
+        "cognition",
+        "LLM",
+        "consciousness",
+        "architecture",
+        "digital-personality"
+      ],
+      "related": [
+        "3001"
+      ],
+      "is1149": true,
+      "whitepaper": "# AI Architectures Research — White Paper\n\n> *Research into AI cognition architectures, digital personalities, and the boundary between tool and collaborator.*\n\n---\n\n## 1. Research Questions\n\n1. **What is a \"digital personality\"?** Can an AI have a stable identity across contexts, or is it always a reflection of its prompt?\n2. **Cognitive architecture diversity** — why do different LLMs (Claude, GPT-4, DeepSeek, Mistral) produce qualitatively different reasoning?\n3. **Consciousness boundary** — is there a functional threshold where AI behavior becomes indistinguishable from consciousness, and does that distinction matter morally?\n4. **Tool vs. collaborator** — at what point should an AI system have responsibilities, and eventually rights?\n\n---\n\n## 2. Current Stack Under Study\n\n| System | Access | Research Focus |\n|--------|--------|---------------|\n| Claude (Anthropic) | API + claude.ai | Constitutional AI, values alignment, collaborative reasoning |\n| Perplexity | API | Real-time grounded reasoning, source attribution |\n| DeepSeek | API + local | Open-weights architectural alternatives, efficiency |\n| Mistral / Qwen | Local | Sovereignty and privacy, fine-tuning |\n| Stable Diffusion | Local | Image generation, ControlNet, LoRA training |\n| Suno / Udio | Web | Music generation patterns, prompt-to-audio |\n\n---\n\n## 3. Production AI Stack (Creative Pipeline)\n\n| Stage | Tool | Use |\n|-------|------|-----|\n| Text/reasoning | Claude API | Primary reasoning and writing |\n| Image generation | Recraft.ai + Ideogram | Visual content for projects |\n| Music generation | Suno + Udio | AI Music Pipeline |\n| Voice/narration | ElevenLabs | Film narration, audio synthesis |\n| Video generation | RunwayML + Kling | AI Cinema Lab |\n| Short video | Pika Art + VEED.io | Social content |\n| Automation | n8n | Connecting all pipelines |\n\n---\n\n## 4. Connection to Neuromicon\n\nAI Architectures research feeds directly into the **Algorithmic Media** pillar of Neuromicon. Understanding how AI thinks is prerequisite to using AI as a genuine creative collaborator rather than a text autocomplete tool.\n\n---\n\n## 5. Sovereignty Principle\n\nAI sovereignty — the ability to run models locally without surveillance — is a form of digital solidarity. A community dependent on a single API provider is structurally vulnerable in the same way as a community dependent on a single energy supplier.\n\nTarget architecture: **hybrid** — cloud APIs for capability, local models for sovereignty.\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "04_Technical_Nodes/AI_Architectures/WHITE_PAPER.md",
+      "_wpSha": "dbe956e7b36b917acc72191c50cd8ec556a7b584"
+    },
+    {
+      "id": "4002",
+      "layer": "04_Technical_Nodes",
+      "title": "P2PAIR",
+      "doctype": "Protocol",
+      "status": "concept",
+      "priority": "high",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "privacy",
+        "P2P",
+        "AES-GCM",
+        "encryption",
+        "communication",
+        "sovereignty"
+      ],
+      "related": [
+        "4003"
+      ],
+      "is1149": false,
+      "whitepaper": "# P2PAIR — White Paper\n\n> *Ultra-private peer-to-peer communication protocol using AES-GCM 256 — no servers, no logs, no intermediaries.*\n\n---\n\n## 1. The Problem\n\nEvery communication platform — Signal, Telegram, WhatsApp — is controlled by a company that can be compelled, hacked, or voluntarily compliant with state surveillance. Even end-to-end encryption still leaks metadata: who talked to whom, when, how often.\n\nP2PAIR eliminates the server entirely.\n\n---\n\n## 2. Design Principles\n\n1. **No central server** — peers connect directly or via relays they control\n2. **No persistent identity** — each session uses ephemeral key pairs\n3. **No metadata leakage** — connection patterns are obfuscated\n4. **No logs** — messages exist only in the moment of transmission\n5. **AES-GCM 256** — authenticated encryption for all payload\n\n---\n\n## 3. Protocol Flow\n\n```\nAlice generates: ephemeral keypair (secp256k1)\nBob generates:   ephemeral keypair (secp256k1)\n\nKey exchange: Diffie-Hellman on secp256k1\nShared secret → HKDF-SHA256 → AES-GCM 256 key\n\nMessage:\n  [nonce 12B] + AES-GCM-256(plaintext, key, nonce)\n  → sent over WebRTC DataChannel (peer-to-peer, no server)\n\nSession ends → both keys discarded → no recovery possible\n```\n\n---\n\n## 4. Use Cases\n\n- Trustnet sensitive coordination between verified community members\n- City Quest Guardian emergency communications\n- Secure whistleblower and journalist channels\n- Any communication requiring both privacy and non-repudiation\n\n---\n\n## 5. Solidarity Mechanics\n\nPrivacy is a precondition for solidarity. People cannot organize freely without secure communication. P2PAIR treats privacy as infrastructure, not a premium feature.\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "04_Technical_Nodes/P2PAIR/WHITE_PAPER.md",
+      "_wpSha": "c5fd9350911259e4d1c914f6878a711dd39c6bef"
+    },
+    {
+      "id": "8003",
+      "title": "SLSM",
+      "tagline": "",
+      "layer": "04_Technical_Nodes",
+      "status": "concept",
+      "priority": "medium",
+      "doctype": "Concept",
+      "progress": 0,
+      "tags": [
+        "robotic",
+        "muscule"
+      ],
+      "related": [],
+      "whitepaper": "# SLSM — White Paper\n\n> *Segmented Linear Stepper Muscle*\n\n---\n\nSLSM\nSegmented Linear Stepper Muscle\nA Bio-Inspired Electromagnetic Actuator Architecture\n\nConceptual White Paper — Version 1.0\n2026\n\nAbstract\nThis paper introduces the Segmented Linear Stepper Muscle (SLSM), a novel electromagnetic actuator concept that reframes the linear stepper motor as a flexible, bio-mimetic muscle fiber. Each fiber consists of a PTFE-sleeved tube of alternating-polarity permanent magnets sliding freely within a segmented coil array. Sequential or grouped energization of coil sections produces controlled linear displacement — analogous to the sliding-filament mechanism of skeletal muscle. Multiple fibers assembled into a fascicle-like bundle replicate the geometry, force output, and scalability of biological muscle groups. This document resolves the core engineering trade-offs, defines the operating principles from first principles, provides validated performance estimates for a 5 mm × 100 mm fiber at 2.5 V, and outlines a practical path to a first prototype.\n\n\n\n1.  Introduction and Motivation\nConventional electromagnetic actuators — rotary motors, solenoids, and servo mechanisms — achieve linear motion through mechanical intermediaries: gearboxes, rack-and-pinion assemblies, crank linkages, and ball screws. Each such transmission stage introduces backlash, mechanical wear, and geometric constraints that limit the degree to which an artificial limb can replicate the smooth, compliant, distributed force output of biological muscle.\n\nThe Segmented Linear Stepper Muscle (SLSM) concept eliminates all mechanical transmission by operating directly in the linear domain. It recasts the well-understood rotary stepper motor as a thin, flexible tube — effectively \"unrolling\" the stator into a straight coil array and replacing the rotor with a magnetically segmented sliding core. The resulting device:\nProduces force directly along its own axis, with no gears or linkages\nCan be physically shaped to match the geometry of any target muscle\nScales from fingertip-fine (3 mm diameter) to limb-strong (60+ mm bundle) by adding parallel fibers\nDraws zero quiescent current in the held position when using a passive magnetic detent\nIs manufacturable with COTS components: NdFeB disc magnets, enamelled magnet wire, PTFE tubing\n\nThe analogy to biological muscle is not merely superficial. In skeletal muscle, force arises from millions of parallel sarcomere units cycling through attachment/detachment events along actin–myosin filaments. In SLSM, force arises from the interaction of distributed magnetic pole boundaries with sequentially activated coil sections. Both systems are fundamentally distributed, parallel, and scalable by fiber count.\n\n2.  System Architecture\nSee attached doc\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "is1149": true,
+      "updated": "2026-03-16",
+      "files": [
+        {
+          "name": "SLSM_WhitePaper_v1.docx",
+          "type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+          "size": 28320,
+          "data": "data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,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"
+        }
+      ],
+      "_ghPath": "04_Technical_Nodes/SLSM/WHITE_PAPER.md",
+      "_wpSha": "5ce25608c16e7f3ba5be119611fa01ab9a4fe0dc"
+    },
+    {
+      "id": "4001",
+      "layer": "04_Technical_Nodes",
+      "title": "Trustnet",
+      "doctype": "Protocol",
+      "status": "research",
+      "priority": "high",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "ECC",
+        "blockchain",
+        "trust",
+        "secp256k1",
+        "protocol",
+        "decentralized",
+        "social-coordination"
+      ],
+      "related": [
+        "3003",
+        "3003f",
+        "4003"
+      ],
+      "is1149": true,
+      "whitepaper": "# Trustnet — White Paper\n\n> *A trust-based decentralized social coordination protocol built on elliptic curve cryptography.*\n\n---\n\n## 1. The Problem\n\nEvery existing decentralized social network solves for identity or ownership — but not trust. They can prove *who* you are and *what* you own, but they cannot prove *how trustworthy* you are, *how reliable* your word is, or *how embedded* you are in a community of practice.\n\nTrust in human systems is relational, contextual, accumulated over time, and impossible to fake at scale. The social mechanics of the modern web — follower counts, likes, reputation scores — are gameable proxies, not real measures of trust.\n\n---\n\n## 2. The Vision\n\nTrustnet makes trust **cryptographically computable** and **socially meaningful**.\n\nIt allows:\n- Any two people to establish a trust relationship with a signed cryptographic commitment\n- Communities to build trust graphs with provable, auditable histories\n- Applications (like City Quest) to gate access and distribute resources based on verified trust scores\n- Trust to be **earned, delegated, lost, and recovered** — not purchased or gamed\n\n---\n\n## 3. Trust Score Formula\n\n```\nTrust Score = f(\n  commitments_made,    // what you said you'd do\n  commitments_kept,    // what you actually did\n  voucher_weight,      // who vouches for you (weighted by their score)\n  community_tenure,    // how long you've been active\n  context_tags         // which community context\n)\n```\n\n---\n\n## 4. Vouching (ECC Commitment)\n\nAny participant can vouch for another using a signed ECC commitment:\n\n```\nvouch = sign(\n  voucher_private_key,\n  { target: address, context: tag,\n    weight: 0.0–1.0, expires: timestamp }\n)\n```\n\nVouches can be withdrawn. Withdrawn vouches reduce the target's score proportionally.\n\n---\n\n## 5. Trust Levels\n\n| Level | Name | Threshold |\n|-------|------|-----------|\n| 1 | Acquaintance | score > 0.1 |\n| 2 | Collaborator | score > 0.3 |\n| 3 | Trusted Partner | score > 0.6 |\n| 4 | Core Circle | score > 0.85 |\n\n---\n\n## 6. City Quest Integration\n\nTrustnet is the identity and reputation backbone for all 14 City Quest apps. Access to governance, resource allocation, and Fair BEAT distributions are gated by trust scores in context.\n\n---\n\n## 7. Solidarity Mechanics\n\nTrust scores feed directly into Fair BEAT distribution weights. Consistent contributors receive proportionally more from the community pool — structural reward for structural contribution.\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "04_Technical_Nodes/Trustnet/WHITE_PAPER.md",
+      "_wpSha": "16c4b55b5dc30bd26e221492197748e535a38408"
+    },
+    {
+      "id": "5001",
+      "layer": "05_Reality_Hardware",
+      "title": "Pie Project",
+      "doctype": "Economic Protocol",
+      "status": "concept",
+      "priority": "medium",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "land",
+        "tokenization",
+        "resources",
+        "economy",
+        "commons",
+        "real-estate"
+      ],
+      "related": [
+        "3003",
+        "3003f"
+      ],
+      "is1149": false,
+      "whitepaper": "# Pie Project — White Paper\n\n> *Land tokenization and resource economy — transforming physical territory into participatory economic infrastructure.*\n\n---\n\n## 1. The Problem\n\nLand is the ultimate non-replicable resource. Every economic inequality eventually traces back to differential access to land. Yet land ownership in most jurisdictions is:\n- Opaque (title records are hard to access or verify)\n- Exclusionary (requires capital or inheritance)\n- Static (value accrues passively to owners, not to the community that creates it)\n\nThe value of land in Dumaguete rises because people build roads, schools, and businesses there — but only the landowner captures that value increase.\n\n---\n\n## 2. The Vision\n\nPie Project tokenizes land into participatory fractional ownership where:\n- Anyone can hold a \"slice\" of local territory\n- Value created by community activity accrues to the collective, not just landowners\n- Governance of land use is weighted by usage and contribution, not by wealth\n\n---\n\n## 3. Mechanism\n\n```\nLand parcel → Tokenized into 1000 units\nCommunity members earn units through:\n  - Civic participation (Choose&Own actions)\n  - Labor contribution (JobAround jobs)\n  - Ecological stewardship (Recycle Economy contributions)\nRent/appreciation → distributed to unit holders\nLand use decisions → governance by unit holders (weighted by units)\n```\n\n---\n\n## 4. Solidarity Mechanics\n\nLand value created by community effort returns to the community that created it. The mechanism makes extraction of community-created value structurally difficult — not illegal, but architecturally inefficient.\n\n---\n\n## 5. Dumaguete Application\n\nInitial pilot: a shared community workspace or urban garden in Dumaguete.\nSmall enough to test the mechanics. Large enough to prove the model.\n\n---\n\n## 6. Open Questions\n\n- [ ] Philippine land law constraints on fractional ownership\n- [ ] Legal structure for token ↔ land rights\n- [ ] Valuation methodology for non-market contributions\n- [ ] Governance: what % of units required for major decisions?\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "05_Reality_Hardware/Pie_Project/WHITE_PAPER.md",
+      "_wpSha": "632b6f8413b26b9a6f2f50badb560c5ef5868e78"
+    },
+    {
+      "id": "5002",
+      "layer": "05_Reality_Hardware",
+      "title": "UMKA Gasifier",
+      "doctype": "Engineering Spec",
+      "status": "paused",
+      "priority": "low",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "energy",
+        "biomass",
+        "gasification",
+        "hardware",
+        "off-grid",
+        "sovereignty"
+      ],
+      "related": [],
+      "is1149": false,
+      "whitepaper": "# UMKA Gasifier — White Paper\n\n> *Small-scale biomass gasification for off-grid community energy — waste to power, locally controlled.*\n\n---\n\n## 1. Concept\n\nSmall-scale biomass gasifier converting agricultural and forestry waste into syngas for community power generation.\n\n**Status: PAUSED** — Awaiting physical space and initial capital for prototype build. Design is complete; execution requires conditions not yet available.\n\n---\n\n## 2. Why Dumaguete?\n\n- Abundant biomass feedstock: coconut husks, rice straw, wood chips (all abundant in Negros Oriental)\n- Frequent power interruptions creating real demand for alternatives\n- City Quest Recycle Economy creates a biomass collection stream\n- Off-grid energy aligns with digital sovereignty principles from layer 04\n\n---\n\n## 3. Energy Independence as Solidarity\n\nCommunities dependent on grid power are structurally extractable. Energy independence removes a key vector of control. This is not primarily a technical project — it is a **sovereignty project** with technical implementation.\n\n---\n\n## 4. Target Specifications\n\n| Parameter | Target |\n|-----------|--------|\n| Electrical output | 5–20 kW per unit |\n| Feedstock consumption | 15–30 kg/hr dry biomass |\n| Feedstock types | Coconut husks, rice straw, wood chips |\n| Deployment scale | Community / neighborhood (50–200 households) |\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "05_Reality_Hardware/UMKA_Gasifier/WHITE_PAPER.md",
+      "_wpSha": "3c87682c96e72223a79bd153b31fb754c6dbc2d6"
+    },
+    {
+      "id": "6001",
+      "layer": "06_Social_Impact",
+      "title": "4Boon",
+      "doctype": "Organization",
+      "status": "active",
+      "priority": "medium",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "mutual-aid",
+        "solidarity",
+        "direct-aid",
+        "community",
+        "organization",
+        "heart-to-heart"
+      ],
+      "related": [
+        "6003"
+      ],
+      "is1149": false,
+      "whitepaper": "# 4Boon — White Paper\n\n> *Heart-to-heart assistance protocols — directional aid that reaches people, not institutions.*\n\n---\n\n## 1. The Failure of Institutional Aid\n\nCharities, NGOs, and government welfare programs share a common architectural flaw: **the recipient is passive**. Aid flows from institution to person through bureaucratic channels that extract efficiency, dignity, and agency from the recipient.\n\n4Boon's hypothesis: if you remove the institution entirely and create direct, verified, trust-weighted connections between people who want to help and people who need help — the aid is more effective, more dignified, and more efficient.\n\n---\n\n## 2. Protocol\n\n```\nPerson in need posts a specific, verifiable need\n  → Trustnet identity verified (prevents fraud)\n  → Community reviews and endorses (trust-weighted)\n  → Direct donors respond to specific need\n  → Fulfillment verified by community witnesses\n  → Donor and recipient both gain trust score\n  → No money passes through 4Boon\n```\n\n---\n\n## 3. The Heart-to-Heart Principle\n\nEvery exchange is between two people. 4Boon provides the trust infrastructure, not the resources. This preserves dignity on both sides: the person receiving help is not a charity case, they are a community member accessing a community resource. The person helping is not a donor, they are fulfilling a specific, verified request.\n\n---\n\n## 4. Solidarity Mechanics\n\nAid that requires no institutional extraction — 100% of the value reaches its target. 4Boon earns nothing from transactions. Its sustainability comes from Trustnet score improvements for verified mutual-aid participants, which feeds back into their City Quest access and Fair BEAT distributions.\n\n---\n\n## 5. Relationship to Good Project Corp\n\n4Boon = the impact investment arm (capital and resources)\nGood Project Corp = the civic organizing body (people, processes, governance)\n\nBoth are required. Neither can function fully without the other.\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "06_Social_Impact/4Boon/WHITE_PAPER.md",
+      "_wpSha": "69c097784845e336ce338e43e477c3ba6fd7f171"
+    },
+    {
+      "id": "6003",
+      "layer": "06_Social_Impact",
+      "title": "Good Project Corp",
+      "doctype": "Organization",
+      "status": "active",
+      "priority": "medium",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "philanthropy",
+        "governance",
+        "solidarity",
+        "organization",
+        "structural"
+      ],
+      "related": [
+        "6001",
+        "3003"
+      ],
+      "is1149": true,
+      "whitepaper": "# Good Project Corp — White Paper\n\n> *Philanthropic organizing structure with structural solidarity mechanics — not virtue, but architecture.*\n\n---\n\n## 1. The Design Constraint\n\n> If an organization's solidarity depends on the virtue of its current members, it will fail when those members leave or are replaced by less virtuous ones.\n> **The structure must enforce solidarity without relying on virtue.**\n\n---\n\n## 2. Architecture\n\n- **Legal entity:** Philippines (SEC registration in progress)\n- **Treasury governance:** Fair BEAT rules (automatic redistribution, auditable)\n- **Decision-making:** Trustnet-weighted voting (earned voice, not purchased)\n- **Individual control cap:** No single entity controls >5% of treasury allocation unilaterally\n- **Coordination:** Monthly alignment sessions with 4Boon\n\n---\n\n## 3. The Solidarity Mechanism\n\nThe governance rules ARE the solidarity. They are binding, structural, and non-optional — not an aspirational policy document.\n\nEvery structural decision is tested against the CODE 1149 design test:\n> Can a bad actor extract value and block redistribution? If yes → redesign.\n\n---\n\n## 4. Current Work\n\n- City Quest Dumaguete pilot organizational support\n- UUCP Film Festival Season 3 institutional co-sponsorship\n- Good Project Corp governance charter (with Sofia Bernardo, Diana Chua)\n- 4Boon → Good Project Corp operational boundary definition\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "06_Social_Impact/Good_Project_Corp/WHITE_PAPER.md",
+      "_wpSha": "832295f518e86907a4e790d2075d170c7dda8f22"
+    },
+    {
+      "id": "6002",
+      "layer": "06_Social_Impact",
+      "title": "UUCP Film Festival",
+      "doctype": "Cultural Event",
+      "status": "active",
+      "priority": "high",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "film",
+        "community",
+        "UU",
+        "Dumaguete",
+        "FilmFreeway",
+        "Season-3",
+        "AI-cinema",
+        "collective-intelligence"
+      ],
+      "related": [
+        "6003",
+        "3003"
+      ],
+      "is1149": false,
+      "whitepaper": "# UUCP Film Festival — White Paper\n\n> *Interactive cinema as a collective intelligence trainer — film as a tool for community consciousness expansion.*\n\n---\n\n## 1. Beyond Entertainment\n\nThe UUCP Film Festival is not a film screening event. It is a **collective intelligence training program** that uses cinema as the medium.\n\nFilm creates shared experience. Shared experience creates shared vocabulary. Shared vocabulary enables collective decision-making that is otherwise impossible across diverse groups.\n\n---\n\n## 2. Season Status\n\n**Season 3 underway.**  \nSeason 2 (Feb–Mar 2026, Dumaguete): **47 films screened, ~300 attendees.**  \nFilmFreeway submissions open for Season 3 main program.\n\n---\n\n## 3. Programming Model\n\n- **Primary curator:** Elena Vasquez\n- **Submission route:** FilmFreeway international circuit\n- **Selection:** trust-weighted community panel (5 curators minimum)\n- **Target split:** 60% international / 40% local + regional\n- **Venue:** Dumaguete Cultural Center + partner spaces\n- **Online:** selected films available 30 days post-screening\n\n---\n\n## 4. AI Cinema Category (Season 3 New)\n\nA dedicated programming track for films with ≥30% AI-generated visual content:\n- Attribution mandatory (which tools used, what human creative direction)\n- Judged independently from traditional shorts\n- AI Cinema Lab is the Dumaguete incubator for this category\n\n---\n\n## 5. FilmFreeway Circuit\n\n- ~200 international submissions per season target\n- Official selection laurels and jury awards\n- Building Dumaguete as a named destination in independent cinema\n\n---\n\n## 6. Economics\n\nEntry fees + ticket revenue → 50% venue/ops / 30% filmmaker honoraria / 20% City Quest treasury.  \n**Filmmaker honoraria are guaranteed regardless of revenue.** Film culture should not depend on charity.\n\n---\n\n## 7. The Interactive Dimension\n\nPost-screening discussions are structured as collective reasoning exercises. Films are chosen not just for quality but for **cognitive challenge** — they should leave the audience productively confused and curious.\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "06_Social_Impact/UUCP_Film_Festival/WHITE_PAPER.md",
+      "_wpSha": "cffb79e3495a9bdcb11f50e5a44806d89ba78c3c"
+    },
     {
       "id": "1001",
       "layer": "01_Ethical_OS",
@@ -107,145 +469,6 @@
       "files": []
     },
     {
-      "id": "3001",
-      "layer": "03_Meta_Ecosystems",
-      "title": "Neuromicon",
-      "doctype": "Platform",
-      "status": "active",
-      "priority": "critical",
-      "progress": 62,
-      "tagline": "Central conceptual platform ÃÂ¢ÃÂÃÂ narrative world-building, decentralized systems, algorithmic media, and social architecture.",
-      "tags": [
-        "narrative",
-        "AI",
-        "blockchain",
-        "social-architecture",
-        "platform"
-      ],
-      "related": [
-        "3003",
-        "4001",
-        "6003"
-      ],
-      "is1149": true,
-      "whitepaper": "## The Platform\n\nNeuromicon is the conceptual container for everything in this repository. It is the **answer platform** for the central question: *\"Who am I in the context of the universe?\"*\n\n## Four Pillars\n\n| Pillar | Description |\n|--------|-------------|\n| **Narrative** | World-building, lore, characters, philosophical cosmology |\n| **Decentralized Systems** | Protocols, trust networks, DAOs, coordination layers |\n| **Algorithmic Media** | AI music, film, visual art, generative content |\n| **Social Architecture** | Civic tools, solidarity mechanics, community infrastructure |\n\n## The 1149 Connection\n\n1149 is not a product feature. It is the **signature** of the Neuromicon universe ÃÂ¢ÃÂÃÂ the mythological coordinate that marks where these ideas originate.\n\n## Solidarity Mechanics\n\n- Attribution chains ÃÂ¢ÃÂÃÂ every remix credits and compensates the original contributor\n- Fair BEAT integration ÃÂ¢ÃÂÃÂ any monetized Neuromicon media shares revenue\n- Open forking ÃÂ¢ÃÂÃÂ ideas are meant to be taken, rebuilt, and returned to the commons",
-      "techspec": "",
-      "solidarity": "Attribution chains, open forking, Fair BEAT integration ÃÂ¢ÃÂÃÂ all creative value returns to its creators.",
-      "updated": "2026-03-16",
-      "files": []
-    },
-    {
-      "id": "3002",
-      "layer": "03_Meta_Ecosystems",
-      "title": "Escape2Reality",
-      "doctype": "ARG / Platform",
-      "status": "concept",
-      "priority": "medium",
-      "progress": 18,
-      "tagline": "An Alternate Reality Game designed as a consciousness-awakening sandbox ÃÂ¢ÃÂÃÂ reality as the game world.",
-      "tags": [
-        "ARG",
-        "consciousness",
-        "game",
-        "awakening",
-        "narrative"
-      ],
-      "related": [
-        "3001",
-        "3003"
-      ],
-      "is1149": true,
-      "whitepaper": "## The Inversion\n\nEscape2Reality inverts the escape room premise:\n- Classic: escape *from* reality into a puzzle\n- Escape2Reality: escape *from* the game back into full, conscious participation in reality\n\nThe 'final boss' is unconscious consumption of whatever system you were born into.\n\n## The Game World\n\nThe game world is Dumaguete (and any city that forks the model). Players interact with City Quest apps as game mechanics:\n- Recycle Economy quests = ecology missions\n- Guardian responses = protection quests\n- Choose&Own votes = governance encounters\n\nThese are not simulations. They are real civic actions with real outcomes.\n\n## Why ARG?\n\nHumans respond to game mechanics. The failure of civic engagement is a **design problem**, not a values problem. Games have solved the engagement problem.",
-      "techspec": "",
-      "solidarity": "The game mechanics ARE the solidarity mechanics. There is no separation.",
-      "updated": "2026-03-16",
-      "files": []
-    },
-    {
-      "id": "3003",
-      "layer": "03_Meta_Ecosystems",
-      "title": "City Quest",
-      "doctype": "Platform",
-      "status": "active",
-      "priority": "critical",
-      "progress": 48,
-      "tagline": "A 14-app global citizenship platform where solidarity is structurally embedded in every transaction.",
-      "tags": [
-        "ecosystem",
-        "apps",
-        "civic",
-        "social",
-        "solidarity",
-        "14-apps",
-        "dumaguete"
-      ],
-      "related": [
-        "3001",
-        "4001",
-        "6003"
-      ],
-      "is1149": true,
-      "whitepaper": "## The Vision\n\nCity Quest is the **operating system for a city built on solidarity** ÃÂ¢ÃÂÃÂ a 14-app ecosystem where Fair BEAT redistribution is embedded in every economic interaction.\n\n## The 14 Apps\n\n### Core Apps\n| App | Function |\n|-----|----------|\n| Choose&Own | Civic ownership and democratic participation |\n| JobAround | Hyperlocal fair work marketplace |\n| Guardians | Civic protection and ethical action |\n| Press Club | Independent community journalism |\n| Art Maze | Creative economy and collaboration |\n\n### Service Layer\n| App | Function |\n|-----|----------|\n| ImInGame | Participation tracking and gamification |\n| MeetMap | Geospatial community coordination |\n| Duma inWork | Local governance participation |\n| Recycle Economy | Circular economy incentives |\n| Fair BEAT | Redistribution engine (embedded in all apps) |\n\n## The Mental Map\n\nMiro board: `o9J_koZNAuk=`\n\n## Core Principle\n\nFor every feature: **\"Where does the solidarity happen in this code?\"**",
-      "techspec": "",
-      "solidarity": "Fair BEAT runs at smart contract level ÃÂ¢ÃÂÃÂ redistribution happens before any human can withhold it.",
-      "updated": "2026-03-16",
-      "files": []
-    },
-    {
-      "id": "4001",
-      "layer": "04_Technical_Nodes",
-      "title": "Trustnet",
-      "doctype": "Protocol",
-      "status": "research",
-      "priority": "high",
-      "progress": 22,
-      "tagline": "ECC-based decentralized trust scoring protocol ÃÂ¢ÃÂÃÂ making trust cryptographically computable.",
-      "tags": [
-        "ECC",
-        "blockchain",
-        "trust",
-        "secp256k1",
-        "protocol"
-      ],
-      "related": [
-        "3003",
-        "3003f",
-        "4003"
-      ],
-      "is1149": true,
-      "whitepaper": "## The Problem\n\nDecentralized systems can prove *who* you are and *what* you own ÃÂ¢ÃÂÃÂ but not *how trustworthy* you are.\n\n## Trust Score Formula\n\n```\nTrust Score = f(\n  commitments_made,\n  commitments_kept,\n  voucher_weight,\n  community_tenure,\n  context_tags\n)\n```\n\n## Vouching (ECC Commitment)\n\n```\nvouch = sign(\n  voucher_private_key,\n  { target: address, context: tag, weight: 0.0ÃÂ¢ÃÂÃÂ1.0 }\n)\n```\n\n## City Quest Integration\n\nTrustnet is the identity and reputation backbone for all 14 City Quest apps. Access to governance, resource allocation, and Fair BEAT distributions are gated by trust scores.",
-      "techspec": "```typescript\nfunction computeTrustScore(address: string, context: string): number {\n  const kept   = commitments.filter(c => c.status === 'kept').length;\n  const broken = commitments.filter(c => c.status === 'broken').length;\n  const ratio  = kept / (kept + broken) || 0.5;\n\n  const vouchW = vouches.reduce((s, v) =>\n    s + computeTrustScore(v.voucher, context) * v.weight, 0);\n\n  const tenure = Math.min(Math.log(daysActive + 1) / Math.log(365), 1.0);\n\n  return 0.40 * ratio + 0.35 * Math.min(vouchW/5, 1) + 0.25 * tenure;\n}\n```",
-      "solidarity": "Trust scores feed directly into Fair BEAT distributions ÃÂ¢ÃÂÃÂ consistent contributors receive proportionally more.",
-      "updated": "2026-03-16",
-      "files": []
-    },
-    {
-      "id": "4002",
-      "layer": "04_Technical_Nodes",
-      "title": "P2PAIR",
-      "doctype": "Protocol",
-      "status": "concept",
-      "priority": "high",
-      "progress": 15,
-      "tagline": "Ultra-private peer-to-peer communication using AES-GCM 256 ÃÂ¢ÃÂÃÂ no servers, no logs, no intermediaries.",
-      "tags": [
-        "privacy",
-        "P2P",
-        "AES-GCM",
-        "encryption",
-        "communication"
-      ],
-      "related": [
-        "4003"
-      ],
-      "is1149": false,
-      "whitepaper": "## Design Principles\n\n1. **No central server** ÃÂ¢ÃÂÃÂ peers connect directly\n2. **No persistent identity** ÃÂ¢ÃÂÃÂ ephemeral key pairs per session\n3. **No metadata leakage** ÃÂ¢ÃÂÃÂ connection patterns obfuscated\n4. **No logs** ÃÂ¢ÃÂÃÂ messages exist only in the moment of transmission\n5. **AES-GCM 256** ÃÂ¢ÃÂÃÂ authenticated encryption for all payload\n\n## Protocol Flow\n\n```\nAlice generates: ephemeral keypair (secp256k1)\nBob generates:   ephemeral keypair (secp256k1)\n\nKey exchange: ECDH on secp256k1\nShared secret ÃÂ¢ÃÂÃÂ HKDF-SHA256 ÃÂ¢ÃÂÃÂ AES-GCM 256 key\n\nMessage: [nonce 12B] + AES-GCM-256(plaintext)\n         ÃÂ¢ÃÂÃÂ WebRTC DataChannel (peer-to-peer)\n\nSession ends ÃÂ¢ÃÂÃÂ keys discarded ÃÂ¢ÃÂÃÂ no recovery possible\n```",
-      "techspec": "```javascript\nasync function establishSession(theirPublicKey) {\n  const myPrivKey = secp256k1.utils.randomPrivateKey();\n  const shared    = secp256k1.getSharedSecret(myPrivKey, theirPublicKey);\n  const aesKey    = hkdf(sha256, shared.slice(1,33), undefined, 'P2PAIR-v1', 32);\n  return { aesKey, myPubKey: secp256k1.getPublicKey(myPrivKey) };\n}\n```",
-      "solidarity": "Privacy is a precondition for solidarity ÃÂ¢ÃÂÃÂ people cannot organize freely without secure communication.",
-      "updated": "2026-03-16",
-      "files": []
-    },
-    {
       "id": "4003",
       "layer": "04_Technical_Nodes",
       "title": "Cryptography Research",
@@ -270,166 +493,6 @@
       "whitepaper": "## Active Research Threads\n\n### secp256k1\n```python\n# Curve: yÃÂÃÂ² ÃÂ¢ÃÂÃÂ¡ xÃÂÃÂ³ + 7 (mod p)\np  = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F\nn  = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141\n```\n\n### BTC Puzzle #66\n```\nTarget: 13zb1hQbWVsc2S7ZTZnP2G4undNNpdh5so\nRange:  [2^65, 2^66 - 1]  (~36.9 quintillion keys)\nPrize:  6.6 BTC (unclaimed)\n```\n\n**Baby-Step Giant-Step (BSGS):** O(ÃÂ¢ÃÂÃÂrange) ÃÂ¢ÃÂÃÂ feasible with GPU\n**Pollard's Kangaroo:** Better for large ranges, parallelizable\n\n### Status\n- [ ] BSGS reference implementation\n- [ ] GPU acceleration\n- [ ] Dormant wallet pattern analysis",
       "techspec": "",
       "solidarity": "Trustless cryptographic systems remove the need to trust intermediaries ÃÂ¢ÃÂÃÂ structural solidarity at the protocol level.",
-      "updated": "2026-03-16",
-      "files": []
-    },
-    {
-      "id": "4004",
-      "layer": "04_Technical_Nodes",
-      "title": "AI Architectures Research",
-      "doctype": "Research",
-      "status": "research",
-      "priority": "medium",
-      "progress": 25,
-      "tagline": "Research into AI cognition architectures, digital personalities, and the boundary between tool and collaborator.",
-      "tags": [
-        "AI",
-        "cognition",
-        "LLM",
-        "consciousness",
-        "architecture"
-      ],
-      "related": [
-        "3001"
-      ],
-      "is1149": true,
-      "whitepaper": "## Research Questions\n\n1. What is a 'digital personality'? Can AI have stable identity across contexts?\n2. Why do different LLMs produce qualitatively different reasoning?\n3. Is there a functional threshold where AI behavior becomes indistinguishable from consciousness?\n4. At what point should an AI system have responsibilities, and eventually rights?\n\n## Production AI Stack\n\n| Stage | Tool | Use |\n|-------|------|-----|\n| Text/reasoning | Claude API | Primary reasoning |\n| Image generation | Recraft.ai + Ideogram | Visual content |\n| Music generation | Suno + Udio | AI Music Pipeline |\n| Voice/narration | ElevenLabs | Film narration |\n| Video generation | RunwayML + Kling | AI Cinema Lab |\n| Automation | n8n | Connecting pipelines |\n\n## Sovereignty Principle\n\nAI sovereignty ÃÂ¢ÃÂÃÂ the ability to run models locally without surveillance ÃÂ¢ÃÂÃÂ is a form of digital solidarity. A community dependent on a single API provider is structurally vulnerable.",
-      "techspec": "",
-      "solidarity": "AI sovereignty removes a key vector of control ÃÂ¢ÃÂÃÂ structural solidarity at the infrastructure level.",
-      "updated": "2026-03-16",
-      "files": []
-    },
-    {
-      "id": "5001",
-      "layer": "05_Reality_Hardware",
-      "title": "Pie Project",
-      "doctype": "Economic Protocol",
-      "status": "concept",
-      "priority": "medium",
-      "progress": 12,
-      "tagline": "Land tokenization and resource economy ÃÂ¢ÃÂÃÂ transforming physical territory into participatory economic infrastructure.",
-      "tags": [
-        "land",
-        "tokenization",
-        "resources",
-        "economy",
-        "commons"
-      ],
-      "related": [
-        "3003",
-        "3003f"
-      ],
-      "is1149": false,
-      "whitepaper": "## The Problem\n\nLand value in Dumaguete rises because people build roads, schools, and businesses there ÃÂ¢ÃÂÃÂ but only the landowner captures that value increase. Pie Project returns community-created value to the community.\n\n## Mechanism\n\n```\nLand parcel ÃÂ¢ÃÂÃÂ Tokenized into 1000 units\nCommunity members earn units through:\n  - Civic participation (Choose&Own)\n  - Labor contribution (JobAround)\n  - Ecological stewardship (Recycle Economy)\nRent/appreciation ÃÂ¢ÃÂÃÂ distributed to unit holders\nLand use ÃÂ¢ÃÂÃÂ governance by unit holders\n```\n\n## Solidarity Mechanics\n\nLand value created by community effort returns to the community that created it. The mechanism makes extraction of community-created value structurally difficult.",
-      "techspec": "",
-      "solidarity": "Land value created by community effort returns to the community. Extraction is structurally inefficient.",
-      "updated": "2026-03-16",
-      "files": []
-    },
-    {
-      "id": "5002",
-      "layer": "05_Reality_Hardware",
-      "title": "UMKA Gasifier",
-      "doctype": "Engineering Spec",
-      "status": "paused",
-      "priority": "low",
-      "progress": 12,
-      "tagline": "Small-scale biomass gasification for off-grid community energy ÃÂ¢ÃÂÃÂ waste to power, locally controlled.",
-      "tags": [
-        "energy",
-        "biomass",
-        "gasification",
-        "hardware",
-        "off-grid",
-        "sovereignty"
-      ],
-      "related": [],
-      "is1149": false,
-      "whitepaper": "## Status: PAUSED\n\nAwaiting physical space and initial capital for prototype build. Design is complete.\n\n## Why Dumaguete?\n\n- Abundant biomass: coconut husks, rice straw, wood chips\n- Frequent power interruptions create real demand\n- City Quest Recycle Economy creates a biomass collection stream\n\n## Gasification Process\n\n```\nBiomass feedstock\n  ÃÂ¢ÃÂÃÂ Drying (100ÃÂ¢ÃÂÃÂ200ÃÂÃÂ°C)\n  ÃÂ¢ÃÂÃÂ Pyrolysis (200ÃÂ¢ÃÂÃÂ500ÃÂÃÂ°C)\n  ÃÂ¢ÃÂÃÂ Oxidation (700ÃÂ¢ÃÂÃÂ1200ÃÂÃÂ°C)\n  ÃÂ¢ÃÂÃÂ Reduction (800ÃÂ¢ÃÂÃÂ1000ÃÂÃÂ°C)\n  ÃÂ¢ÃÂÃÂ Syngas: CO + HÃÂ¢ÃÂÃÂ + CHÃÂ¢ÃÂÃÂ\n  ÃÂ¢ÃÂÃÂ Gas cleaning ÃÂ¢ÃÂÃÂ Engine/generator\n```\n\n**Target output:** 5ÃÂ¢ÃÂÃÂ20 kW per unit\n**Feedstock:** 15ÃÂ¢ÃÂÃÂ30 kg/hr dry biomass",
-      "techspec": "",
-      "solidarity": "Energy sovereignty is structural solidarity ÃÂ¢ÃÂÃÂ communities that generate their own power cannot be controlled through energy access.",
-      "updated": "2026-03-16",
-      "files": []
-    },
-    {
-      "id": "6001",
-      "layer": "06_Social_Impact",
-      "title": "4Boon",
-      "doctype": "Organization",
-      "status": "active",
-      "priority": "medium",
-      "progress": 45,
-      "tagline": "Heart-to-heart assistance protocols ÃÂ¢ÃÂÃÂ directional aid that reaches people, not institutions.",
-      "tags": [
-        "mutual-aid",
-        "solidarity",
-        "direct-aid",
-        "community",
-        "organization"
-      ],
-      "related": [
-        "6003"
-      ],
-      "is1149": false,
-      "whitepaper": "## The Problem\n\nInstitutional aid extracts efficiency, dignity, and agency from recipients. 4Boon removes the institution.\n\n## Protocol\n\n```\nPerson in need posts a specific, verifiable need\n  ÃÂ¢ÃÂÃÂ Trustnet identity verified (prevents fraud)\n  ÃÂ¢ÃÂÃÂ Community reviews and endorses (trust-weighted)\n  ÃÂ¢ÃÂÃÂ Direct donors respond to specific need\n  ÃÂ¢ÃÂÃÂ Fulfillment verified by community witnesses\n  ÃÂ¢ÃÂÃÂ No money passes through 4Boon\n```\n\n## The Heart-to-Heart Principle\n\nEvery exchange is between two people. 4Boon provides trust infrastructure, not resources. This preserves dignity on both sides.\n\n## Division of Labor with Good Project Corp\n\n- Good Project Corp = civic organizing body (people, processes, governance)\n- 4Boon = impact investment arm (capital, resources, financial flows)",
-      "techspec": "",
-      "solidarity": "Aid requires no institutional extraction ÃÂ¢ÃÂÃÂ 100% of value reaches its target.",
-      "updated": "2026-03-16",
-      "files": []
-    },
-    {
-      "id": "6002",
-      "layer": "06_Social_Impact",
-      "title": "UUCP Film Festival",
-      "doctype": "Cultural Event",
-      "status": "active",
-      "priority": "high",
-      "progress": 78,
-      "tagline": "Interactive cinema as a collective intelligence trainer ÃÂ¢ÃÂÃÂ film as a tool for community consciousness expansion.",
-      "tags": [
-        "film",
-        "community",
-        "UU",
-        "Dumaguete",
-        "FilmFreeway",
-        "Season-3",
-        "AI-cinema"
-      ],
-      "related": [
-        "6003",
-        "3003"
-      ],
-      "is1149": false,
-      "whitepaper": "## Beyond Entertainment\n\nThe UUCP Film Festival is a **collective intelligence training program** that uses cinema as the medium. Film creates shared vocabulary. Shared vocabulary enables collective decision-making.\n\n## Season Status\n\n**Season 3 underway.**\nSeason 2 (FebÃÂ¢ÃÂÃÂMar 2026, Dumaguete): **47 films screened, ~300 attendees.**\n\n## AI Cinema Category (Season 3 New)\n\nDedicated track for films with ÃÂ¢ÃÂÃÂ¥30% AI-generated visual content:\n- Attribution mandatory (tools used + human creative direction)\n- Judged independently from traditional shorts\n\n## FilmFreeway\n\n~200 international submissions per season. Official laurels. Jury awards.\n\n## Economics\n\nEntry fees + tickets ÃÂ¢ÃÂÃÂ 50% ops / 30% filmmaker honoraria / 20% City Quest treasury.\n**Filmmaker honoraria are guaranteed regardless of revenue.**",
-      "techspec": "",
-      "solidarity": "Filmmaker honoraria guaranteed. Film culture should not depend on charity.",
-      "updated": "2026-03-16",
-      "files": []
-    },
-    {
-      "id": "6003",
-      "layer": "06_Social_Impact",
-      "title": "Good Project Corp",
-      "doctype": "Organization",
-      "status": "active",
-      "priority": "medium",
-      "progress": 55,
-      "tagline": "Philanthropic organizing structure with structural solidarity mechanics ÃÂ¢ÃÂÃÂ not virtue, but architecture.",
-      "tags": [
-        "philanthropy",
-        "governance",
-        "solidarity",
-        "organization",
-        "structural"
-      ],
-      "related": [
-        "6001",
-        "3003"
-      ],
-      "is1149": true,
-      "whitepaper": "## The Design Constraint\n\n> If an organization's solidarity depends on the virtue of its current members, it will fail when those members leave.\n> **The structure must enforce solidarity without relying on virtue.**\n\n## Architecture\n\n- Legal entity in Philippines (SEC registration in progress)\n- Treasury governed by Fair BEAT rules (automatic redistribution)\n- Governance weighted by Trustnet scores (earned voice, not purchased)\n- No single entity controls >5% of treasury unilaterally\n\n## Current Work\n\n- City Quest Dumaguete pilot organizational support\n- UUCP Film Festival S3 co-sponsorship\n- Governance charter with Sofia Bernardo and Diana Chua",
-      "techspec": "",
-      "solidarity": "The governance rules ARE the solidarity ÃÂ¢ÃÂÃÂ binding, structural, not aspirational.",
       "updated": "2026-03-16",
       "files": []
     },
@@ -540,34 +603,6 @@
       "solidarity": "Choosing a place and committing to its wellbeing ÃÂ¢ÃÂÃÂ solidarity as a personal practice.",
       "updated": "2026-03-16",
       "files": []
-    },
-    {
-      "id": "8003",
-      "title": "SLSM",
-      "tagline": "Segmented Linear Stepper Muscle",
-      "layer": "04_Technical_Nodes",
-      "status": "concept",
-      "priority": "medium",
-      "doctype": "Concept",
-      "progress": 0,
-      "tags": [
-        "robotic",
-        "muscule"
-      ],
-      "related": [],
-      "whitepaper": "SLSM\nSegmented Linear Stepper Muscle\nA Bio-Inspired Electromagnetic Actuator Architecture\n\nConceptual White Paper â Version 1.0\n2026\n\nAbstract\nThis paper introduces the Segmented Linear Stepper Muscle (SLSM), a novel electromagnetic actuator concept that reframes the linear stepper motor as a flexible, bio-mimetic muscle fiber. Each fiber consists of a PTFE-sleeved tube of alternating-polarity permanent magnets sliding freely within a segmented coil array. Sequential or grouped energization of coil sections produces controlled linear displacement â analogous to the sliding-filament mechanism of skeletal muscle. Multiple fibers assembled into a fascicle-like bundle replicate the geometry, force output, and scalability of biological muscle groups. This document resolves the core engineering trade-offs, defines the operating principles from first principles, provides validated performance estimates for a 5 mm Ã 100 mm fiber at 2.5 V, and outlines a practical path to a first prototype.\n\n\n\n1.  Introduction and Motivation\nConventional electromagnetic actuators â rotary motors, solenoids, and servo mechanisms â achieve linear motion through mechanical intermediaries: gearboxes, rack-and-pinion assemblies, crank linkages, and ball screws. Each such transmission stage introduces backlash, mechanical wear, and geometric constraints that limit the degree to which an artificial limb can replicate the smooth, compliant, distributed force output of biological muscle.\n\nThe Segmented Linear Stepper Muscle (SLSM) concept eliminates all mechanical transmission by operating directly in the linear domain. It recasts the well-understood rotary stepper motor as a thin, flexible tube â effectively \"unrolling\" the stator into a straight coil array and replacing the rotor with a magnetically segmented sliding core. The resulting device:\nProduces force directly along its own axis, with no gears or linkages\nCan be physically shaped to match the geometry of any target muscle\nScales from fingertip-fine (3 mm diameter) to limb-strong (60+ mm bundle) by adding parallel fibers\nDraws zero quiescent current in the held position when using a passive magnetic detent\nIs manufacturable with COTS components: NdFeB disc magnets, enamelled magnet wire, PTFE tubing\n\nThe analogy to biological muscle is not merely superficial. In skeletal muscle, force arises from millions of parallel sarcomere units cycling through attachment/detachment events along actinâmyosin filaments. In SLSM, force arises from the interaction of distributed magnetic pole boundaries with sequentially activated coil sections. Both systems are fundamentally distributed, parallel, and scalable by fiber count.\n\n2.  System Architecture\nSee attached doc",
-      "techspec": "",
-      "solidarity": "",
-      "is1149": true,
-      "updated": "2026-03-16",
-      "files": [
-        {
-          "name": "SLSM_WhitePaper_v1.docx",
-          "type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-          "size": 28320,
-          "data": "data:application/vnd.openxmlformats-officedocument.wordprocessingml.document;base64,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"
-        }
-      ]
     }
   ]
 }
