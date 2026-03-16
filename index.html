@@ -1010,10 +1010,15 @@ input[type=file] { display:none }
       <div class="sh">Data Management</div>
       <div id="sync-status-card" style="font-size:11px;color:var(--ink2);line-height:2;margin-bottom:14px"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="triggerManualSync()">↻ Pull from GitHub</button>
+        <button class="btn btn-primary btn-sm" onclick="triggerManualSync()">↻ Pull from GitHub</button>
+        <button class="btn btn-ghost btn-sm" onclick="pushToGitHub()">↑ Push to GitHub</button>
         <button class="btn btn-ghost btn-sm" onclick="triggerExport()">↓ Export JSON</button>
         <button class="btn btn-ghost btn-sm" onclick="triggerImport()">↑ Import JSON</button>
         <button class="btn btn-danger btn-sm" onclick="confirmClearAll()">⚠ Clear Cache</button>
+      </div>
+      <div id="data-mgmt-hint" style="font-size:10.5px;color:var(--ink3);margin-top:10px;line-height:1.65">
+        <strong style="color:var(--ink2)">Pull from GitHub</strong> — loads latest <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd);border-radius:3px;padding:1px 5px">data/ideas.json</code> into this browser.<br>
+        <strong style="color:var(--ink2)">Push to GitHub</strong> — writes current browser data to the repo (creates the file if needed).
       </div>
     </div>
     <div class="card" style="padding:20px">
@@ -1116,8 +1121,14 @@ async function ghRead() {
   if (!res.ok) throw new Error(`GitHub read error: ${res.status}`);
   const file = await res.json();
   const sha  = file.sha;
-  const ideas = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\n/g,'')))));
-  return { ideas: Array.isArray(ideas) ? ideas : (ideas.ideas || []), sha };
+  let ideas;
+  try {
+    const raw = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\n/g,'')))));
+    ideas = Array.isArray(raw) ? raw : (raw.ideas || []);
+  } catch {
+    ideas = [];
+  }
+  return { ideas, sha };
 }
 
 // GitHub API: write file
@@ -1394,11 +1405,13 @@ function nav(page, id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item[data-page]').forEach(n => n.classList.remove('active'));
 
-  let pageEl = document.getElementById(`page-${page}`);
+  // 'edit' reuses the same DOM element as 'new'
+  const domPage = page === 'edit' ? 'new' : page;
+  let pageEl = document.getElementById(`page-${domPage}`);
   if (!pageEl) return;
   pageEl.classList.add('active');
 
-  const navEl = document.querySelector(`[data-page="${page}"]`);
+  const navEl = document.querySelector(`[data-page="${domPage}"]`);
   if (navEl) navEl.classList.add('active');
 
   currentPage = page;
@@ -1992,10 +2005,21 @@ function renderSettings() {
 
   // Status card
   const sc = document.getElementById('sync-status-card');
+  const cacheCount = cacheRead().length;
   if (sc) sc.innerHTML = `
-    GitHub token: <strong style="color:${token?'var(--green)':'var(--orange)'}">${token ? 'Set ✓' : 'Not set'}</strong><br>
-    Last known file SHA: <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd);border-radius:3px;padding:1px 5px">${sha ? sha.slice(0,12)+'…' : '—'}</code><br>
-    Sync status: <strong id="settings-sync-status">${syncStatus}</strong>
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 14px;line-height:2.2">
+      <span style="color:var(--ink3)">GitHub token</span>
+      <strong style="color:${token?'var(--green)':'var(--orange)'}">${token ? 'Set ✓' : 'Not set — enter token above'}</strong>
+      <span style="color:var(--ink3)">Ideas in cache</span>
+      <strong style="color:${cacheCount>0?'var(--green)':'var(--orange)'}">${cacheCount > 0 ? cacheCount+' ideas' : '0 — empty, pull or seed'}</strong>
+      <span style="color:var(--ink3)">File in repo</span>
+      <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd);border-radius:3px;padding:1px 5px">data/ideas.json</code>
+      <span style="color:var(--ink3)">Last file SHA</span>
+      <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd);border-radius:3px;padding:1px 5px">${sha ? sha.slice(0,14)+'…' : '— not synced yet'}</code>
+      <span style="color:var(--ink3)">Sync status</span>
+      <span id="settings-sync-status" style="font-weight:500">${syncStatus}</span>
+    </div>
+    ${cacheCount === 0 && token ? '<div style='margin-top:10px;padding:10px 14px;background:var(--orange-bg);border:1px solid rgba(194,65,12,.2);border-radius:var(--r2);font-size:11px;color:var(--orange)'>No ideas in cache. Click <strong>Pull from GitHub</strong> to load existing data, or use the <strong>Seed Default Data</strong> button below to populate and push.</div>' : ''}
   `;
 
   document.getElementById('storage-stats').innerHTML = `
@@ -2033,12 +2057,50 @@ async function testToken() {
     if (!res.ok) throw new Error(`GitHub error: ${res.status}`);
     const data = await res.json();
     if (el) el.innerHTML = `<span style="color:var(--green)">✓ Connected to <strong>${data.full_name}</strong> — ${data.description||'no description'}</span>`;
-    toast('GitHub connection OK', 'success');
-    // Now try to sync data
-    await triggerManualSync();
+    toast('GitHub connection OK ✓', 'success');
+    // Load data from GitHub
+    setSyncStatus('loading');
+    const ideas = await ghLoad();
+    if (ideas !== null) {
+      if (ideas.length === 0) {
+        // File doesn't exist yet — push seed data automatically
+        await seedDefaultIdeas();
+        renderAll();
+        const el2 = document.getElementById('token-status');
+        if (el2) el2.innerHTML += '<br><span style="color:var(--green)">✓ Seeded ' + getIdeas().length + ' ideas and pushed to GitHub.</span>';
+      } else {
+        renderAll();
+        if (el) el.innerHTML += '<br><span style="color:var(--green)">✓ Loaded ' + ideas.length + ' ideas from GitHub.</span>';
+      }
+    }
   } catch(e) {
     if (el) el.innerHTML = `<span style="color:var(--orange)">✗ ${e.message}</span>`;
     toast('Connection failed: ' + e.message.slice(0,50), 'error');
+  }
+}
+
+async function pushToGitHub() {
+  const ideas = cacheRead();
+  if (!ideas.length) {
+    showModal(
+      'Nothing to push',
+      'Local cache is empty. Pull from GitHub first, or seed the default data.',
+      [
+        { label: 'Seed default data', cls: 'btn-primary', fn: async () => { closeModal(); await seedDefaultIdeas(); renderAll(); } },
+        { label: 'Cancel', cls: 'btn-ghost', fn: closeModal }
+      ]
+    );
+    return;
+  }
+  setSyncStatus('saving');
+  try {
+    await ghWrite(ideas);
+    setSyncStatus('ok');
+    toast(`Pushed ${ideas.length} ideas to GitHub ✓`, 'success');
+    renderSettings();
+  } catch(e) {
+    setSyncStatus('error', e.message.slice(0,40));
+    toast('Push failed: ' + e.message.slice(0,60), 'error');
   }
 }
 
@@ -2046,8 +2108,20 @@ async function triggerManualSync() {
   setSyncStatus('loading');
   const ideas = await ghLoad();
   if (ideas !== null) {
-    renderAll();
-    toast(`Synced — ${getIdeas().length} ideas loaded from GitHub`, 'success');
+    if (ideas.length === 0 && cacheRead().length === 0) {
+      // Empty repo + empty cache → offer to seed
+      showModal(
+        'Repository is empty',
+        'No ideas found in <strong>data/ideas.json</strong>. Push the default Reality Refactor Lab seed data to GitHub now?',
+        [
+          { label: 'Yes — seed & push', cls: 'btn-primary', fn: async () => { closeModal(); await seedDefaultIdeas(); renderAll(); } },
+          { label: 'No', cls: 'btn-ghost', fn: closeModal }
+        ]
+      );
+    } else {
+      renderAll();
+      toast(`Synced ✓ — ${getIdeas().length} ideas`, 'success');
+    }
   }
 }
 
@@ -2129,6 +2203,7 @@ function renderAll() {
   else if(currentPage==='ideas') renderIdeas();
   else if(currentPage.startsWith('layer-')) renderLayer(currentPage.replace('layer-',''));
   else if(currentPage==='settings') renderSettings();
+  // 'new' and 'edit' pages are form state — never re-render them via renderAll
 }
 
 (async function init() {
