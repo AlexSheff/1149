@@ -2,9 +2,9 @@
 
 > *"Who am I in the context of the universe?"*
 
-**Founder:** Alexandr Tokarev (Founder Alex)  
+**Founder:** Alexandr Tokarev (Founder)  
 **Base:** Dumaguete, Philippines  
-**Live site:** [alexsheff.github.io/1149](https://alexsheff.github.io/1149)  
+**Live site:** [AlexSheff.github.io/1149](https://AlexSheff.github.io/1149)  
 **Repo:** [github.com/AlexSheff/1149](https://github.com/AlexSheff/1149)
 
 ---
@@ -65,7 +65,7 @@ If the answer requires human goodwill — the design is incomplete.
 1. Pick the right layer folder
 2. Copy `_templates/WHITE_PAPER_TEMPLATE.md` or `TECH_SPEC_TEMPLATE.md`
 3. Fill in the fields
-4. The site at `alexsheff.github.io/1149` reads from `data/ideas.json`
+4. The site at `AlexSheff.github.io/1149` reads from `data/ideas.json`
 
 ---
 
@@ -77,3 +77,5 @@ When a project carries the 1149 mark, it is built in full awareness of the centr
 ---
 
 *Last updated: March 2026*
+
+

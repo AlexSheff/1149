@@ -10,7 +10,7 @@ related: ["7001", "1001"]
 is_1149: true
 created: 2025-12-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # Evolution Protocols
@@ -63,3 +63,4 @@ Design for that legibility now, while it is still simple.
 ---
 
 *Speculative Research · Reality Refactor Lab · 1149*
+

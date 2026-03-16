@@ -5,12 +5,12 @@ layer: "03_Meta_Ecosystems"
 doctype: "Platform"
 status: active
 priority: critical
-tags: [ecosystem, apps, civic, social, solidarity, 14-apps, dumaguete, citizenship]
+tags: [ecosystem, apps, civic, social, solidarity, 14-apps, Dumaguete, citizenship]
 related: ["3001", "4001", "6003"]
 is_1149: true
 created: 2024-06-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # City Quest — White Paper
@@ -89,3 +89,5 @@ Any payment in City Quest
 ---
 
 *White Paper · Reality Refactor Lab · 1149*
+
+

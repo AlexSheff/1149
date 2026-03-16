@@ -2,7 +2,7 @@
 
 ---
 
-## For Founder Alex
+## For Founder
 
 ### Fast capture (under 2 minutes)
 1. Open a GitHub Issue using the **New Idea** template
@@ -44,3 +44,5 @@ layer_folder/
 ---
 
 *Reality Refactor Lab · github.com/AlexSheff/1149*
+
+

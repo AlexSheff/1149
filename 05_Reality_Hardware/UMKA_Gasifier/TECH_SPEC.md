@@ -7,7 +7,7 @@ version: 0.3
 stack: [biomass-gasification, syngas, internal-combustion-generator]
 created: 2024-01-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # UMKA Gasifier — Technical Specification
@@ -90,3 +90,4 @@ Coconut husks have natural moisture ~30–50%. Sun-drying to <15% required befor
 ---
 
 *Tech Spec · Reality Refactor Lab · 1149*
+

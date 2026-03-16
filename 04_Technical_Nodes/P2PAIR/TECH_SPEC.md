@@ -7,7 +7,7 @@ version: 0.1
 stack: [secp256k1, AES-GCM-256, WebRTC, HKDF-SHA256]
 created: 2026-02-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # P2PAIR — Technical Specification
@@ -104,3 +104,4 @@ dc.onmessage = async (e) => {
 ---
 
 *Tech Spec · Reality Refactor Lab · 1149*
+

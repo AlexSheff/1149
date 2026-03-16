@@ -10,7 +10,7 @@ related: [id1, id2]
 is_1149: true | false
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
-author: Founder Alex
+author: Founder
 ---
 
 # [Title] — White Paper
@@ -95,3 +95,5 @@ Step A → triggers → Step B → produces → Output
 ---
 
 *White Paper · Reality Refactor Lab · 1149*
+
+

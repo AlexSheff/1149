@@ -10,7 +10,7 @@ related: ["4001", "4002"]
 is_1149: false
 created: 2025-01-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # Cryptography Research — Technical Notes
@@ -127,3 +127,4 @@ Expected operations: 2 × √(2^65) ≈ 12 billion.
 ---
 
 *Research Notes · Reality Refactor Lab · 1149*
+

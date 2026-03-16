@@ -10,7 +10,7 @@ related: ["3003", "3003f", "4003"]
 is_1149: true
 created: 2025-06-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # Trustnet — White Paper
@@ -93,3 +93,4 @@ Trust scores feed directly into Fair BEAT distribution weights. Consistent contr
 ---
 
 *White Paper · Reality Refactor Lab · 1149*
+

@@ -10,7 +10,7 @@ related: ["3001"]
 is_1149: true
 created: 2026-01-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # AI Architectures Research — White Paper
@@ -70,3 +70,4 @@ Target architecture: **hybrid** — cloud APIs for capability, local models for 
 ---
 
 *White Paper · Reality Refactor Lab · 1149*
+

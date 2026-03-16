@@ -10,7 +10,7 @@ related: ["6003", "3003"]
 is_1149: false
 created: 2024-01-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # UUCP Film Festival — White Paper
@@ -77,3 +77,5 @@ Post-screening discussions are structured as collective reasoning exercises. Fil
 ---
 
 *White Paper · Reality Refactor Lab · 1149*
+
+

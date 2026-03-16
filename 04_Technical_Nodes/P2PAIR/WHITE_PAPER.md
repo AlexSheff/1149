@@ -10,7 +10,7 @@ related: ["4003"]
 is_1149: false
 created: 2026-02-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # P2PAIR — White Paper
@@ -71,3 +71,4 @@ Privacy is a precondition for solidarity. People cannot organize freely without 
 ---
 
 *White Paper · Reality Refactor Lab · 1149*
+

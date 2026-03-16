@@ -10,7 +10,7 @@ related: ["3003", "3003f"]
 is_1149: false
 created: 2026-01-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # Pie Project — White Paper
@@ -76,3 +76,5 @@ Small enough to test the mechanics. Large enough to prove the model.
 ---
 
 *White Paper · Reality Refactor Lab · 1149*
+
+

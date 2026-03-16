@@ -10,7 +10,7 @@ related: ["3003", "4001", "3003f"]
 is_1149: true
 created: 2025-01-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # Recycle Economy — White Paper
@@ -56,3 +56,5 @@ Community bonus pool triggered by collective achievement — everyone is motivat
 ---
 
 *App White Paper · City Quest · Reality Refactor Lab · 1149*
+
+

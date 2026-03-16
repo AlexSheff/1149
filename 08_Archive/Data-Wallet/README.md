@@ -9,7 +9,7 @@ tags: [archive, personal, history, ideas, logbook, memory]
 is_1149: true
 created: 2024-01-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # Data Wallet
@@ -51,3 +51,5 @@ Unlike the active layers, the Data Wallet does not aspire to be completed. It re
 ---
 
 *Personal Archive · Reality Refactor Lab · 1149*
+
+

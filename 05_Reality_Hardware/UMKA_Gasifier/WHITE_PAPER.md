@@ -10,7 +10,7 @@ related: []
 is_1149: false
 created: 2024-01-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # UMKA Gasifier — White Paper
@@ -29,7 +29,7 @@ Small-scale biomass gasifier converting agricultural and forestry waste into syn
 
 ## 2. Why Dumaguete?
 
-- Abundant biomass feedstock: coconut husks, rice straw, wood chips (all abundant in Negros Oriental)
+- Abundant biomass feedstock: coconut husks, rice straw, wood chips (all abundant in Local Region)
 - Frequent power interruptions creating real demand for alternatives
 - City Quest Recycle Economy creates a biomass collection stream
 - Off-grid energy aligns with digital sovereignty principles from layer 04
@@ -54,3 +54,5 @@ Communities dependent on grid power are structurally extractable. Energy indepen
 ---
 
 *White Paper · Reality Refactor Lab · 1149*
+
+

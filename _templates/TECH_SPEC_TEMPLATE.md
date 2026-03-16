@@ -7,7 +7,7 @@ version: 0.1
 stack: [technology1, technology2]
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
-author: Founder Alex
+author: Founder
 ---
 
 # [Title] — Technical Specification
@@ -105,3 +105,4 @@ Trigger → Step 1 → Step 2 → Output
 ---
 
 *Tech Spec · Reality Refactor Lab · 1149*
+

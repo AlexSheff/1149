@@ -10,7 +10,7 @@ related: ["6003"]
 is_1149: false
 created: 2024-06-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # 4Boon — White Paper
@@ -63,3 +63,4 @@ Both are required. Neither can function fully without the other.
 ---
 
 *White Paper · Reality Refactor Lab · 1149*
+

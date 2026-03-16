@@ -8,7 +8,7 @@ version: 0.2
 stack: [secp256k1, Ethereum-L2, Node.js, Supabase, IPFS, The-Graph]
 created: 2025-06-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # Trustnet — Technical Specification
@@ -161,3 +161,4 @@ contract TrustnetRegistry {
 ---
 
 *Tech Spec · Reality Refactor Lab · 1149*
+

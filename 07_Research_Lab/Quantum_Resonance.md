@@ -10,7 +10,7 @@ related: ["7002"]
 is_1149: true
 created: 2025-11-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # Quantum Resonance Models
@@ -64,3 +64,4 @@ Exploratory. No claims. Reading list and hypothesis formation only.
 ---
 
 *Research Hypothesis · Reality Refactor Lab · 1149*
+

@@ -10,7 +10,7 @@ related: ["8001", "2001"]
 is_1149: false
 created: 2024-01-01
 updated: 2026-03-16
-author: Founder Alex
+author: Founder
 ---
 
 # Philippines Relocation Log
@@ -34,7 +34,7 @@ Dumaguete offered:
 
 ## What "Deliberate Rootedness" Means
 
-This is not passing through. The City Quest pilot is not a project being done *in* Dumaguete — it is a project being done *with* Dumaguete.
+This is not passing through. Dumaguete Quest pilot is not a project being done *in* Dumaguete — it is a project being done *with* Dumaguete.
 
 This distinction matters:
 - Passing through: extract what is useful, move on
@@ -63,3 +63,5 @@ This distinction matters:
 ---
 
 *Personal Log · Reality Refactor Lab · 1149*
+
+
