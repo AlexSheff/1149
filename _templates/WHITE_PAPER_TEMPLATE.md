@@ -1,68 +1,65 @@
 ---
 id: XXX
-title: "Idea Title Here"
-category: platform | app | protocol | event | research | creative | organization
-status: concept | active | research | paused | archived
+title: "Idea Title"
+layer: "01_Ethical_OS | 02_Social_Protocol | 03_Meta_Ecosystems | 04_Technical_Nodes | 05_Reality_Hardware | 06_Social_Impact | 07_Research_Lab | 08_Archive"
+doctype: "White Paper | Manifesto | Framework | Protocol | Research"
+status: concept | research | active | paused | archived
 priority: critical | high | medium | low
-related_1149: true | false
+tags: [tag1, tag2]
+related: [id1, id2]
+is_1149: true | false
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 author: Founder Alex
-tags: [tag1, tag2, tag3]
 ---
 
-# [Idea Title] — White Paper
+# [Title] — White Paper
 
-> *One sentence that captures the essential vision.*
+> *One precise sentence. The essence of this idea.*
 
 ---
 
 ## 1. The Problem
 
-> What is broken, missing, or possible that this idea addresses?
-> Be specific. What does the world look like without this?
-
-Write 2–4 paragraphs. Focus on the *real* problem, not the symptom.
+What is broken, missing, or possible that this idea addresses?
+Be specific. What does the world look like without this?
 
 ---
 
 ## 2. The Vision
 
-> What does success look like in 5 years?
-> What changes in the world, the community, or the system?
+What does success look like in 5 years?
+What changes in the world, the community, or the system?
 
 ---
 
 ## 3. Core Philosophy
 
-> What principles are non-negotiable in this project?
-> This is the DNA — it must survive any pivot.
+What principles are non-negotiable? This is the DNA of the project.
 
 - **Principle 1** — description
 - **Principle 2** — description
 - **Principle 3** — description
 
-*If this connects to the 1149 thread, describe how.*
-
 ---
 
 ## 4. The Mechanism
 
-> How does it actually work as a system?
-> Not the technology — the social/economic/organizational mechanics.
-
 ### 4.1 Core Loop
 
-Describe the fundamental cycle: what triggers what, what rewards what, what builds on what.
+Describe the fundamental cycle: what triggers what, what rewards what.
+
+```
+Step A → triggers → Step B → produces → Output
+          ↑                                │
+          └────────────────────────────────┘
+```
 
 ### 4.2 Solidarity Mechanics
 
-> How is solidarity structurally embedded? What is the redistribution mechanism?
-> (Required for any City Quest or Good Project Corp aligned idea.)
-
-### 4.3 Incentive Architecture
-
-Who participates and why? What do they give and receive?
+> **Where does solidarity happen structurally?**
+> Describe the mechanism, not the intention.
+> If the answer requires human goodwill — redesign.
 
 ---
 
@@ -73,56 +70,28 @@ Who participates and why? What do they give and receive?
 | Geography | Global / Philippines / Dumaguete / Remote |
 | Primary users | Description |
 | Community | Description |
-| Language(s) | EN / RU / Cebuano / other |
 
 ---
 
 ## 6. Related Ideas
 
-> What existing ideas in this repository does this connect to?
-
 | Idea | Relationship |
 |------|-------------|
-| [Idea A](../../path/to/idea-a/) | Parent / Child / Sibling / Feeds into / Depends on |
-| [Idea B](../../path/to/idea-b/) | Description of connection |
+| [Idea A](../../path/) | Parent / Child / Feeds into / Depends on |
 
 ---
 
-## 7. Opportunities This Enables
-
-> What becomes possible if this exists?
-
-- Opportunity 1
-- Opportunity 2
-- Opportunity 3
-
----
-
-## 8. Open Questions
-
-> What is still unresolved? What would you need to know to proceed?
+## 7. Open Questions
 
 - [ ] Question 1
 - [ ] Question 2
-- [ ] Question 3
 
 ---
 
-## 9. Prior Art & References
+## 8. Status Log
 
-> What already exists that is relevant? What can be learned from it?
-
-- Reference 1
-- Reference 2
+**[YYYY-MM-DD]** — What happened / what was decided.
 
 ---
 
-## 10. Status Notes
-
-> A running log of the idea's development. Newest first.
-
-**[YYYY-MM-DD]** — What happened / what changed / what was decided.
-
----
-
-*Document type: White Paper · Repository: 1149 // Idea Repository*
+*White Paper · Reality Refactor Lab · 1149*
