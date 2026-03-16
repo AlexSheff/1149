@@ -20,7 +20,7 @@ tagline: "Segmented Linear Stepper Muscle"
 
 ---
 
-# SLSM — White Paper
+# SLSM â White Paper
 
 > *Segmented Linear Stepper Muscle*
 
@@ -30,32 +30,32 @@ SLSM
 Segmented Linear Stepper Muscle
 A Bio-Inspired Electromagnetic Actuator Architecture
 
-Conceptual White Paper — Version 1.0
+Conceptual White Paper â Version 1.0
 2026
 
 Abstract
-This paper introduces the Segmented Linear Stepper Muscle (SLSM), a novel electromagnetic actuator concept that reframes the linear stepper motor as a flexible, bio-mimetic muscle fiber. Each fiber consists of a PTFE-sleeved tube of alternating-polarity permanent magnets sliding freely within a segmented coil array. Sequential or grouped energization of coil sections produces controlled linear displacement — analogous to the sliding-filament mechanism of skeletal muscle. Multiple fibers assembled into a fascicle-like bundle replicate the geometry, force output, and scalability of biological muscle groups. This document resolves the core engineering trade-offs, defines the operating principles from first principles, provides validated performance estimates for a 5 mm × 100 mm fiber at 2.5 V, and outlines a practical path to a first prototype.
+This paper introduces the Segmented Linear Stepper Muscle (SLSM), a novel electromagnetic actuator concept that reframes the linear stepper motor as a flexible, bio-mimetic muscle fiber. Each fiber consists of a PTFE-sleeved tube of alternating-polarity permanent magnets sliding freely within a segmented coil array. Sequential or grouped energization of coil sections produces controlled linear displacement â analogous to the sliding-filament mechanism of skeletal muscle. Multiple fibers assembled into a fascicle-like bundle replicate the geometry, force output, and scalability of biological muscle groups. This document resolves the core engineering trade-offs, defines the operating principles from first principles, provides validated performance estimates for a 5 mm Ã 100 mm fiber at 2.5 V, and outlines a practical path to a first prototype.
 
 
 
 1.  Introduction and Motivation
-Conventional electromagnetic actuators — rotary motors, solenoids, and servo mechanisms — achieve linear motion through mechanical intermediaries: gearboxes, rack-and-pinion assemblies, crank linkages, and ball screws. Each such transmission stage introduces backlash, mechanical wear, and geometric constraints that limit the degree to which an artificial limb can replicate the smooth, compliant, distributed force output of biological muscle.
+Conventional electromagnetic actuators â rotary motors, solenoids, and servo mechanisms â achieve linear motion through mechanical intermediaries: gearboxes, rack-and-pinion assemblies, crank linkages, and ball screws. Each such transmission stage introduces backlash, mechanical wear, and geometric constraints that limit the degree to which an artificial limb can replicate the smooth, compliant, distributed force output of biological muscle.
 
-The Segmented Linear Stepper Muscle (SLSM) concept eliminates all mechanical transmission by operating directly in the linear domain. It recasts the well-understood rotary stepper motor as a thin, flexible tube — effectively "unrolling" the stator into a straight coil array and replacing the rotor with a magnetically segmented sliding core. The resulting device:
+The Segmented Linear Stepper Muscle (SLSM) concept eliminates all mechanical transmission by operating directly in the linear domain. It recasts the well-understood rotary stepper motor as a thin, flexible tube â effectively "unrolling" the stator into a straight coil array and replacing the rotor with a magnetically segmented sliding core. The resulting device:
 Produces force directly along its own axis, with no gears or linkages
 Can be physically shaped to match the geometry of any target muscle
 Scales from fingertip-fine (3 mm diameter) to limb-strong (60+ mm bundle) by adding parallel fibers
 Draws zero quiescent current in the held position when using a passive magnetic detent
 Is manufacturable with COTS components: NdFeB disc magnets, enamelled magnet wire, PTFE tubing
 
-The analogy to biological muscle is not merely superficial. In skeletal muscle, force arises from millions of parallel sarcomere units cycling through attachment/detachment events along actin–myosin filaments. In SLSM, force arises from the interaction of distributed magnetic pole boundaries with sequentially activated coil sections. Both systems are fundamentally distributed, parallel, and scalable by fiber count.
+The analogy to biological muscle is not merely superficial. In skeletal muscle, force arises from millions of parallel sarcomere units cycling through attachment/detachment events along actinâmyosin filaments. In SLSM, force arises from the interaction of distributed magnetic pole boundaries with sequentially activated coil sections. Both systems are fundamentally distributed, parallel, and scalable by fiber count.
 
 2.  System Architecture
 See attached doc
 
 ---
 
-*White Paper · Reality Refactor Lab · 1149*
+*White Paper Â· Reality Refactor Lab Â· 1149*
 
 ---
 
