@@ -68,17 +68,6 @@ Working across multiple languages is not a convenience — it is an epistemologi
 
 ---
 
-## 5. The Local Anchor
-
-Dumaguete is not a temporary base. It is a deliberate anchor.
-
-The choice of a specific physical place is the act that makes global thinking real rather than abstract. Without Dumaguete, the Manifesto is philosophy. With Dumaguete, it is practice.
-
-What Dumaguete provides:
-- Manageable scale (~130,000 people) for real civic experiments
-- Active civil society for genuine community partnership
-- Geographic specificity that forces concrete implementation
-
 ---
 
 *Framework · Reality Refactor Lab · 1149*
