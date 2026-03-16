@@ -1138,6 +1138,121 @@ async function ghLoad() {
   }
 }
 
+// ── Markdown generators ──────────────────────────────────────────
+function ideaSlug(title) {
+  return title.trim()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_')
+    .slice(0, 60);
+}
+
+function ideaFolderPath(idea) {
+  // e.g. "01_Ethical_OS/CODE_1149"
+  return idea.layer + '/' + ideaSlug(idea.title);
+}
+
+function buildWhitePaper(idea) {
+  const tags = (idea.tags || []).join(', ');
+  const related = (idea.related || []).join(', ');
+  const now = new Date().toISOString().slice(0, 10);
+  return '---\n' +
+    'id: "' + idea.id + '"\n' +
+    'title: "' + (idea.title || '').replace(/"/g, '\\"') + '"\n' +
+    'layer: "' + (idea.layer || '') + '"\n' +
+    'doctype: "' + (idea.doctype || 'White Paper') + '"\n' +
+    'status: ' + (idea.status || 'concept') + '\n' +
+    'priority: ' + (idea.priority || 'medium') + '\n' +
+    'progress: ' + (idea.progress || 0) + '\n' +
+    'tags: [' + tags + ']\n' +
+    'related: [' + related + ']\n' +
+    'is_1149: ' + (idea.is1149 ? 'true' : 'false') + '\n' +
+    'updated: ' + now + '\n' +
+    'author: Founder Alex\n' +
+    '---\n\n' +
+    '# ' + (idea.title || '') + ' — White Paper\n\n' +
+    '> *' + (idea.tagline || '') + '*\n\n' +
+    '---\n\n' +
+    (idea.whitepaper || '') + '\n\n' +
+    (idea.solidarity ? '---\n\n## Solidarity Mechanism\n\n' + idea.solidarity + '\n\n' : '') +
+    '---\n\n*White Paper · Reality Refactor Lab · 1149*\n';
+}
+
+function buildTechSpec(idea) {
+  const now = new Date().toISOString().slice(0, 10);
+  return '---\n' +
+    'id: "' + idea.id + '"\n' +
+    'title: "' + (idea.title || '').replace(/"/g, '\\"') + ' — Technical Specification"\n' +
+    'layer: "' + (idea.layer || '') + '"\n' +
+    'status: ' + (idea.status || 'concept') + '\n' +
+    'version: 0.1\n' +
+    'updated: ' + now + '\n' +
+    'author: Founder Alex\n' +
+    '---\n\n' +
+    '# ' + (idea.title || '') + ' — Technical Specification\n\n' +
+    (idea.techspec || '') + '\n\n' +
+    '---\n\n*Tech Spec · Reality Refactor Lab · 1149*\n';
+}
+
+// ── Single file write via GitHub API ─────────────────────────────
+async function ghWriteFile(path, content, existingSha) {
+  const token = getToken();
+  if (!token) return;
+  const body = JSON.stringify({
+    message: 'docs: update ' + path.split('/').pop() + ' (' + new Date().toISOString().slice(0,10) + ')',
+    content: btoa(unescape(encodeURIComponent(content))),
+    branch: GH_BRANCH,
+    ...(existingSha ? { sha: existingSha } : {})
+  });
+  const res = await fetch(
+    'https://api.github.com/repos/' + GH_REPO + '/contents/' + path,
+    { method: 'PUT', headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' }, body }
+  );
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.message || 'Write error ' + res.status);
+  }
+  return res.json();
+}
+
+// ── Get file SHA (null if not found) ─────────────────────────────
+async function ghGetSha(path) {
+  const token = getToken();
+  if (!token) return null;
+  const res = await fetch(
+    'https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH,
+    { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } }
+  );
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data.sha || null;
+}
+
+// ── Write .md files for a single idea (background, non-blocking) ─
+async function syncIdeaMarkdown(idea) {
+  if (!getToken()) return;
+  try {
+    const folder = ideaFolderPath(idea);
+
+    // WHITE_PAPER.md — always write if idea has content
+    if (idea.whitepaper || idea.tagline) {
+      const wpPath = folder + '/WHITE_PAPER.md';
+      const wpSha  = await ghGetSha(wpPath);
+      await ghWriteFile(wpPath, buildWhitePaper(idea), wpSha);
+    }
+
+    // TECH_SPEC.md — only if techspec content exists
+    if (idea.techspec && idea.techspec.trim().length > 10) {
+      const tsPath = folder + '/TECH_SPEC.md';
+      const tsSha  = await ghGetSha(tsPath);
+      await ghWriteFile(tsPath, buildTechSpec(idea), tsSha);
+    }
+  } catch(e) {
+    console.warn('syncIdeaMarkdown failed for', idea.id, ':', e.message);
+  }
+}
+
+// ── Main save: writes ideas.json + fires background md sync ──────
 async function save(ideas) {
   cacheWrite(ideas);
   updateBadges();
@@ -1149,6 +1264,16 @@ async function save(ideas) {
     setSyncUI('error', e.message.slice(0,36));
     toast('GitHub sync failed: ' + e.message.slice(0,50), 'error');
   }
+}
+
+// ── Called after submitIdea to sync the individual file ───────────
+async function syncSingleIdea(idea) {
+  // Run in background — don't block the UI
+  syncIdeaMarkdown(idea).then(() => {
+    setSyncUI('ok');
+  }).catch(e => {
+    console.warn('Background md sync error:', e.message);
+  });
 }
 
 // ════════════════════════════════════════════════════════════════
@@ -1786,8 +1911,10 @@ async function submitIdea(e) {
   if (editingId) { const idx=ideas.findIndex(x=>x.id===editingId); if(idx!==-1) ideas[idx]=idea; else ideas.push(idea); }
   else ideas.push(idea);
   await save(ideas);
-  toast(editingId?'Idea updated':'Idea saved', 'success');
+  toast((editingId ? 'Idea updated' : 'Idea saved') + ' — syncing markdown…', 'success');
   nav('idea', idea.id);
+  // Background: write WHITE_PAPER.md / TECH_SPEC.md to repo
+  syncSingleIdea(idea);
 }
 
 function confirmDelete() {
