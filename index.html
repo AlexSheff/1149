@@ -740,9 +740,16 @@ input[type=file] { display:none }
     <button class="sb-btn sb-btn-gold" onclick="nav('new')">＋ New Idea</button>
     <button class="sb-btn sb-btn-ghost" onclick="triggerImport()">↑ Import JSON</button>
   </div>
-  <div class="sb-foot">
-    <div class="live-dot"></div>
-    <span id="sb-date">–</span>
+  <div class="sb-foot" style="flex-direction:column;align-items:flex-start;gap:4px;padding:10px 18px">
+    <div style="display:flex;align-items:center;gap:7px">
+      <div class="live-dot"></div>
+      <span id="sb-date" style="font-size:8px;color:rgba(255,255,255,.18);letter-spacing:1.5px;text-transform:uppercase">–</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:7px;color:rgba(255,255,255,.18);letter-spacing:1.5px;text-transform:uppercase">GITHUB</span>
+      <span id="sync-indicator" style="font-size:8px;letter-spacing:.5px">—</span>
+      <button onclick="triggerManualSync()" style="background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;font-size:11px;padding:0;font-family:inherit;line-height:1" title="Force sync from GitHub">↻</button>
+    </div>
   </div>
 </div>
 
@@ -969,18 +976,48 @@ input[type=file] { display:none }
       <div class="pg-title">Settings</div>
     </div>
   </div>
+
+  <!-- GITHUB TOKEN CARD -->
+  <div class="card" style="padding:22px;margin-bottom:20px;border-left:3px solid var(--gold)">
+    <div class="sh">GitHub Sync — Personal Access Token</div>
+    <p style="font-size:11px;color:var(--ink2);line-height:1.7;margin-bottom:14px">
+      Enter your GitHub Personal Access Token so that every saved idea is committed directly to
+      <strong style="color:var(--ink)">github.com/AlexSheff/1149</strong> as <code style="font-size:10.5px;background:var(--surface2);border:1px solid var(--brd2);border-radius:3px;padding:1px 6px">data/ideas.json</code>.
+      Your ideas will be version-controlled, synced across devices, and never lost.
+    </p>
+    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px">
+      <div style="flex:1;min-width:260px">
+        <label class="form-label">Personal Access Token (classic)</label>
+        <input type="password" class="form-input" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+      </div>
+      <button class="btn btn-primary" onclick="saveToken()" style="flex-shrink:0">Save Token</button>
+      <button class="btn btn-ghost" onclick="testToken()" style="flex-shrink:0">Test Connection</button>
+    </div>
+    <div id="token-status" style="font-size:11px;color:var(--ink3);line-height:1.7"></div>
+    <div style="margin-top:14px;padding:12px 16px;background:var(--surface2);border:1px solid var(--brd);border-radius:var(--r2);font-size:10.5px;color:var(--ink3);line-height:1.8">
+      <strong style="color:var(--ink2);display:block;margin-bottom:4px">How to create the token:</strong>
+      1. Go to <strong style="color:var(--ink)">github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong><br>
+      2. Click <strong style="color:var(--ink)">Generate new token (classic)</strong><br>
+      3. Note: <strong style="color:var(--ink)">1149 ideas</strong> · Expiration: <strong style="color:var(--ink)">No expiration</strong><br>
+      4. Scopes: check only <strong style="color:var(--ink)">repo</strong> (full control of private repositories)<br>
+      5. Click <strong style="color:var(--ink)">Generate token</strong> → copy the <code style="background:var(--surface);border:1px solid var(--brd2);border-radius:3px;padding:1px 5px">ghp_...</code> value here<br>
+      <span style="color:var(--ink4);font-size:10px;margin-top:4px;display:block">Token is stored only in your browser's localStorage. It is never sent anywhere except api.github.com.</span>
+    </div>
+  </div>
+
   <div class="g2" style="margin-bottom:20px">
     <div class="card" style="padding:20px">
       <div class="sh">Data Management</div>
-      <p style="font-size:11px;color:var(--ink2);line-height:1.7;margin-bottom:16px">Export all ideas to JSON for backup or to sync with the <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd2);border-radius:3px;padding:1px 5px">github.com/AlexSheff/1149</code> repository. Import merges with existing data.</p>
+      <div id="sync-status-card" style="font-size:11px;color:var(--ink2);line-height:2;margin-bottom:14px"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="triggerManualSync()">↻ Pull from GitHub</button>
         <button class="btn btn-ghost btn-sm" onclick="triggerExport()">↓ Export JSON</button>
         <button class="btn btn-ghost btn-sm" onclick="triggerImport()">↑ Import JSON</button>
-        <button class="btn btn-danger btn-sm" onclick="confirmClearAll()">⚠ Clear All</button>
+        <button class="btn btn-danger btn-sm" onclick="confirmClearAll()">⚠ Clear Cache</button>
       </div>
     </div>
     <div class="card" style="padding:20px">
-      <div class="sh">Storage</div>
+      <div class="sh">Status</div>
       <div id="storage-stats" style="font-size:11px;color:var(--ink2);line-height:2.2"></div>
     </div>
   </div>
@@ -1031,12 +1068,110 @@ const LAYERS = {
 };
 
 // ════════════════════════════════════════════════════════════════
-// STORAGE
+// GITHUB API STORAGE LAYER
 // ════════════════════════════════════════════════════════════════
-const KEY = 'rrl_1149_v3';
-const load  = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
-const save  = d  => { localStorage.setItem(KEY, JSON.stringify(d)); updateBadges(); };
-const getIdeas = load;
+const GH_REPO   = 'AlexSheff/1149';
+const GH_FILE   = 'data/ideas.json';
+const GH_BRANCH = 'main';
+const CACHE_KEY = 'rrl_1149_cache';
+const CFG_KEY   = 'rrl_1149_config';
+
+// Config: { token, sha }
+function getConfig() { try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch { return {}; } }
+function setConfig(c) { localStorage.setItem(CFG_KEY, JSON.stringify({...getConfig(),...c})); }
+function getToken() { return getConfig().token || ''; }
+function getSha()   { return getConfig().sha   || ''; }
+
+// Cache: fast local read while GitHub syncs
+function cacheRead()     { try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || []; } catch { return []; } }
+function cacheWrite(d)   { try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch {} }
+function getIdeas()      { return cacheRead(); }
+
+// Sync status
+let syncStatus = 'idle'; // idle | loading | saving | ok | error | no-token
+function setSyncStatus(s, msg) {
+  syncStatus = s;
+  const el = document.getElementById('sync-indicator');
+  if (!el) return;
+  const map = {
+    idle:     { label:'—',        color:'var(--ink4)' },
+    loading:  { label:'Loading…', color:'var(--blue)' },
+    saving:   { label:'Saving…',  color:'var(--gold)' },
+    ok:       { label:'Synced ✓', color:'var(--green)'},
+    error:    { label:'Error ✗',  color:'var(--orange)'},
+    'no-token':{ label:'No token', color:'var(--ink3)'},
+  };
+  const s2 = map[s] || map.idle;
+  el.textContent = msg || s2.label;
+  el.style.color = s2.color;
+}
+
+// GitHub API: read file
+async function ghRead() {
+  const token = getToken();
+  if (!token) { setSyncStatus('no-token'); return null; }
+  const headers = { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' };
+  const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}`, { headers });
+  if (res.status === 404) return { ideas: [], sha: null };
+  if (!res.ok) throw new Error(`GitHub read error: ${res.status}`);
+  const file = await res.json();
+  const sha  = file.sha;
+  const ideas = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\n/g,'')))));
+  return { ideas: Array.isArray(ideas) ? ideas : (ideas.ideas || []), sha };
+}
+
+// GitHub API: write file
+async function ghWrite(ideas) {
+  const token = getToken();
+  if (!token) { setSyncStatus('no-token'); throw new Error('No GitHub token set. Add it in Settings → GitHub Sync.'); }
+  const sha = getSha();
+  const payload = {
+    message: `data: update ${new Date().toISOString().slice(0,10)} (${ideas.length} ideas)`,
+    content: btoa(unescape(encodeURIComponent(JSON.stringify({ version:3, updated: new Date().toISOString(), ideas }, null, 2)))),
+    branch: GH_BRANCH,
+  };
+  if (sha) payload.sha = sha;
+  const headers = { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' };
+  const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, { method: 'PUT', headers, body: JSON.stringify(payload) });
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({}));
+    throw new Error(err.message || `GitHub write error: ${res.status}`);
+  }
+  const data = await res.json();
+  setConfig({ sha: data.content.sha });
+  return data;
+}
+
+// Load from GitHub into cache
+async function ghLoad() {
+  setSyncStatus('loading');
+  try {
+    const result = await ghRead();
+    if (!result) return;
+    cacheWrite(result.ideas);
+    if (result.sha) setConfig({ sha: result.sha });
+    setSyncStatus('ok');
+    return result.ideas;
+  } catch(e) {
+    setSyncStatus('error', e.message.slice(0,40));
+    console.error('ghLoad:', e);
+    return null;
+  }
+}
+
+// Save to GitHub + cache
+async function save(ideas) {
+  cacheWrite(ideas);
+  updateBadges();
+  setSyncStatus('saving');
+  try {
+    await ghWrite(ideas);
+    setSyncStatus('ok');
+  } catch(e) {
+    setSyncStatus('error', e.message.slice(0,40));
+    toast('GitHub sync error: ' + e.message.slice(0,60), 'error');
+  }
+}
 
 // ════════════════════════════════════════════════════════════════
 // SEED DATA — Reality Refactor Lab
@@ -1236,12 +1371,12 @@ const SEED = [
     updated:'2026-03-14', files:[] },
 ];
 
-function seedDefaultIdeas() {
-  const existing = load();
+async function seedDefaultIdeas() {
+  const existing = cacheRead();
   const existingIds = new Set(existing.map(i => i.id));
   const toAdd = SEED.filter(i => !existingIds.has(i.id));
   if (!toAdd.length) { toast('All default ideas already exist', 'error'); return; }
-  save([...existing, ...toAdd]);
+  await save([...existing, ...toAdd]);
   toast(`Seeded ${toAdd.length} ideas`, 'success');
   renderAll();
 }
@@ -1305,7 +1440,7 @@ function badge(cls, txt) { return `<span class="badge ${cls}">${txt}</span>`; }
 function pbar(p, paused) { return `<div class="pbar"><div class="pbar-f${paused?' paused':''}" style="width:${p||0}%"></div></div>`; }
 function tagsHtml(arr, max=4) { return (arr||[]).slice(0,max).map(t=>`<span class="tag">${t}</span>`).join(''); }
 function fmtDate(s) { if(!s) return ''; const d=new Date(s); return isNaN(d)?s:d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
-function storageKB() { try { return Math.round((localStorage.getItem(KEY)||'').length/1024); } catch { return 0; } }
+
 function layerInfo(k) { return LAYERS[k] || { num:'?', label:k, color:'#888', desc:'' }; }
 function layerKey(l) { return Object.keys(LAYERS).find(k=>k===l) || l; }
 function updateBadges() {
@@ -1648,7 +1783,7 @@ function openEditForm(id) {
   renderFileList(); updateStorageHint();
 }
 
-function submitIdea(e) {
+async function submitIdea(e) {
   e.preventDefault();
   const ideas = getIdeas();
   const now = new Date().toISOString().split('T')[0];
@@ -1679,7 +1814,7 @@ function confirmDelete() {
   if (!editingId) return;
   const i = getIdeas().find(x=>x.id===editingId);
   showModal('Delete Idea', `Delete "<strong>${i?.title}</strong>"? This cannot be undone.`, [
-    {label:'Delete', cls:'btn-danger', fn:()=>{ getIdeas().filter(x=>x.id!==editingId); save(getIdeas().filter(x=>x.id!==editingId)); closeModal(); toast('Deleted','success'); nav('ideas'); }},
+    {label:'Delete', cls:'btn-danger', fn:async ()=>{ const filtered=getIdeas().filter(x=>x.id!==editingId); await save(filtered); closeModal(); toast('Deleted','success'); nav('ideas'); }},
     {label:'Cancel', cls:'btn-ghost', fn:closeModal}
   ]);
 }
@@ -1841,19 +1976,82 @@ function renderGraph() {
 }
 
 // ════════════════════════════════════════════════════════════════
-// SETTINGS
+// ════════════════════════════════════════════════════════════════
+// SETTINGS + TOKEN MANAGEMENT
 // ════════════════════════════════════════════════════════════════
 function renderSettings() {
-  const ideas=getIdeas();
-  const totalFiles=ideas.reduce((s,i)=>s+(i.files||[]).length,0);
-  const totalSize=ideas.reduce((s,i)=>(i.files||[]).reduce((ss,f)=>ss+f.size,s),0);
-  document.getElementById('storage-stats').innerHTML=`
-    Ideas stored: <strong>${ideas.length}</strong><br>
+  const ideas = getIdeas();
+  const totalFiles = ideas.reduce((s,i)=>s+(i.files||[]).length,0);
+  const totalSize  = ideas.reduce((s,i)=>(i.files||[]).reduce((ss,f)=>ss+f.size,s),0);
+  const token = getToken();
+  const sha = getSha();
+
+  // Token input: show masked if set
+  const tokenInput = document.getElementById('gh-token-input');
+  if (tokenInput && token) tokenInput.placeholder = token.slice(0,7) + '…' + token.slice(-4) + '  (set — paste new to change)';
+
+  // Status card
+  const sc = document.getElementById('sync-status-card');
+  if (sc) sc.innerHTML = `
+    GitHub token: <strong style="color:${token?'var(--green)':'var(--orange)'}">${token ? 'Set ✓' : 'Not set'}</strong><br>
+    Last known file SHA: <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd);border-radius:3px;padding:1px 5px">${sha ? sha.slice(0,12)+'…' : '—'}</code><br>
+    Sync status: <strong id="settings-sync-status">${syncStatus}</strong>
+  `;
+
+  document.getElementById('storage-stats').innerHTML = `
+    Ideas in cache: <strong>${ideas.length}</strong><br>
     Attached files: <strong>${totalFiles}</strong> (${fmtSize(totalSize)})<br>
-    localStorage used: <strong>${storageKB()} KB</strong><br>
-    Estimated limit: <strong>~5 MB</strong>
+    Data file in repo: <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd);border-radius:3px;padding:1px 5px">data/ideas.json</code><br>
+    Cache size: <strong>${storageKB()} KB</strong>
   `;
 }
+
+function saveToken() {
+  const val = document.getElementById('gh-token-input').value.trim();
+  if (!val) { toast('Enter a token first', 'error'); return; }
+  if (!val.startsWith('ghp_') && !val.startsWith('github_pat_')) {
+    toast('Token should start with ghp_ or github_pat_', 'error'); return;
+  }
+  setConfig({ token: val, sha: '' }); // reset sha when token changes
+  document.getElementById('gh-token-input').value = '';
+  document.getElementById('gh-token-input').placeholder = val.slice(0,7)+'…'+val.slice(-4)+'  (saved)';
+  toast('Token saved. Testing connection…', 'success');
+  testToken();
+}
+
+async function testToken() {
+  const el = document.getElementById('token-status');
+  if (el) el.innerHTML = '<span style="color:var(--blue)">Testing connection to GitHub…</span>';
+  try {
+    const token = getToken();
+    if (!token) throw new Error('No token set');
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}`, {
+      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (res.status === 404) throw new Error('Repository not found. Check the repo name is AlexSheff/1149 and is public.');
+    if (res.status === 401) throw new Error('Token invalid or expired. Generate a new one.');
+    if (!res.ok) throw new Error(`GitHub error: ${res.status}`);
+    const data = await res.json();
+    if (el) el.innerHTML = `<span style="color:var(--green)">✓ Connected to <strong>${data.full_name}</strong> — ${data.description||'no description'}</span>`;
+    toast('GitHub connection OK', 'success');
+    // Now try to sync data
+    await triggerManualSync();
+  } catch(e) {
+    if (el) el.innerHTML = `<span style="color:var(--orange)">✗ ${e.message}</span>`;
+    toast('Connection failed: ' + e.message.slice(0,50), 'error');
+  }
+}
+
+async function triggerManualSync() {
+  setSyncStatus('loading');
+  const ideas = await ghLoad();
+  if (ideas !== null) {
+    renderAll();
+    toast(`Synced — ${getIdeas().length} ideas loaded from GitHub`, 'success');
+  }
+}
+
+function storageKB() { try { return Math.round((localStorage.getItem(CACHE_KEY)||'').length/1024); } catch { return 0; } }
 
 // ════════════════════════════════════════════════════════════════
 // EXPORT / IMPORT
@@ -1871,7 +2069,7 @@ function triggerImport() { document.getElementById('import-input').click(); }
 function handleImport(e) {
   const f=e.target.files[0]; if(!f) return;
   const r=new FileReader();
-  r.onload=ev=>{
+  r.onload=async ev=>{
     try {
       const p=JSON.parse(ev.target.result);
       const incoming=p.ideas||(Array.isArray(p)?p:[]);
@@ -1880,7 +2078,7 @@ function handleImport(e) {
       const existingIds=new Set(existing.map(i=>i.id));
       const toAdd=incoming.filter(i=>!existingIds.has(i.id));
       const toUpd=incoming.filter(i=>existingIds.has(i.id));
-      save([...existing.map(ex=>{const u=toUpd.find(x=>x.id===ex.id);return u||ex;}),...toAdd]);
+      await save([...existing.map(ex=>{const u=toUpd.find(x=>x.id===ex.id);return u||ex;}),...toAdd]);
       toast(`Imported: ${toAdd.length} added, ${toUpd.length} updated`,'success');
       renderAll();
     } catch(err) { toast('Import failed: '+err.message,'error'); }
@@ -1889,7 +2087,7 @@ function handleImport(e) {
 }
 function confirmClearAll() {
   showModal('Clear All Data','This will permanently delete ALL ideas and attachments.',[
-    {label:'Clear Everything',cls:'btn-danger',fn:()=>{localStorage.removeItem(KEY);closeModal();toast('All data cleared','success');renderAll();}},
+    {label:'Clear Cache',cls:'btn-danger',fn:()=>{localStorage.removeItem(CACHE_KEY);closeModal();toast('Cache cleared — pull from GitHub to restore','success');renderAll();}},
     {label:'Cancel',cls:'btn-ghost',fn:closeModal}
   ]);
 }
@@ -1933,11 +2131,47 @@ function renderAll() {
   else if(currentPage==='settings') renderSettings();
 }
 
-(function init() {
+(async function init() {
   document.getElementById('sb-date').textContent =
     new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  if (!getIdeas().length) seedDefaultIdeas();
-  else { updateBadges(); handleHash(); }
+
+  // Show cached data immediately
+  const cached = cacheRead();
+  if (cached.length) { updateBadges(); handleHash(); }
+
+  // Try to load from GitHub
+  const token = getToken();
+  if (token) {
+    const fresh = await ghLoad();
+    if (fresh !== null) {
+      // If no ideas at all, seed defaults then push
+      if (fresh.length === 0 && cached.length === 0) {
+        await seedDefaultIdeas();
+      } else {
+        updateBadges();
+        if (!cached.length) handleHash();
+        else renderAll();
+      }
+    } else {
+      // GitHub failed — use cache
+      if (!cached.length) {
+        // No cache either — seed locally
+        seedDefaultIdeas();
+      }
+    }
+  } else {
+    // No token — use cache or seed
+    setSyncStatus('no-token');
+    if (!cached.length) seedDefaultIdeas();
+    else { updateBadges(); handleHash(); }
+    // Show a one-time hint to set up token
+    if (!token && !localStorage.getItem('rrl_token_hint')) {
+      localStorage.setItem('rrl_token_hint','1');
+      setTimeout(() => {
+        toast('Set up GitHub token in Settings to save ideas to your repo', 'success');
+      }, 1500);
+    }
+  }
 })();
 </script>
 </body>
