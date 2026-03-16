@@ -740,15 +740,15 @@ input[type=file] { display:none }
     <button class="sb-btn sb-btn-gold" onclick="nav('new')">＋ New Idea</button>
     <button class="sb-btn sb-btn-ghost" onclick="triggerImport()">↑ Import JSON</button>
   </div>
-  <div class="sb-foot" style="flex-direction:column;align-items:flex-start;gap:4px;padding:10px 18px">
+  <div class="sb-foot" style="flex-direction:column;align-items:flex-start;gap:5px;padding:10px 18px">
     <div style="display:flex;align-items:center;gap:7px">
       <div class="live-dot"></div>
       <span id="sb-date" style="font-size:8px;color:rgba(255,255,255,.18);letter-spacing:1.5px;text-transform:uppercase">–</span>
     </div>
     <div style="display:flex;align-items:center;gap:6px">
-      <span style="font-size:7px;color:rgba(255,255,255,.18);letter-spacing:1.5px;text-transform:uppercase">GITHUB</span>
-      <span id="sync-indicator" style="font-size:8px;letter-spacing:.5px">—</span>
-      <button onclick="triggerManualSync()" style="background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;font-size:11px;padding:0;font-family:inherit;line-height:1" title="Force sync from GitHub">↻</button>
+      <span style="font-size:7px;color:rgba(255,255,255,.15);letter-spacing:2px;text-transform:uppercase">GH</span>
+      <span id="sync-lbl" style="font-size:8.5px;color:var(--ink3)">—</span>
+      <button onclick="triggerSync()" style="background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;font-size:12px;padding:0;line-height:1;transition:color .12s" onmouseover="this.style.color='rgba(255,255,255,.5)'" onmouseout="this.style.color='rgba(255,255,255,.2)'" title="Pull from GitHub">↻</button>
     </div>
   </div>
 </div>
@@ -977,68 +977,58 @@ input[type=file] { display:none }
     </div>
   </div>
 
-  <!-- GITHUB TOKEN CARD -->
-  <div class="card" style="padding:22px;margin-bottom:20px;border-left:3px solid var(--gold)">
-    <div class="sh">GitHub Sync — Personal Access Token</div>
-    <p style="font-size:11px;color:var(--ink2);line-height:1.7;margin-bottom:14px">
-      Enter your GitHub Personal Access Token so that every saved idea is committed directly to
-      <strong style="color:var(--ink)">github.com/AlexSheff/1149</strong> as <code style="font-size:10.5px;background:var(--surface2);border:1px solid var(--brd2);border-radius:3px;padding:1px 6px">data/ideas.json</code>.
-      Your ideas will be version-controlled, synced across devices, and never lost.
-    </p>
-    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:12px">
-      <div style="flex:1;min-width:260px">
-        <label class="form-label">Personal Access Token (classic)</label>
-        <input type="password" class="form-input" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+  <div class="card" style="padding:22px;margin-bottom:20px;border-left:3px solid var(--gold);border-radius:0 var(--r2) var(--r2) 0">
+    <div class="sh">GitHub Sync</div>
+    <p style="font-size:11px;color:var(--ink2);line-height:1.7;margin-bottom:16px">Every saved idea is committed to <strong style="color:var(--ink)">github.com/AlexSheff/1149</strong> as <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd2);border-radius:3px;padding:1px 5px">data/ideas.json</code>. Ideas are version-controlled and accessible from any device.</p>
+    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+      <div style="flex:1;min-width:240px">
+        <label class="form-label">Personal Access Token</label>
+        <input type="password" class="form-input" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
       </div>
-      <button class="btn btn-primary" onclick="saveToken()" style="flex-shrink:0">Save Token</button>
-      <button class="btn btn-ghost" onclick="testToken()" style="flex-shrink:0">Test Connection</button>
+      <button class="btn btn-primary" onclick="saveToken()">Save token</button>
+      <button class="btn btn-ghost" onclick="testConnection()">Test</button>
     </div>
-    <div id="token-status" style="font-size:11px;color:var(--ink3);line-height:1.7"></div>
-    <div style="margin-top:14px;padding:12px 16px;background:var(--surface2);border:1px solid var(--brd);border-radius:var(--r2);font-size:10.5px;color:var(--ink3);line-height:1.8">
-      <strong style="color:var(--ink2);display:block;margin-bottom:4px">How to create the token:</strong>
-      1. Go to <strong style="color:var(--ink)">github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong><br>
-      2. Click <strong style="color:var(--ink)">Generate new token (classic)</strong><br>
-      3. Note: <strong style="color:var(--ink)">1149 ideas</strong> · Expiration: <strong style="color:var(--ink)">No expiration</strong><br>
-      4. Scopes: check only <strong style="color:var(--ink)">repo</strong> (full control of private repositories)<br>
-      5. Click <strong style="color:var(--ink)">Generate token</strong> → copy the <code style="background:var(--surface);border:1px solid var(--brd2);border-radius:3px;padding:1px 5px">ghp_...</code> value here<br>
-      <span style="color:var(--ink4);font-size:10px;margin-top:4px;display:block">Token is stored only in your browser's localStorage. It is never sent anywhere except api.github.com.</span>
-    </div>
+    <div id="gh-status" style="font-size:11px;color:var(--ink3);line-height:1.65;min-height:18px"></div>
+    <details style="margin-top:14px">
+      <summary style="font-size:10.5px;color:var(--ink3);cursor:pointer;user-select:none">How to create a token ▾</summary>
+      <div style="margin-top:10px;padding:12px 16px;background:var(--surface2);border:1px solid var(--brd);border-radius:var(--r2);font-size:10.5px;color:var(--ink3);line-height:2">
+        1. Go to <strong style="color:var(--ink)">github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong><br>
+        2. <strong style="color:var(--ink)">Generate new token (classic)</strong> · Note: <em>1149 ideas</em> · Expiration: <strong style="color:var(--ink)">No expiration</strong><br>
+        3. Scopes: check only <strong style="color:var(--ink)">repo</strong><br>
+        4. Copy the <code style="background:var(--surface);border:1px solid var(--brd2);border-radius:3px;padding:1px 5px">ghp_…</code> value here and click Save.<br>
+        <span style="color:var(--ink4);font-size:10px">Token is stored in your browser's localStorage only — never transmitted except to api.github.com.</span>
+      </div>
+    </details>
   </div>
 
   <div class="g2" style="margin-bottom:20px">
     <div class="card" style="padding:20px">
-      <div class="sh">Data Management</div>
-      <div id="sync-status-card" style="font-size:11px;color:var(--ink2);line-height:2;margin-bottom:14px"></div>
+      <div class="sh">Data</div>
+      <div id="storage-stats" style="font-size:11px;color:var(--ink2);line-height:2.2;margin-bottom:14px"></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="triggerManualSync()">↻ Pull from GitHub</button>
-        <button class="btn btn-ghost btn-sm" onclick="pushToGitHub()">↑ Push to GitHub</button>
+        <button class="btn btn-primary btn-sm" onclick="triggerSync()">↻ Pull from GitHub</button>
+        <button class="btn btn-ghost btn-sm" onclick="pushNow()">↑ Push to GitHub</button>
         <button class="btn btn-ghost btn-sm" onclick="triggerExport()">↓ Export JSON</button>
         <button class="btn btn-ghost btn-sm" onclick="triggerImport()">↑ Import JSON</button>
-        <button class="btn btn-danger btn-sm" onclick="confirmClearAll()">⚠ Clear Cache</button>
-      </div>
-      <div id="data-mgmt-hint" style="font-size:10.5px;color:var(--ink3);margin-top:10px;line-height:1.65">
-        <strong style="color:var(--ink2)">Pull from GitHub</strong> — loads latest <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd);border-radius:3px;padding:1px 5px">data/ideas.json</code> into this browser.<br>
-        <strong style="color:var(--ink2)">Push to GitHub</strong> — writes current browser data to the repo (creates the file if needed).
       </div>
     </div>
     <div class="card" style="padding:20px">
-      <div class="sh">Status</div>
-      <div id="storage-stats" style="font-size:11px;color:var(--ink2);line-height:2.2"></div>
+      <div class="sh">Seed default data</div>
+      <p style="font-size:11px;color:var(--ink2);line-height:1.7;margin-bottom:14px">Fill the repo with the 20 default Reality Refactor Lab ideas across all 8 layers. Skips IDs that already exist.</p>
+      <button class="btn btn-ghost btn-sm" onclick="seedDefaultIdeas()">Seed &amp; push to GitHub</button>
+      <div style="margin-top:12px">
+        <button class="btn btn-danger btn-sm" onclick="confirmClearAll()">⚠ Clear local cache</button>
+      </div>
     </div>
   </div>
-  <div class="card" style="padding:20px;margin-bottom:20px">
-    <div class="sh">Seed Default Data</div>
-    <p style="font-size:11px;color:var(--ink2);line-height:1.7;margin-bottom:14px">Populate with the default Reality Refactor Lab entries across all 8 layers. Skips any IDs that already exist.</p>
-    <button class="btn btn-ghost btn-sm" onclick="seedDefaultIdeas()">Seed Reality Refactor Lab Data</button>
-  </div>
+
   <div class="card" style="padding:20px">
-    <div class="sh">Repository Info</div>
-    <div style="font-size:11px;color:var(--ink2);line-height:2.4;font-family:var(--mono)">
+    <div class="sh">About</div>
+    <div style="font-size:11px;color:var(--ink2);line-height:2.4">
       <div>Repo: <a href="https://github.com/AlexSheff/1149" target="_blank" style="color:var(--gold)">github.com/AlexSheff/1149</a></div>
       <div>Live: <a href="https://alexsheff.github.io/1149" target="_blank" style="color:var(--gold)">alexsheff.github.io/1149</a></div>
-      <div>Founder: Alexandr Tokarev (Founder Alex)</div>
-      <div>Base: Dumaguete, Philippines</div>
-      <div>Version: 3.0.0 — Reality Refactor Lab</div>
+      <div>Founder: Alexandr Tokarev (Founder Alex) · Dumaguete, Philippines</div>
+      <div>Version: 3.1.0 — Reality Refactor Lab + GitHub Sync</div>
     </div>
   </div>
 </div>
@@ -1073,114 +1063,91 @@ const LAYERS = {
 };
 
 // ════════════════════════════════════════════════════════════════
-// GITHUB API STORAGE LAYER
+// STORAGE — GitHub API + localStorage cache
 // ════════════════════════════════════════════════════════════════
 const GH_REPO   = 'AlexSheff/1149';
 const GH_FILE   = 'data/ideas.json';
 const GH_BRANCH = 'main';
-const CACHE_KEY = 'rrl_1149_cache';
-const CFG_KEY   = 'rrl_1149_config';
+const CACHE_KEY = 'rrl_cache_v3';
+const CFG_KEY   = 'rrl_cfg_v3';
 
-// Config: { token, sha }
-function getConfig() { try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch { return {}; } }
-function setConfig(c) { localStorage.setItem(CFG_KEY, JSON.stringify({...getConfig(),...c})); }
-function getToken() { return getConfig().token || ''; }
-function getSha()   { return getConfig().sha   || ''; }
+function cfgGet()    { try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch { return {}; } }
+function cfgSet(obj) { localStorage.setItem(CFG_KEY, JSON.stringify({...cfgGet(),...obj})); }
+function getToken()  { return cfgGet().token || ''; }
+function getSha()    { return cfgGet().sha   || ''; }
+function cacheRead() { try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || []; } catch { return []; } }
+function cacheWrite(d){ try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch(e) {} }
+function getIdeas()  { return cacheRead(); }
+function storageKB() { try { return Math.round((localStorage.getItem(CACHE_KEY)||'').length/1024); } catch { return 0; } }
 
-// Cache: fast local read while GitHub syncs
-function cacheRead()     { try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || []; } catch { return []; } }
-function cacheWrite(d)   { try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch {} }
-function getIdeas()      { return cacheRead(); }
-
-// Sync status
-let syncStatus = 'idle'; // idle | loading | saving | ok | error | no-token
-function setSyncStatus(s, msg) {
-  syncStatus = s;
-  const el = document.getElementById('sync-indicator');
+let syncState = 'idle'; // idle | loading | saving | ok | error | no-token
+function setSyncUI(state, msg) {
+  syncState = state;
+  const el = document.getElementById('sync-lbl');
   if (!el) return;
-  const map = {
-    idle:     { label:'—',        color:'var(--ink4)' },
-    loading:  { label:'Loading…', color:'var(--blue)' },
-    saving:   { label:'Saving…',  color:'var(--gold)' },
-    ok:       { label:'Synced ✓', color:'var(--green)'},
-    error:    { label:'Error ✗',  color:'var(--orange)'},
-    'no-token':{ label:'No token', color:'var(--ink3)'},
-  };
-  const s2 = map[s] || map.idle;
-  el.textContent = msg || s2.label;
-  el.style.color = s2.color;
+  const MAP = { idle:'—', loading:'Loading…', saving:'Saving…', ok:'Synced ✓', error:'Error ✗', 'no-token':'No token' };
+  el.textContent = msg || MAP[state] || '—';
+  const C = { idle:'var(--ink4)', loading:'var(--blue)', saving:'var(--gold)', ok:'var(--green)', error:'var(--orange)', 'no-token':'var(--ink3)' };
+  el.style.color = C[state] || 'var(--ink3)';
 }
 
-// GitHub API: read file
 async function ghRead() {
   const token = getToken();
-  if (!token) { setSyncStatus('no-token'); return null; }
-  const headers = { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' };
-  const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}`, { headers });
+  if (!token) { setSyncUI('no-token'); return null; }
+  const hdrs = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
+  const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE + '?ref=' + GH_BRANCH, { headers: hdrs });
   if (res.status === 404) return { ideas: [], sha: null };
-  if (!res.ok) throw new Error(`GitHub read error: ${res.status}`);
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || 'Read error ' + res.status); }
   const file = await res.json();
-  const sha  = file.sha;
-  let ideas;
-  try {
-    const raw = JSON.parse(decodeURIComponent(escape(atob(file.content.replace(/\n/g,'')))));
-    ideas = Array.isArray(raw) ? raw : (raw.ideas || []);
-  } catch {
-    ideas = [];
-  }
-  return { ideas, sha };
+  let parsed;
+  try { parsed = JSON.parse(atob(file.content.replace(/\n/g,''))); } catch(e) { parsed = []; }
+  return { ideas: Array.isArray(parsed) ? parsed : (parsed.ideas || []), sha: file.sha };
 }
 
-// GitHub API: write file
 async function ghWrite(ideas) {
   const token = getToken();
-  if (!token) { setSyncStatus('no-token'); throw new Error('No GitHub token set. Add it in Settings → GitHub Sync.'); }
-  const sha = getSha();
+  if (!token) { setSyncUI('no-token'); throw new Error('No GitHub token. Add it in Settings.'); }
+  const body = JSON.stringify({ version: 3, updated: new Date().toISOString(), ideas: ideas }, null, 2);
   const payload = {
-    message: `data: update ${new Date().toISOString().slice(0,10)} (${ideas.length} ideas)`,
-    content: btoa(unescape(encodeURIComponent(JSON.stringify({ version:3, updated: new Date().toISOString(), ideas }, null, 2)))),
-    branch: GH_BRANCH,
+    message: 'data: ' + new Date().toISOString().slice(0,10) + ' (' + ideas.length + ' ideas)',
+    content: btoa(unescape(encodeURIComponent(body))),
+    branch: GH_BRANCH
   };
+  const sha = getSha();
   if (sha) payload.sha = sha;
-  const headers = { 'Authorization': `token ${token}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' };
-  const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, { method: 'PUT', headers, body: JSON.stringify(payload) });
-  if (!res.ok) {
-    const err = await res.json().catch(()=>({}));
-    throw new Error(err.message || `GitHub write error: ${res.status}`);
-  }
+  const hdrs = { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' };
+  const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE, { method: 'PUT', headers: hdrs, body: JSON.stringify(payload) });
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || 'Write error ' + res.status); }
   const data = await res.json();
-  setConfig({ sha: data.content.sha });
+  cfgSet({ sha: data.content.sha });
   return data;
 }
 
-// Load from GitHub into cache
 async function ghLoad() {
-  setSyncStatus('loading');
+  setSyncUI('loading');
   try {
     const result = await ghRead();
-    if (!result) return;
+    if (!result) return null;
     cacheWrite(result.ideas);
-    if (result.sha) setConfig({ sha: result.sha });
-    setSyncStatus('ok');
+    if (result.sha) cfgSet({ sha: result.sha });
+    setSyncUI('ok');
     return result.ideas;
   } catch(e) {
-    setSyncStatus('error', e.message.slice(0,40));
-    console.error('ghLoad:', e);
+    setSyncUI('error', e.message.slice(0,36));
     return null;
   }
 }
 
-// Save to GitHub + cache
 async function save(ideas) {
   cacheWrite(ideas);
   updateBadges();
-  setSyncStatus('saving');
+  setSyncUI('saving');
   try {
     await ghWrite(ideas);
-    setSyncStatus('ok');
+    setSyncUI('ok');
   } catch(e) {
-    setSyncStatus('error', e.message.slice(0,40));
-    toast('GitHub sync error: ' + e.message.slice(0,60), 'error');
+    setSyncUI('error', e.message.slice(0,36));
+    toast('GitHub sync failed: ' + e.message.slice(0,50), 'error');
   }
 }
 
@@ -1386,9 +1353,9 @@ async function seedDefaultIdeas() {
   const existing = cacheRead();
   const existingIds = new Set(existing.map(i => i.id));
   const toAdd = SEED.filter(i => !existingIds.has(i.id));
-  if (!toAdd.length) { toast('All default ideas already exist', 'error'); return; }
+  if (!toAdd.length) { toast('All default ideas already exist — use Push to sync', 'error'); return; }
   await save([...existing, ...toAdd]);
-  toast(`Seeded ${toAdd.length} ideas`, 'success');
+  toast('Seeded ' + toAdd.length + ' ideas and pushed to GitHub', 'success');
   renderAll();
 }
 
@@ -1405,25 +1372,25 @@ function nav(page, id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item[data-page]').forEach(n => n.classList.remove('active'));
 
-  // 'edit' reuses the same DOM element as 'new'
-  const domPage = page === 'edit' ? 'new' : page;
-  let pageEl = document.getElementById(`page-${domPage}`);
+  // 'edit' reuses page-new DOM element
+  const domId = (page === 'edit') ? 'new' : page;
+  let pageEl = document.getElementById('page-' + domId);
   if (!pageEl) return;
   pageEl.classList.add('active');
 
-  const navEl = document.querySelector(`[data-page="${domPage}"]`);
+  const navEl = document.querySelector('[data-page="' + domId + '"]');
   if (navEl) navEl.classList.add('active');
 
   currentPage = page;
 
-  if (page === 'dashboard')   renderDashboard();
-  if (page === 'ideas')       renderIdeas();
-  if (page.startsWith('layer-')) renderLayer(page.replace('layer-',''));
-  if (page === 'idea' && id)  { renderIdeaDetail(id); }
-  if (page === 'new')         openNewForm();
-  if (page === 'edit' && id)  openEditForm(id);
-  if (page === 'graph')       setTimeout(renderGraph, 50);
-  if (page === 'settings')    renderSettings();
+  if (page === 'dashboard')        renderDashboard();
+  if (page === 'ideas')            renderIdeas();
+  if (page.startsWith('layer-'))   renderLayer(page.replace('layer-',''));
+  if (page === 'idea' && id)       renderIdeaDetail(id);
+  if (page === 'new')              openNewForm();
+  if (page === 'edit' && id)       openEditForm(id);
+  if (page === 'graph')            setTimeout(renderGraph, 50);
+  if (page === 'settings')         renderSettings();
 
   window.location.hash = id ? `${page}/${id}` : page;
   document.getElementById('content').scrollTop = 0;
@@ -1453,7 +1420,7 @@ function badge(cls, txt) { return `<span class="badge ${cls}">${txt}</span>`; }
 function pbar(p, paused) { return `<div class="pbar"><div class="pbar-f${paused?' paused':''}" style="width:${p||0}%"></div></div>`; }
 function tagsHtml(arr, max=4) { return (arr||[]).slice(0,max).map(t=>`<span class="tag">${t}</span>`).join(''); }
 function fmtDate(s) { if(!s) return ''; const d=new Date(s); return isNaN(d)?s:d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
-
+function storageKB() { try { return Math.round((localStorage.getItem(KEY)||'').length/1024); } catch { return 0; } }
 function layerInfo(k) { return LAYERS[k] || { num:'?', label:k, color:'#888', desc:'' }; }
 function layerKey(l) { return Object.keys(LAYERS).find(k=>k===l) || l; }
 function updateBadges() {
@@ -1818,7 +1785,7 @@ async function submitIdea(e) {
   };
   if (editingId) { const idx=ideas.findIndex(x=>x.id===editingId); if(idx!==-1) ideas[idx]=idea; else ideas.push(idea); }
   else ideas.push(idea);
-  save(ideas);
+  await save(ideas);
   toast(editingId?'Idea updated':'Idea saved', 'success');
   nav('idea', idea.id);
 }
@@ -1827,7 +1794,7 @@ function confirmDelete() {
   if (!editingId) return;
   const i = getIdeas().find(x=>x.id===editingId);
   showModal('Delete Idea', `Delete "<strong>${i?.title}</strong>"? This cannot be undone.`, [
-    {label:'Delete', cls:'btn-danger', fn:async ()=>{ const filtered=getIdeas().filter(x=>x.id!==editingId); await save(filtered); closeModal(); toast('Deleted','success'); nav('ideas'); }},
+    {label:'Delete', cls:'btn-danger', fn:async ()=>{ await save(getIdeas().filter(x=>x.id!==editingId)); closeModal(); toast('Deleted','success'); nav('ideas'); }},
     {label:'Cancel', cls:'btn-ghost', fn:closeModal}
   ]);
 }
@@ -1990,142 +1957,99 @@ function renderGraph() {
 
 // ════════════════════════════════════════════════════════════════
 // ════════════════════════════════════════════════════════════════
-// SETTINGS + TOKEN MANAGEMENT
+// SETTINGS
 // ════════════════════════════════════════════════════════════════
 function renderSettings() {
   const ideas = getIdeas();
   const totalFiles = ideas.reduce((s,i)=>s+(i.files||[]).length,0);
   const totalSize  = ideas.reduce((s,i)=>(i.files||[]).reduce((ss,f)=>ss+f.size,s),0);
   const token = getToken();
-  const sha = getSha();
-
-  // Token input: show masked if set
-  const tokenInput = document.getElementById('gh-token-input');
-  if (tokenInput && token) tokenInput.placeholder = token.slice(0,7) + '…' + token.slice(-4) + '  (set — paste new to change)';
-
-  // Status card
-  const sc = document.getElementById('sync-status-card');
-  const cacheCount = cacheRead().length;
-  if (sc) sc.innerHTML = `
-    <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 14px;line-height:2.2">
-      <span style="color:var(--ink3)">GitHub token</span>
-      <strong style="color:${token?'var(--green)':'var(--orange)'}">${token ? 'Set ✓' : 'Not set — enter token above'}</strong>
-      <span style="color:var(--ink3)">Ideas in cache</span>
-      <strong style="color:${cacheCount>0?'var(--green)':'var(--orange)'}">${cacheCount > 0 ? cacheCount+' ideas' : '0 — empty, pull or seed'}</strong>
-      <span style="color:var(--ink3)">File in repo</span>
-      <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd);border-radius:3px;padding:1px 5px">data/ideas.json</code>
-      <span style="color:var(--ink3)">Last file SHA</span>
-      <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd);border-radius:3px;padding:1px 5px">${sha ? sha.slice(0,14)+'…' : '— not synced yet'}</code>
-      <span style="color:var(--ink3)">Sync status</span>
-      <span id="settings-sync-status" style="font-weight:500">${syncStatus}</span>
-    </div>
-    ${cacheCount === 0 && token ? '<div style='margin-top:10px;padding:10px 14px;background:var(--orange-bg);border:1px solid rgba(194,65,12,.2);border-radius:var(--r2);font-size:11px;color:var(--orange)'>No ideas in cache. Click <strong>Pull from GitHub</strong> to load existing data, or use the <strong>Seed Default Data</strong> button below to populate and push.</div>' : ''}
-  `;
-
-  document.getElementById('storage-stats').innerHTML = `
-    Ideas in cache: <strong>${ideas.length}</strong><br>
-    Attached files: <strong>${totalFiles}</strong> (${fmtSize(totalSize)})<br>
-    Data file in repo: <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd);border-radius:3px;padding:1px 5px">data/ideas.json</code><br>
-    Cache size: <strong>${storageKB()} KB</strong>
-  `;
+  const sha   = getSha();
+  const inp   = document.getElementById('gh-token-input');
+  if (inp && token) inp.placeholder = token.slice(0,7) + '...' + token.slice(-4) + ' (set)';
+  const ghStatus = document.getElementById('gh-status');
+  if (ghStatus && !ghStatus.textContent) {
+    ghStatus.innerHTML = token
+      ? '<span style="color:var(--green)">Token saved. ' + (sha ? 'SHA: ' + sha.slice(0,10) + '...' : 'Not yet synced.') + '</span>'
+      : '<span style="color:var(--orange)">No token set — ideas will only be saved locally.</span>';
+  }
+  document.getElementById('storage-stats').innerHTML =
+    'Ideas in cache: <strong>' + ideas.length + '</strong><br>' +
+    'Attached files: <strong>' + totalFiles + '</strong> (' + fmtSize(totalSize) + ')<br>' +
+    'Cache size: <strong>' + storageKB() + ' KB</strong><br>' +
+    'Token: <strong style="color:' + (token ? 'var(--green)' : 'var(--orange)') + '">' + (token ? 'Set ✓' : 'Not set') + '</strong>';
 }
 
 function saveToken() {
-  const val = document.getElementById('gh-token-input').value.trim();
-  if (!val) { toast('Enter a token first', 'error'); return; }
+  const val = (document.getElementById('gh-token-input').value || '').trim();
+  if (!val) { toast('Paste your token first', 'error'); return; }
   if (!val.startsWith('ghp_') && !val.startsWith('github_pat_')) {
     toast('Token should start with ghp_ or github_pat_', 'error'); return;
   }
-  setConfig({ token: val, sha: '' }); // reset sha when token changes
+  cfgSet({ token: val, sha: '' });
   document.getElementById('gh-token-input').value = '';
-  document.getElementById('gh-token-input').placeholder = val.slice(0,7)+'…'+val.slice(-4)+'  (saved)';
-  toast('Token saved. Testing connection…', 'success');
-  testToken();
+  document.getElementById('gh-status').innerHTML = '<span style="color:var(--blue)">Token saved. Testing connection…</span>';
+  testConnection();
 }
 
-async function testToken() {
-  const el = document.getElementById('token-status');
-  if (el) el.innerHTML = '<span style="color:var(--blue)">Testing connection to GitHub…</span>';
+async function testConnection() {
+  const token = getToken();
+  const el = document.getElementById('gh-status');
+  if (!token) { if (el) el.innerHTML = '<span style="color:var(--orange)">No token set.</span>'; return; }
+  if (el) el.innerHTML = '<span style="color:var(--blue)">Connecting to github.com/AlexSheff/1149…</span>';
   try {
-    const token = getToken();
-    if (!token) throw new Error('No token set');
-    const res = await fetch(`https://api.github.com/repos/${GH_REPO}`, {
-      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    const res = await fetch('https://api.github.com/repos/' + GH_REPO, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
     });
-    if (res.status === 404) throw new Error('Repository not found. Check the repo name is AlexSheff/1149 and is public.');
-    if (res.status === 401) throw new Error('Token invalid or expired. Generate a new one.');
-    if (!res.ok) throw new Error(`GitHub error: ${res.status}`);
+    if (res.status === 401) throw new Error('Token invalid or expired');
+    if (res.status === 404) throw new Error('Repo not found — check AlexSheff/1149 exists and is accessible');
+    if (!res.ok) throw new Error('Error ' + res.status);
     const data = await res.json();
-    if (el) el.innerHTML = `<span style="color:var(--green)">✓ Connected to <strong>${data.full_name}</strong> — ${data.description||'no description'}</span>`;
-    toast('GitHub connection OK ✓', 'success');
-    // Load data from GitHub
-    setSyncStatus('loading');
+    if (el) el.innerHTML = '<span style="color:var(--green)">Connected: <strong>' + data.full_name + '</strong></span>';
+    toast('GitHub connected ✓', 'success');
+    // Now load ideas from GitHub
     const ideas = await ghLoad();
     if (ideas !== null) {
       if (ideas.length === 0) {
-        // File doesn't exist yet — push seed data automatically
-        await seedDefaultIdeas();
-        renderAll();
-        const el2 = document.getElementById('token-status');
-        if (el2) el2.innerHTML += '<br><span style="color:var(--green)">✓ Seeded ' + getIdeas().length + ' ideas and pushed to GitHub.</span>';
+        if (el) el.innerHTML += ' — <span style="color:var(--orange)">data/ideas.json empty or missing. Click "Seed &amp; push" below.</span>';
       } else {
+        if (el) el.innerHTML += ' — <span style="color:var(--green)">' + ideas.length + ' ideas loaded.</span>';
         renderAll();
-        if (el) el.innerHTML += '<br><span style="color:var(--green)">✓ Loaded ' + ideas.length + ' ideas from GitHub.</span>';
       }
     }
+    renderSettings();
   } catch(e) {
-    if (el) el.innerHTML = `<span style="color:var(--orange)">✗ ${e.message}</span>`;
+    if (el) el.innerHTML = '<span style="color:var(--orange)">Error: ' + e.message + '</span>';
     toast('Connection failed: ' + e.message.slice(0,50), 'error');
   }
 }
 
-async function pushToGitHub() {
-  const ideas = cacheRead();
-  if (!ideas.length) {
-    showModal(
-      'Nothing to push',
-      'Local cache is empty. Pull from GitHub first, or seed the default data.',
-      [
-        { label: 'Seed default data', cls: 'btn-primary', fn: async () => { closeModal(); await seedDefaultIdeas(); renderAll(); } },
-        { label: 'Cancel', cls: 'btn-ghost', fn: closeModal }
-      ]
-    );
-    return;
+async function triggerSync() {
+  setSyncUI('loading');
+  const ideas = await ghLoad();
+  if (ideas === null) return;
+  if (ideas.length === 0 && cacheRead().length === 0) {
+    toast('Repo is empty. Use "Seed & push" in Settings to populate.', 'error');
+  } else {
+    renderAll();
+    toast('Synced — ' + getIdeas().length + ' ideas', 'success');
   }
-  setSyncStatus('saving');
+}
+
+async function pushNow() {
+  const ideas = cacheRead();
+  if (!ideas.length) { toast('Nothing to push — cache is empty', 'error'); return; }
+  setSyncUI('saving');
   try {
     await ghWrite(ideas);
-    setSyncStatus('ok');
-    toast(`Pushed ${ideas.length} ideas to GitHub ✓`, 'success');
+    setSyncUI('ok');
+    toast('Pushed ' + ideas.length + ' ideas to GitHub ✓', 'success');
     renderSettings();
   } catch(e) {
-    setSyncStatus('error', e.message.slice(0,40));
+    setSyncUI('error', e.message.slice(0,36));
     toast('Push failed: ' + e.message.slice(0,60), 'error');
   }
 }
-
-async function triggerManualSync() {
-  setSyncStatus('loading');
-  const ideas = await ghLoad();
-  if (ideas !== null) {
-    if (ideas.length === 0 && cacheRead().length === 0) {
-      // Empty repo + empty cache → offer to seed
-      showModal(
-        'Repository is empty',
-        'No ideas found in <strong>data/ideas.json</strong>. Push the default Reality Refactor Lab seed data to GitHub now?',
-        [
-          { label: 'Yes — seed & push', cls: 'btn-primary', fn: async () => { closeModal(); await seedDefaultIdeas(); renderAll(); } },
-          { label: 'No', cls: 'btn-ghost', fn: closeModal }
-        ]
-      );
-    } else {
-      renderAll();
-      toast(`Synced ✓ — ${getIdeas().length} ideas`, 'success');
-    }
-  }
-}
-
-function storageKB() { try { return Math.round((localStorage.getItem(CACHE_KEY)||'').length/1024); } catch { return 0; } }
 
 // ════════════════════════════════════════════════════════════════
 // EXPORT / IMPORT
@@ -2160,8 +2084,8 @@ function handleImport(e) {
   r.readAsText(f); e.target.value='';
 }
 function confirmClearAll() {
-  showModal('Clear All Data','This will permanently delete ALL ideas and attachments.',[
-    {label:'Clear Cache',cls:'btn-danger',fn:()=>{localStorage.removeItem(CACHE_KEY);closeModal();toast('Cache cleared — pull from GitHub to restore','success');renderAll();}},
+  showModal('Clear local cache','This clears the browser cache. Your ideas stay safe in GitHub.',[
+    {label:'Clear cache',cls:'btn-danger',fn:()=>{localStorage.removeItem(CACHE_KEY);closeModal();toast('Cache cleared. Pull from GitHub to restore.','success');renderAll();}},
     {label:'Cancel',cls:'btn-ghost',fn:closeModal}
   ]);
 }
@@ -2203,48 +2127,38 @@ function renderAll() {
   else if(currentPage==='ideas') renderIdeas();
   else if(currentPage.startsWith('layer-')) renderLayer(currentPage.replace('layer-',''));
   else if(currentPage==='settings') renderSettings();
-  // 'new' and 'edit' pages are form state — never re-render them via renderAll
 }
 
 (async function init() {
   document.getElementById('sb-date').textContent =
     new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-
-  // Show cached data immediately
   const cached = cacheRead();
+  // Show cached data immediately (fast path)
   if (cached.length) { updateBadges(); handleHash(); }
-
-  // Try to load from GitHub
   const token = getToken();
   if (token) {
     const fresh = await ghLoad();
-    if (fresh !== null) {
-      // If no ideas at all, seed defaults then push
-      if (fresh.length === 0 && cached.length === 0) {
-        await seedDefaultIdeas();
-      } else {
-        updateBadges();
-        if (!cached.length) handleHash();
-        else renderAll();
+    if (fresh !== null && fresh.length === 0 && cached.length === 0) {
+      // Repo empty + cache empty → show hint
+      setSyncUI('no-token', 'Repo empty');
+      if (!localStorage.getItem('rrl_seed_hint')) {
+        localStorage.setItem('rrl_seed_hint','1');
+        setTimeout(() => toast('Repo is empty — go to Settings and click "Seed & push"', 'error'), 1000);
       }
-    } else {
-      // GitHub failed — use cache
-      if (!cached.length) {
-        // No cache either — seed locally
-        seedDefaultIdeas();
-      }
+    } else if (fresh !== null) {
+      renderAll();
     }
   } else {
-    // No token — use cache or seed
-    setSyncStatus('no-token');
-    if (!cached.length) seedDefaultIdeas();
-    else { updateBadges(); handleHash(); }
-    // Show a one-time hint to set up token
-    if (!token && !localStorage.getItem('rrl_token_hint')) {
-      localStorage.setItem('rrl_token_hint','1');
-      setTimeout(() => {
-        toast('Set up GitHub token in Settings to save ideas to your repo', 'success');
-      }, 1500);
+    setSyncUI('no-token');
+    if (!cached.length) {
+      // No token, no cache → seed locally
+      await seedDefaultIdeas();
+    } else {
+      updateBadges(); handleHash();
+    }
+    if (!localStorage.getItem('rrl_gh_hint')) {
+      localStorage.setItem('rrl_gh_hint','1');
+      setTimeout(() => toast('Add a GitHub token in Settings to sync ideas to your repo', 'success'), 2000);
     }
   }
 })();
