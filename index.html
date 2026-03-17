@@ -2,2377 +2,1233 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Reality Refactor Lab · 1149</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-/* ─────────────────────────────────────────────────────────
-   TOKENS
-───────────────────────────────────────────────────────── */
 :root {
-  /* surface */
-  --bg:       #F4F1EA;
-  --surface:  #FDFCF8;
-  --surface2: #F8F5EE;
-  --sidebar:  #1D2035;
-  --sidebar2: #252840;
-  --sidebar3: #2E3358;
-
-  /* ink */
-  --ink:      #1A1B26;
-  --ink2:     #4A4E72;
-  --ink3:     #8A8EAA;
-  --ink4:     #B8BAD0;
-  --ink5:     #D8DAEB;
-
-  /* accent */
-  --gold:     #B8721A;
-  --gold2:    #D4891E;
-  --gold-bg:  rgba(184,114,26,.1);
-  --gold-brd: rgba(184,114,26,.25);
-
-  /* borders */
-  --brd:      #E2DDD5;
-  --brd2:     #CCC7BC;
-  --brd3:     #B8B3A8;
-
-  /* status */
-  --green:    #16A34A;
-  --green-bg: rgba(22,163,74,.08);
-  --blue:     #1D6FC0;
-  --blue-bg:  rgba(29,111,192,.08);
-  --purple:   #7C3AED;
-  --purple-bg:rgba(124,58,237,.08);
-  --orange:   #C2410C;
-  --orange-bg:rgba(194,65,12,.08);
-  --gray:     #6B7280;
-  --gray-bg:  rgba(107,114,128,.08);
-
-  /* type */
-  --serif:    'Fraunces',Georgia,serif;
-  --mono:     'JetBrains Mono','Fira Code',Consolas,monospace;
-
-  /* space */
-  --r:  4px;
-  --r2: 8px;
-  --r3: 12px;
-  --shadow: 0 1px 4px rgba(30,32,50,.07), 0 4px 16px rgba(30,32,50,.05);
-  --shadow2: 0 2px 8px rgba(30,32,50,.1), 0 8px 32px rgba(30,32,50,.08);
+--bg: #F4F1EA; --surface: #FDFCF8; --surface2: #F8F5EE;
+--sidebar: #1D2035; --sidebar2: #252840; --sidebar3: #2E3358;
+--ink: #1A1B26; --ink2: #4A4E72; --ink3: #8A8EAA; --ink4: #B8BAD0;
+--gold: #B8721A; --gold2: #D4891E; --gold-bg: rgba(184,114,26,.1); --gold-brd: rgba(184,114,26,.25);
+--brd: #E2DDD5; --brd2: #CCC7BC; --brd3: #B8B3A8;
+--green: #16A34A; --green-bg: rgba(22,163,74,.08);
+--blue: #1D6FC0; --blue-bg: rgba(29,111,192,.08);
+--purple: #7C3AED; --purple-bg: rgba(124,58,237,.08);
+--orange: #C2410C; --orange-bg: rgba(194,65,12,.08);
+--gray: #6B7280; --gray-bg: rgba(107,114,128,.08);
+--serif: 'Fraunces', Georgia, serif;
+--mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+--r: 4px; --r2: 8px; --r3: 12px;
+--shadow: 0 1px 4px rgba(30,32,50,.07), 0 4px 16px rgba(30,32,50,.05);
+--shadow2: 0 2px 8px rgba(30,32,50,.1), 0 8px 32px rgba(30,32,50,.08);
+--max-content: 1400px;
 }
-
-/* ─────────────────────────────────────────────────────────
-   RESET
-───────────────────────────────────────────────────────── */
-*,*::before,*::after { box-sizing:border-box;margin:0;padding:0 }
-html,body { height:100% }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 body {
-  background:var(--bg);
-  color:var(--ink);
-  font-family:var(--mono);
-  font-size:13px;
-  line-height:1.6;
-  min-height:100%;
-  overflow-x:hidden;
+background: var(--bg); color: var(--ink);
+font-family: var(--mono); font-size: 13px; line-height: 1.6;
+min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased;
 }
-::-webkit-scrollbar { width:5px;height:5px }
-::-webkit-scrollbar-track { background:transparent }
-::-webkit-scrollbar-thumb { background:var(--brd2);border-radius:3px }
-::-webkit-scrollbar-thumb:hover { background:var(--brd3) }
-a { color:inherit;text-decoration:none }
-button,input,textarea,select { font-family:var(--mono);font-size:inherit }
-input[type=file] { display:none }
-
-/* ─────────────────────────────────────────────────────────
-   LAYOUT
-───────────────────────────────────────────────────────── */
-#app { display:flex;height:100vh;overflow:hidden }
+#app { display: flex; height: 100vh; overflow: hidden; max-width: 100vw; }
 #sidebar {
-  width:226px;min-width:226px;
-  height:100vh;
-  background:var(--sidebar);
-  display:flex;flex-direction:column;
-  overflow:hidden;
-  flex-shrink:0;
+width: 240px; min-width: 240px; max-width: 240px;
+height: 100vh; background: var(--sidebar);
+display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0;
+border-right: 1px solid rgba(255,255,255,.06);
 }
 #content {
-  flex:1;min-width:0;
-  height:100vh;
-  overflow-y:auto;
-  background:var(--bg);
+flex: 1; min-width: 0; height: 100vh; overflow-y: auto; overflow-x: hidden;
+background: var(--bg); padding: 24px 28px; max-width: 100%;
 }
-
-/* ─────────────────────────────────────────────────────────
-   SIDEBAR
-───────────────────────────────────────────────────────── */
-.sb-head {
-  padding:22px 20px 18px;
-  border-bottom:1px solid rgba(255,255,255,.06);
+.page { 
+display: none; padding: 0; min-height: calc(100vh - 48px); 
+max-width: var(--max-content); margin: 0 auto; width: 100%; 
 }
-.sb-title {
-  font-family:var(--serif);
-  font-size:11px;
-  font-weight:300;
-  letter-spacing:3px;
-  text-transform:uppercase;
-  color:rgba(255,255,255,.35);
-  margin-bottom:6px;
-}
-.sb-num {
-  font-family:var(--serif);
-  font-size:48px;
-  color:var(--gold2);
-  font-weight:700;
-  line-height:.95;
-  letter-spacing:-1px;
-}
-.sb-sub {
-  font-size:9px;
-  color:rgba(255,255,255,.25);
-  letter-spacing:2px;
-  text-transform:uppercase;
-  margin-top:5px;
-}
-
-.sb-nav { flex:1;overflow-y:auto;padding:10px 0 }
-.nav-sec {
-  font-size:8px;
-  color:rgba(255,255,255,.18);
-  letter-spacing:2.5px;
-  text-transform:uppercase;
-  padding:14px 20px 5px;
-}
-.nav-item {
-  display:flex;align-items:center;gap:9px;
-  padding:8px 20px;
-  cursor:pointer;
-  font-size:9.5px;
-  color:rgba(255,255,255,.35);
-  letter-spacing:.5px;
-  border-left:2px solid transparent;
-  transition:all .12s;
-  user-select:none;
-}
-.nav-item:hover { color:rgba(255,255,255,.65);background:rgba(255,255,255,.04) }
-.nav-item.active { color:#fff;border-left-color:var(--gold2);background:rgba(255,255,255,.06) }
-.nav-num {
-  font-size:8px;
-  color:rgba(255,255,255,.2);
-  width:16px;
-  text-align:right;
-  flex-shrink:0;
-  font-variant-numeric:tabular-nums;
-}
-.nav-badge {
-  margin-left:auto;
-  font-size:8px;
-  color:var(--gold2);
-  background:rgba(212,137,30,.15);
-  padding:1px 6px;
-  border-radius:10px;
-  border:1px solid rgba(212,137,30,.25);
-}
-.nav-dot {
-  width:5px;height:5px;
-  border-radius:50%;
-  flex-shrink:0;
-}
-
-.sb-bottom {
-  border-top:1px solid rgba(255,255,255,.06);
-  padding:14px 16px;
-  display:flex;flex-direction:column;gap:7px;
-}
-.sb-btn {
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  padding:9px 12px;
-  border-radius:var(--r2);
-  font-size:9px;
-  letter-spacing:1.5px;
-  text-transform:uppercase;
-  cursor:pointer;
-  border:1px solid;
-  transition:all .14s;
-  font-family:var(--mono);
-  font-weight:500;
-}
-.sb-btn-gold {
-  background:var(--gold);
-  border-color:var(--gold);
-  color:#fff;
-}
-.sb-btn-gold:hover { background:var(--gold2);border-color:var(--gold2) }
-.sb-btn-ghost {
-  background:transparent;
-  border-color:rgba(255,255,255,.12);
-  color:rgba(255,255,255,.4);
-}
-.sb-btn-ghost:hover { border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.7) }
-
-.sb-foot {
-  padding:10px 20px;
-  border-top:1px solid rgba(255,255,255,.04);
-  font-size:8px;
-  color:rgba(255,255,255,.18);
-  letter-spacing:1.5px;
-  text-transform:uppercase;
-  display:flex;align-items:center;gap:7px;
-}
-.live-dot {
-  width:5px;height:5px;border-radius:50%;
-  background:#4ADE80;
-  box-shadow:0 0 6px #4ADE80;
-  animation:pulse 2s ease-in-out infinite;
-  flex-shrink:0;
-}
-@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.25} }
-
-/* ─────────────────────────────────────────────────────────
-   PAGES
-───────────────────────────────────────────────────────── */
-.page { display:none;padding:32px 36px;min-height:calc(100vh - 64px) }
-.page.active { display:block;animation:fadeUp .2s ease }
-@keyframes fadeUp { from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none} }
-
-/* Page header */
+.page.active { display: block; animation: fadeUp .2s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 .pg-head {
-  display:flex;align-items:flex-end;justify-content:space-between;
-  margin-bottom:28px;padding-bottom:22px;
-  border-bottom:1.5px solid var(--brd);
-  gap:16px;flex-wrap:wrap;
+display: flex; align-items: flex-end; justify-content: space-between;
+margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1.5px solid var(--brd);
+gap: 16px; flex-wrap: wrap; max-width: 100%;
 }
-.pg-title-block {}
-.pg-eyebrow {
-  font-size:8.5px;
-  color:var(--ink3);
-  letter-spacing:3px;
-  text-transform:uppercase;
-  margin-bottom:6px;
-}
-.pg-title {
-  font-family:var(--serif);
-  font-size:38px;
-  font-weight:600;
-  color:var(--ink);
-  line-height:1;
-  letter-spacing:-.5px;
-}
-.pg-sub {
-  font-size:10px;
-  color:var(--ink3);
-  margin-top:6px;
-  letter-spacing:.3px;
-}
-
-/* ─────────────────────────────────────────────────────────
-   COMPONENTS
-───────────────────────────────────────────────────────── */
-
-/* Section heading */
-.sh {
-  display:flex;align-items:center;gap:10px;
-  margin-bottom:13px;
-  font-size:9px;
-  font-weight:500;
-  letter-spacing:3px;
-  text-transform:uppercase;
-  color:var(--ink3);
-}
-.sh::after { content:'';flex:1;height:1px;background:var(--brd) }
-
-/* Stats */
-.stats-row { display:grid;gap:10px;margin-bottom:26px }
-.s4 { grid-template-columns:repeat(4,1fr) }
-.s3 { grid-template-columns:repeat(3,1fr) }
+.pg-eyebrow { font-size: 8.5px; color: var(--ink3); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+.pg-title { font-family: var(--serif); font-size: 34px; font-weight: 600; color: var(--ink); line-height: 1; letter-spacing: -.5px; }
+.pg-sub { font-size: 10px; color: var(--ink3); margin-top: 6px; letter-spacing: .3px; }
+.sh { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; font-size: 9px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--ink3); }
+.sh::after { content: ''; flex: 1; height: 1px; background: var(--brd); }
+.stats-row { display: grid; gap: 10px; margin-bottom: 24px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 .stat-card {
-  background:var(--surface);
-  border:1px solid var(--brd);
-  border-radius:var(--r2);
-  padding:18px 18px 16px;
-  box-shadow:var(--shadow);
-  position:relative;overflow:hidden;
+background: var(--surface); border: 1px solid var(--brd); border-radius: var(--r2);
+padding: 16px 16px 14px; box-shadow: var(--shadow); position: relative; overflow: hidden;
 }
-.stat-card::after {
-  content:'';
-  position:absolute;bottom:0;left:0;right:0;height:2px;
-  background:var(--ac,var(--gold));
-  opacity:.5;
-}
-.stat-num {
-  font-family:var(--serif);
-  font-size:48px;
-  font-weight:700;
-  color:var(--ac,var(--gold));
-  line-height:1;
-  letter-spacing:-1px;
-}
-.stat-lbl {
-  font-size:8px;
-  color:var(--ink3);
-  text-transform:uppercase;
-  letter-spacing:2.5px;
-  margin-top:6px;
-}
-
-/* Card */
-.card {
-  background:var(--surface);
-  border:1px solid var(--brd);
-  border-radius:var(--r2);
-  box-shadow:var(--shadow);
-}
-
-/* Badge */
+.stat-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: var(--ac, var(--gold)); opacity: .5; }
+.stat-num { font-family: var(--serif); font-size: 42px; font-weight: 700; color: var(--ac, var(--gold)); line-height: 1; letter-spacing: -1px; }
+.stat-lbl { font-size: 8px; color: var(--ink3); text-transform: uppercase; letter-spacing: 2.5px; margin-top: 6px; }
+.card { background: var(--surface); border: 1px solid var(--brd); border-radius: var(--r2); box-shadow: var(--shadow); max-width: 100%; }
 .badge {
-  display:inline-flex;align-items:center;
-  font-size:7.5px;letter-spacing:1px;text-transform:uppercase;
-  padding:2px 8px;border-radius:3px;border:1px solid;
-  flex-shrink:0;white-space:nowrap;font-weight:500;
+display: inline-flex; align-items: center; font-size: 7.5px; letter-spacing: 1px;
+text-transform: uppercase; padding: 2px 8px; border-radius: 3px; border: 1px solid;
+flex-shrink: 0; white-space: nowrap; font-weight: 500;
 }
-.b-active  { color:var(--green);border-color:rgba(22,163,74,.3);background:var(--green-bg) }
-.b-research{ color:var(--blue);border-color:rgba(29,111,192,.3);background:var(--blue-bg) }
-.b-concept { color:var(--purple);border-color:rgba(124,58,237,.3);background:var(--purple-bg) }
-.b-paused  { color:var(--gray);border-color:rgba(107,114,128,.3);background:var(--gray-bg) }
-.b-archived{ color:var(--gray);border-color:rgba(107,114,128,.2);background:var(--gray-bg) }
-.b-critical{ color:#B91C1C;border-color:rgba(185,28,28,.3);background:rgba(185,28,28,.07) }
-.b-high    { color:var(--orange);border-color:rgba(194,65,12,.3);background:var(--orange-bg) }
-.b-medium  { color:var(--gold);border-color:var(--gold-brd);background:var(--gold-bg) }
-.b-low     { color:var(--gray);border-color:rgba(107,114,128,.2);background:var(--gray-bg) }
-
-/* Tag */
+.b-active { color: var(--green); border-color: rgba(22,163,74,.3); background: var(--green-bg); }
+.b-research { color: var(--blue); border-color: rgba(29,111,192,.3); background: var(--blue-bg); }
+.b-concept { color: var(--purple); border-color: rgba(124,58,237,.3); background: var(--purple-bg); }
+.b-paused { color: var(--gray); border-color: rgba(107,114,128,.3); background: var(--gray-bg); }
+.b-archived { color: var(--gray); border-color: rgba(107,114,128,.2); background: var(--gray-bg); }
+.b-critical { color: #B91C1C; border-color: rgba(185,28,28,.3); background: rgba(185,28,28,.07); }
+.b-high { color: var(--orange); border-color: rgba(194,65,12,.3); background: var(--orange-bg); }
+.b-medium { color: var(--gold); border-color: var(--gold-brd); background: var(--gold-bg); }
+.b-low { color: var(--gray); border-color: rgba(107,114,128,.2); background: var(--gray-bg); }
 .tag {
-  font-size:7px;letter-spacing:1px;text-transform:uppercase;
-  padding:2px 7px;border-radius:3px;
-  border:1px solid var(--brd2);
-  color:var(--ink3);
-  background:var(--surface2);
+font-size: 7px; letter-spacing: 1px; text-transform: uppercase;
+padding: 2px 7px; border-radius: 3px; border: 1px solid var(--brd2);
+color: var(--ink3); background: var(--surface2);
 }
-
-/* Progress */
-.pbar { height:3px;background:var(--brd);border-radius:2px;overflow:hidden;margin:10px 0 8px }
-.pbar-f { height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width .5s ease }
-.pbar-f.paused { background:var(--brd2) }
-
-/* Filters */
-.filter-bar { display:flex;gap:5px;flex-wrap:wrap;margin-bottom:20px;align-items:center }
+.pbar { height: 3px; background: var(--brd); border-radius: 2px; overflow: hidden; margin: 10px 0 8px; }
+.pbar-f { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--gold), var(--gold2)); transition: width .5s ease; }
+.pbar-f.paused { background: var(--brd2); }
+.filter-bar { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
 .fb {
-  font-size:8px;letter-spacing:1px;text-transform:uppercase;
-  padding:5px 12px;border-radius:3px;
-  border:1px solid var(--brd);
-  background:var(--surface);
-  color:var(--ink3);cursor:pointer;
-  transition:all .12s;font-family:var(--mono);
+font-size: 8px; letter-spacing: 1px; text-transform: uppercase;
+padding: 5px 12px; border-radius: 3px; border: 1px solid var(--brd);
+background: var(--surface); color: var(--ink3); cursor: pointer;
+transition: all .12s; font-family: var(--mono);
 }
-.fb:hover { border-color:var(--brd2);color:var(--ink2);background:var(--surface2) }
-.fb.on { border-color:var(--gold-brd);color:var(--gold);background:var(--gold-bg);font-weight:500 }
-.f-sep { width:1px;height:20px;background:var(--brd);margin:0 3px }
-
-/* Buttons */
+.fb:hover { border-color: var(--brd2); color: var(--ink2); background: var(--surface2); }
+.fb.on { border-color: var(--gold-brd); color: var(--gold); background: var(--gold-bg); font-weight: 500; }
+.f-sep { width: 1px; height: 20px; background: var(--brd); margin: 0 3px; }
 .btn {
-  display:inline-flex;align-items:center;gap:7px;
-  padding:9px 18px;border-radius:var(--r2);
-  font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;
-  cursor:pointer;border:1px solid;transition:all .14s;
-  font-family:var(--mono);font-weight:500;
+display: inline-flex; align-items: center; gap: 7px; padding: 9px 16px;
+border-radius: var(--r2); font-size: 9.5px; letter-spacing: 1.5px;
+text-transform: uppercase; cursor: pointer; border: 1px solid;
+transition: all .14s; font-family: var(--mono); font-weight: 500;
 }
-.btn-primary { background:var(--gold);border-color:var(--gold);color:#fff }
-.btn-primary:hover { background:var(--gold2);border-color:var(--gold2) }
-.btn-ghost { background:var(--surface);border-color:var(--brd2);color:var(--ink2) }
-.btn-ghost:hover { border-color:var(--brd3);background:var(--surface2) }
-.btn-danger { background:var(--surface);border-color:rgba(185,28,28,.3);color:#B91C1C }
-.btn-danger:hover { background:rgba(185,28,28,.06) }
-.btn-sm { padding:6px 13px;font-size:8.5px }
-
-/* Search */
-.search-wrap { position:relative;margin-bottom:20px }
-.search-wrap input { padding-left:38px }
-.s-ico { position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--ink4);font-size:15px;pointer-events:none }
-.s-clear { position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;line-height:1;padding:2px;display:none }
-.s-clear.vis { display:block }
-
-/* Forms */
-.form-group { margin-bottom:20px }
-.form-label {
-  display:block;
-  font-size:8.5px;letter-spacing:2px;text-transform:uppercase;
-  color:var(--ink2);margin-bottom:8px;font-weight:500;
+.btn-primary { background: var(--gold); border-color: var(--gold); color: #fff; }
+.btn-primary:hover { background: var(--gold2); border-color: var(--gold2); }
+.btn-ghost { background: var(--surface); border-color: var(--brd2); color: var(--ink2); }
+.btn-ghost:hover { border-color: var(--brd3); background: var(--surface2); }
+.btn-danger { background: var(--surface); border-color: rgba(185,28,28,.3); color: #B91C1C; }
+.btn-danger:hover { background: rgba(185,28,28,.06); }
+.btn-sm { padding: 6px 12px; font-size: 8.5px; }
+.btn:disabled { opacity: .6; cursor: not-allowed; }
+.search-wrap { position: relative; margin-bottom: 18px; max-width: 100%; }
+.search-wrap input { padding-left: 36px; width: 100%; max-width: 100%; }
+.s-ico { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink4); font-size: 15px; pointer-events: none; }
+.s-clear {
+position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+background: none; border: none; color: var(--ink3); cursor: pointer;
+font-size: 16px; line-height: 1; padding: 2px; display: none;
 }
-.form-req { color:var(--gold);margin-left:3px }
+.s-clear.vis { display: block; }
+.form-group { margin-bottom: 18px; }
+.form-label { display: block; font-size: 8.5px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink2); margin-bottom: 8px; font-weight: 500; }
+.form-req { color: var(--gold); margin-left: 3px; }
 .form-input {
-  width:100%;
-  background:var(--surface);
-  border:1.5px solid var(--brd);
-  border-radius:var(--r2);
-  padding:10px 14px;
-  color:var(--ink);
-  font-family:var(--mono);font-size:12.5px;
-  transition:border-color .14s,box-shadow .14s;outline:none;
+width: 100%; max-width: 100%; background: var(--surface);
+border: 1.5px solid var(--brd); border-radius: var(--r2);
+padding: 10px 14px; color: var(--ink); font-family: var(--mono);
+font-size: 12.5px; transition: border-color .14s, box-shadow .14s; outline: none;
 }
-.form-input:focus { border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-bg) }
-.form-input::placeholder { color:var(--ink4) }
+.form-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-bg); }
+.form-input::placeholder { color: var(--ink4); }
 .form-select {
-  appearance:none;cursor:pointer;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;background-position:right 13px center;padding-right:32px;
+appearance: none; cursor: pointer;
+background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+background-repeat: no-repeat; background-position: right 13px center; padding-right: 32px;
 }
-.form-textarea { resize:vertical;min-height:130px;line-height:1.6 }
-.form-hint { font-size:8.5px;color:var(--ink3);margin-top:5px }
-.form-row { display:grid;grid-template-columns:1fr 1fr;gap:16px }
-.form-row3 { display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px }
-
-/* File drop */
+.form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+.form-hint { font-size: 8.5px; color: var(--ink3); margin-top: 5px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-row3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
 .file-drop {
-  border:1.5px dashed var(--brd2);border-radius:var(--r2);
-  padding:26px;text-align:center;cursor:pointer;transition:all .14s;
+border: 1.5px dashed var(--brd2); border-radius: var(--r2);
+padding: 24px; text-align: center; cursor: pointer; transition: all .14s;
 }
-.file-drop:hover,.file-drop.drag-over {
-  border-color:var(--gold);background:var(--gold-bg);
-}
-.file-drop-ico { font-size:28px;margin-bottom:8px;opacity:.35 }
-.file-drop-txt { font-size:11px;color:var(--ink2) }
-.file-drop-sub { font-size:8.5px;color:var(--ink3);margin-top:4px }
-.file-list { margin-top:12px;display:flex;flex-direction:column;gap:6px }
+.file-drop:hover, .file-drop.drag-over { border-color: var(--gold); background: var(--gold-bg); }
+.file-drop-ico { font-size: 26px; margin-bottom: 8px; opacity: .35; }
+.file-drop-txt { font-size: 11px; color: var(--ink2); }
+.file-drop-sub { font-size: 8.5px; color: var(--ink3); margin-top: 4px; }
+.file-list { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
 .file-item {
-  display:flex;align-items:center;gap:10px;
-  padding:8px 12px;
-  background:var(--surface2);border:1px solid var(--brd);border-radius:var(--r);
+display: flex; align-items: center; gap: 10px; padding: 8px 12px;
+background: var(--surface2); border: 1px solid var(--brd); border-radius: var(--r);
 }
-.file-ico { width:28px;height:28px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:var(--brd) }
-.file-name { flex:1;font-size:10.5px;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap }
-.file-size { font-size:8px;color:var(--ink3);flex-shrink:0 }
-.file-del { background:none;border:none;color:var(--ink4);cursor:pointer;padding:3px 6px;border-radius:3px;font-size:14px;line-height:1;transition:color .12s }
-.file-del:hover { color:#B91C1C }
-
-/* Grid layouts */
-.g2 { display:grid;grid-template-columns:1fr 1fr;gap:12px }
-.g3 { display:grid;grid-template-columns:repeat(3,1fr);gap:14px }
-.g-side { display:grid;grid-template-columns:1fr 300px;gap:22px;align-items:start }
-
-/* Idea card */
+.file-ico {
+width: 28px; height: 28px; border-radius: var(--r);
+display: flex; align-items: center; justify-content: center;
+font-size: 14px; flex-shrink: 0; background: var(--brd);
+}
+.file-name { flex: 1; font-size: 10.5px; color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-size { font-size: 8px; color: var(--ink3); flex-shrink: 0; }
+.file-status { font-size: 7px; color: var(--green); margin-left: 4px; }
+.file-status.pending { color: var(--orange); }
+.file-del {
+background: none; border: none; color: var(--ink4); cursor: pointer;
+padding: 3px 6px; border-radius: 3px; font-size: 14px; line-height: 1; transition: color .12s;
+}
+.file-del:hover { color: #B91C1C; }
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.g3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.g-side { display: grid; grid-template-columns: 1fr 320px; gap: 20px; align-items: start; }
 .idea-card {
-  background:var(--surface);border:1.5px solid var(--brd);
-  border-radius:var(--r2);padding:18px;cursor:pointer;
-  transition:all .15s;
-  box-shadow:var(--shadow);
+background: var(--surface); border: 1.5px solid var(--brd); border-radius: var(--r2);
+padding: 16px; cursor: pointer; transition: all .15s; box-shadow: var(--shadow);
 }
-.idea-card:hover {
-  border-color:var(--gold-brd);
-  box-shadow:var(--shadow2);
-  transform:translateY(-2px);
-}
-.ic-section {
-  font-size:7.5px;letter-spacing:2px;text-transform:uppercase;
-  margin-bottom:6px;font-weight:500;
-}
-.ic-title { font-family:var(--serif);font-size:16px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:4px }
-.ic-parent { font-size:8px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px }
-.ic-tagline { font-size:10.5px;color:var(--ink2);line-height:1.55;margin-bottom:12px;flex:1 }
-.ic-foot { display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:6px;margin-top:auto }
-.ic-tags { display:flex;flex-wrap:wrap;gap:3px;flex:1 }
-.ic-meta { text-align:right;flex-shrink:0 }
-.ic-pct { font-size:11px;font-weight:500 }
-.ic-upd { font-size:7.5px;color:var(--ink3);margin-top:2px }
-.ic-files { font-size:8px;color:var(--ink3);margin-top:7px;display:flex;align-items:center;gap:4px }
-
-/* Detail */
-.detail-eyebrow {
-  font-size:8.5px;letter-spacing:3px;text-transform:uppercase;
-  color:var(--ink3);margin-bottom:8px;
-}
-.detail-title {
-  font-family:var(--serif);font-size:44px;font-weight:700;
-  color:var(--ink);line-height:1;letter-spacing:-1px;
-  margin-bottom:14px;
-}
-.detail-badges { display:flex;flex-wrap:wrap;gap:7px;margin-bottom:14px }
+.idea-card:hover { border-color: var(--gold-brd); box-shadow: var(--shadow2); transform: translateY(-2px); }
+.ic-section { font-size: 7.5px; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; font-weight: 500; }
+.ic-title { font-family: var(--serif); font-size: 15px; font-weight: 600; color: var(--ink); line-height: 1.25; margin-bottom: 4px; }
+.ic-tagline { font-size: 10.5px; color: var(--ink2); line-height: 1.55; margin-bottom: 12px; flex: 1; }
+.ic-foot { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 6px; margin-top: auto; }
+.ic-tags { display: flex; flex-wrap: wrap; gap: 3px; flex: 1; }
+.ic-meta { text-align: right; flex-shrink: 0; }
+.ic-pct { font-size: 11px; font-weight: 500; }
+.ic-upd { font-size: 7.5px; color: var(--ink3); margin-top: 2px; }
+.ic-files { font-size: 8px; color: var(--ink3); margin-top: 7px; display: flex; align-items: center; gap: 4px; }
+.detail-title { font-family: var(--serif); font-size: 40px; font-weight: 700; color: var(--ink); line-height: 1; letter-spacing: -1px; margin-bottom: 14px; }
+.detail-badges { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
 .detail-tagline {
-  font-family:var(--serif);font-size:15px;font-weight:400;font-style:italic;
-  color:var(--ink2);line-height:1.6;
-  padding:16px 22px;
-  border-left:3px solid var(--gold);
-  background:var(--gold-bg);
-  border-radius:0 var(--r2) var(--r2) 0;
-  margin-bottom:26px;
+font-family: var(--serif); font-size: 15px; font-weight: 400; font-style: italic;
+color: var(--ink2); line-height: 1.6; padding: 16px 20px;
+border-left: 3px solid var(--gold); background: var(--gold-bg);
+border-radius: 0 var(--r2) var(--r2) 0; margin-bottom: 24px;
 }
-.detail-progress-row {
-  display:flex;align-items:center;gap:14px;margin-bottom:14px;
-}
-
-/* Markdown content */
-.md-content { font-size:13px;color:var(--ink2);line-height:1.8 }
-.md-content h2 { font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink);margin:28px 0 12px;letter-spacing:-.3px }
-.md-content h3 { font-size:12px;font-weight:500;color:var(--ink);letter-spacing:1.5px;text-transform:uppercase;margin:20px 0 8px;border-bottom:1px solid var(--brd);padding-bottom:6px }
-.md-content h4 { font-size:12px;font-weight:500;color:var(--ink2);margin:14px 0 6px }
-.md-content p { margin-bottom:12px }
-.md-content ul,.md-content ol { padding-left:22px;margin-bottom:12px }
-.md-content li { margin-bottom:5px }
+.md-content { font-size: 13px; color: var(--ink2); line-height: 1.8; max-width: 100%; overflow-wrap: break-word; }
+.md-content h2 { font-family: var(--serif); font-size: 22px; font-weight: 600; color: var(--ink); margin: 26px 0 12px; }
+.md-content h3 { font-size: 12px; font-weight: 500; color: var(--ink); letter-spacing: 1.5px; text-transform: uppercase; margin: 18px 0 8px; border-bottom: 1px solid var(--brd); padding-bottom: 6px; }
+.md-content p { margin-bottom: 12px; }
+.md-content ul, .md-content ol { padding-left: 22px; margin-bottom: 12px; }
+.md-content li { margin-bottom: 5px; }
 .md-content pre {
-  background:var(--sidebar);color:#C8D0E8;
-  border:1px solid var(--sidebar3);
-  border-radius:var(--r2);
-  padding:18px 20px;overflow-x:auto;
-  margin:14px 0;font-size:11.5px;line-height:1.65;
+background: var(--sidebar); color: #C8D0E8; border: 1px solid var(--sidebar3);
+border-radius: var(--r2); padding: 16px 18px; overflow-x: auto; margin: 14px 0;
+font-size: 11.5px; line-height: 1.65; max-width: 100%; white-space: pre-wrap; word-break: break-word;
 }
 .md-content code {
-  background:var(--surface2);border:1px solid var(--brd2);
-  border-radius:3px;padding:1px 5px;font-size:11.5px;color:var(--orange);
+background: var(--surface2); border: 1px solid var(--brd2); border-radius: 3px;
+padding: 1px 5px; font-size: 11.5px; color: var(--orange); word-break: break-word;
 }
-.md-content pre code { background:none;border:none;padding:0;font-size:11.5px;color:#C8D0E8 }
-.md-content table { width:100%;border-collapse:collapse;margin:14px 0;font-size:12px }
-.md-content th { background:var(--surface2);font-size:8.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink3);font-weight:500;padding:9px 12px;border-bottom:2px solid var(--brd2);text-align:left }
-.md-content td { padding:9px 12px;border-bottom:1px solid var(--brd);color:var(--ink2) }
+.md-content pre code { background: none; border: none; padding: 0; font-size: 11.5px; color: #C8D0E8; }
+.md-content table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 12px; display: block; overflow-x: auto; }
+.md-content th {
+background: var(--surface2); font-size: 8.5px; text-transform: uppercase;
+letter-spacing: 1.5px; color: var(--ink3); font-weight: 500;
+padding: 9px 12px; border-bottom: 2px solid var(--brd2); text-align: left;
+}
+.md-content td { padding: 9px 12px; border-bottom: 1px solid var(--brd); color: var(--ink2); }
 .md-content blockquote {
-  border-left:3px solid var(--gold);
-  padding:10px 18px;
-  background:var(--gold-bg);
-  border-radius:0 var(--r) var(--r) 0;
-  margin:12px 0;font-style:italic;color:var(--ink2);
+border-left: 3px solid var(--gold); padding: 10px 18px; background: var(--gold-bg);
+border-radius: 0 var(--r) var(--r) 0; margin: 12px 0; font-style: italic; color: var(--ink2);
 }
-.md-content strong { color:var(--ink);font-weight:600 }
-
-/* Connected ideas */
-.conn-item {
-  display:flex;align-items:center;gap:10px;
-  padding:10px 14px;
-  background:var(--surface);border:1.5px solid var(--brd);border-radius:var(--r);
-  margin-bottom:7px;cursor:pointer;transition:all .12s;
-}
-.conn-item:hover { border-color:var(--gold-brd);background:var(--gold-bg) }
-.conn-arrow { font-size:11px;color:var(--gold);flex-shrink:0 }
-.conn-name { font-size:11.5px;font-weight:500;color:var(--ink) }
-.conn-rel { font-size:8px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-top:1px }
-
-/* Back link */
 .back-link {
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:9px;color:var(--ink3);letter-spacing:2px;text-transform:uppercase;
-  cursor:pointer;margin-bottom:22px;transition:color .12s;
-  border:none;background:none;padding:0;
+display: inline-flex; align-items: center; gap: 6px; font-size: 9px;
+color: var(--ink3); letter-spacing: 2px; text-transform: uppercase;
+cursor: pointer; margin-bottom: 20px; transition: color .12s;
+border: none; background: none; padding: 0;
 }
-.back-link:hover { color:var(--gold) }
-
-/* Section path indicator */
-.section-path {
-  display:flex;align-items:center;gap:6px;
-  font-size:8px;color:var(--ink3);letter-spacing:1.5px;
-  text-transform:uppercase;margin-bottom:8px;
-}
-.section-path span { color:var(--ink3) }
-
-/* Empty state */
-.empty-state { text-align:center;padding:64px 24px }
-.empty-ico { font-size:40px;margin-bottom:16px;opacity:.25 }
-.empty-title { font-family:var(--serif);font-size:22px;color:var(--ink3);margin-bottom:8px }
-.empty-sub { font-size:11px;color:var(--ink3) }
-
-/* Mini row item */
+.back-link:hover { color: var(--gold); }
+.empty-state { text-align: center; padding: 56px 24px; }
+.empty-ico { font-size: 38px; margin-bottom: 14px; opacity: .25; }
+.empty-title { font-family: var(--serif); font-size: 20px; color: var(--ink3); margin-bottom: 8px; }
+.empty-sub { font-size: 11px; color: var(--ink3); }
 .mini-row {
-  display:flex;align-items:center;gap:10px;
-  padding:10px 14px;
-  background:var(--surface);border:1px solid var(--brd);border-radius:var(--r);
-  margin-bottom:7px;cursor:pointer;transition:all .12s;
+display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+background: var(--surface); border: 1px solid var(--brd); border-radius: var(--r);
+margin-bottom: 7px; cursor: pointer; transition: all .12s;
 }
-.mini-row:hover { border-color:var(--brd2);background:var(--surface2) }
-.mini-strip { width:3px;border-radius:1px;flex-shrink:0 }
-.mini-body { flex:1;min-width:0 }
-.mini-t { font-size:11px;font-weight:500;color:var(--ink);line-height:1.3 }
-.mini-s { font-size:8.5px;color:var(--ink3);margin-top:2px }
-
-/* Knowledge graph */
-#graph-canvas { width:100%;display:block;border-radius:var(--r2);cursor:grab;background:var(--sidebar) }
-#graph-canvas:active { cursor:grabbing }
-
-/* Solidarity box */
-.solidarity-box {
-  background:var(--gold-bg);
-  border:1.5px solid var(--gold-brd);
-  border-radius:var(--r2);
-  padding:16px 18px;
-  margin-top:0;
-}
-.solidarity-label { font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:8px }
-.solidarity-text { font-size:11.5px;color:var(--ink2);line-height:1.7 }
-
-/* Axiom block */
+.mini-row:hover { border-color: var(--brd2); background: var(--surface2); }
+.mini-body { flex: 1; min-width: 0; }
+.mini-t { font-size: 11px; font-weight: 500; color: var(--ink); line-height: 1.3; }
+.mini-s { font-size: 8.5px; color: var(--ink3); margin-top: 2px; }
+#graph-canvas { width: 100%; display: block; border-radius: var(--r2); cursor: grab; background: var(--sidebar); max-width: 100%; }
 .axiom {
-  background:var(--sidebar);
-  border-radius:var(--r2);
-  padding:24px 28px;
-  position:relative;overflow:hidden;
-  margin-top:24px;
+background: var(--sidebar); border-radius: var(--r2); padding: 22px 26px;
+position: relative; overflow: hidden; margin-top: 22px; max-width: 100%;
 }
-.axiom::before {
-  content:'1149';position:absolute;right:-8px;top:-16px;
-  font-family:var(--serif);font-size:120px;font-weight:700;
-  color:rgba(255,255,255,.04);line-height:1;pointer-events:none;letter-spacing:-3px;
+.axiom-text { font-family: var(--serif); font-size: 13px; font-style: italic; color: rgba(255,255,255,.45); line-height: 1.85; max-width: 640px; }
+.sb-head { padding: 20px 18px 16px; border-bottom: 1px solid rgba(255,255,255,.06); flex-shrink: 0; }
+.sb-title { font-family: var(--serif); font-size: 11px; font-weight: 300; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,.35); margin-bottom: 6px; }
+.sb-num { font-family: var(--serif); font-size: 44px; color: var(--gold2); font-weight: 700; line-height: .95; letter-spacing: -1px; }
+.sb-sub { font-size: 9px; color: rgba(255,255,255,.25); letter-spacing: 2px; text-transform: uppercase; margin-top: 5px; }
+.sb-nav { flex: 1; overflow-y: auto; padding: 8px 0; }
+.nav-sec { font-size: 8px; color: rgba(255,255,255,.18); letter-spacing: 2.5px; text-transform: uppercase; padding: 12px 18px 4px; }
+.nav-item {
+display: flex; align-items: center; gap: 9px; padding: 7px 18px;
+cursor: pointer; font-size: 9.5px; color: rgba(255,255,255,.35);
+letter-spacing: .5px; border-left: 2px solid transparent; transition: all .12s; user-select: none;
 }
-.axiom-label { font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--gold2);font-weight:500;margin-bottom:10px }
-.axiom-text { font-family:var(--serif);font-size:13px;font-style:italic;color:rgba(255,255,255,.45);line-height:1.85;position:relative;z-index:1;max-width:640px }
-
-/* Layer badge */
-.layer-badge {
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:7.5px;letter-spacing:2px;text-transform:uppercase;
-  padding:4px 10px;border-radius:3px;font-weight:500;
+.nav-item:hover { color: rgba(255,255,255,.65); background: rgba(255,255,255,.04); }
+.nav-item.active { color: #fff; border-left-color: var(--gold2); background: rgba(255,255,255,.06); }
+.nav-num { font-size: 8px; color: rgba(255,255,255,.2); width: 16px; text-align: right; flex-shrink: 0; }
+.nav-badge { margin-left: auto; font-size: 8px; color: var(--gold2); background: rgba(212,137,30,.15); padding: 1px 6px; border-radius: 10px; }
+.nav-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+.sb-bottom { border-top: 1px solid rgba(255,255,255,.06); padding: 12px 16px; display: flex; flex-direction: column; gap: 7px; flex-shrink: 0; }
+.sb-btn {
+display: flex; align-items: center; justify-content: center; gap: 6px;
+padding: 8px 12px; border-radius: var(--r2); font-size: 9px;
+letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer;
+border: 1px solid; transition: all .14s; font-family: var(--mono); font-weight: 500;
 }
-
-/* Toast */
-#toast { position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none }
+.sb-btn-gold { background: var(--gold); border-color: var(--gold); color: #fff; }
+.sb-btn-gold:hover { background: var(--gold2); border-color: var(--gold2); }
+.sb-btn-ghost { background: transparent; border-color: rgba(255,255,255,.12); color: rgba(255,255,255,.4); }
+.sb-btn-ghost:hover { border-color: rgba(255,255,255,.25); color: rgba(255,255,255,.7); }
+.sb-foot {
+padding: 10px 18px; border-top: 1px solid rgba(255,255,255,.04);
+font-size: 8px; color: rgba(255,255,255,.18); letter-spacing: 1.5px;
+text-transform: uppercase; display: flex; align-items: center; gap: 7px; flex-shrink: 0;
+}
+.live-dot { width: 5px; height: 5px; border-radius: 50%; background: #4ADE80; box-shadow: 0 0 6px #4ADE80; animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
+#toast {
+position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+}
 .toast {
-  background:var(--sidebar);border:1px solid rgba(255,255,255,.12);
-  border-radius:var(--r2);padding:12px 18px;font-size:11.5px;color:#fff;
-  max-width:280px;animation:slideIn .2s ease;pointer-events:auto;
-  display:flex;align-items:center;gap:8px;box-shadow:var(--shadow2);
+background: var(--sidebar); border: 1px solid rgba(255,255,255,.12);
+border-radius: var(--r2); padding: 12px 18px; font-size: 11.5px;
+color: #fff; max-width: 320px; animation: slideIn .2s ease;
+pointer-events: auto; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow2);
 }
-.toast.success { border-color:rgba(74,222,128,.3) }
-.toast.error { border-color:rgba(248,113,113,.3);color:#FCA5A5 }
-@keyframes slideIn { from{transform:translateX(12px);opacity:0}to{transform:none;opacity:1} }
-
-/* Modal */
-#modal-overlay { position:fixed;inset:0;background:rgba(20,22,38,.6);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px) }
-#modal-overlay.open { display:flex }
-.modal { background:var(--surface);border:1.5px solid var(--brd);border-radius:var(--r3);padding:30px;max-width:480px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow2) }
-.modal-title { font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);margin-bottom:14px }
-.modal-body { font-size:12px;color:var(--ink2);line-height:1.7 }
-.modal-actions { display:flex;gap:9px;justify-content:flex-end;margin-top:22px;flex-wrap:wrap }
-
-/* Divider */
-.divider { height:1px;background:var(--brd);margin:22px 0 }
-
-/* Responsive */
-@media(max-width:960px){
-  .g3{grid-template-columns:repeat(2,1fr)}
-  .s4{grid-template-columns:repeat(2,1fr)}
-  .g-side{grid-template-columns:1fr}
-  .form-row,.form-row3{grid-template-columns:1fr}
+.toast.success { border-color: rgba(74,222,128,.3); }
+.toast.error { border-color: rgba(248,113,113,.3); color: #FCA5A5; }
+@keyframes slideIn { from { transform: translateX(12px); opacity: 0; } to { transform: none; opacity: 1; } }
+#modal-overlay {
+position: fixed; inset: 0; background: rgba(20,22,38,.6);
+z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px);
 }
-@media(max-width:680px){
-  #sidebar{width:52px;min-width:52px}
-  .sb-head,.sb-bottom,.sb-foot,.nav-sec,.nav-badge,.nav-num{display:none}
-  .nav-item{justify-content:center;padding:13px;border-left:none;border-bottom:2px solid transparent}
-  .nav-item.active{border-bottom-color:var(--gold2);background:rgba(255,255,255,.04)}
-  .nav-dot{display:none}
-  .page{padding:20px 16px}
-  .g2{grid-template-columns:1fr}
+#modal-overlay.open { display: flex; }
+.modal {
+background: var(--surface); border: 1.5px solid var(--brd); border-radius: var(--r3);
+padding: 28px; max-width: 500px; width: 92%; max-height: 85vh; overflow-y: auto; box-shadow: var(--shadow2);
+}
+.modal-title { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--ink); margin-bottom: 14px; }
+.modal-body { font-size: 12px; color: var(--ink2); line-height: 1.7; }
+.modal-actions { display: flex; gap: 9px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap; }
+.divider { height: 1px; background: var(--brd); margin: 20px 0; }
+@media (max-width: 1100px) {
+.g-side { grid-template-columns: 1fr; }
+#sidebar { width: 60px; min-width: 60px; }
+.sb-head, .sb-bottom, .sb-foot, .nav-sec, .nav-badge, .nav-num, .sb-title, .sb-sub { display: none; }
+.nav-item { justify-content: center; padding: 12px; border-left: none; border-bottom: 2px solid transparent; }
+.nav-item.active { border-bottom-color: var(--gold2); background: rgba(255,255,255,.04); }
+.nav-dot, .nav-item span:not(.nav-dot) { display: none; }
+}
+@media (max-width: 768px) {
+.g3 { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.stats-row { grid-template-columns: repeat(2, 1fr); }
+.form-row, .form-row3 { grid-template-columns: 1fr; }
+.pg-title { font-size: 28px; }
+.detail-title { font-size: 32px; }
+#content { padding: 18px 16px; }
+}
+@media (max-width: 480px) {
+.stats-row { grid-template-columns: 1fr; }
+.g3 { grid-template-columns: 1fr; }
+.filter-bar { flex-direction: column; align-items: stretch; }
+.f-sep { display: none; }
+.pg-head { flex-direction: column; align-items: flex-start; gap: 12px; }
 }
 </style>
 </head>
 <body>
-
 <div id="app">
-
-<!-- ═══════════ SIDEBAR ═══════════ -->
 <div id="sidebar">
-  <div class="sb-head">
-    <div class="sb-title">Reality Refactor Lab</div>
-    <div class="sb-num">1149</div>
-    <div class="sb-sub">Idea Repository · alexsheff</div>
-  </div>
-
-  <div class="sb-nav">
-    <div class="nav-sec">Navigation</div>
-    <div class="nav-item active" data-page="dashboard">
-      <div class="nav-dot" style="background:#94A3B8"></div>
-      Overview
-      <span class="nav-num"></span>
-    </div>
-    <div class="nav-item" data-page="ideas">
-      <div class="nav-dot" style="background:#94A3B8"></div>
-      All Ideas
-      <span class="nav-badge" id="nb-ideas">0</span>
-    </div>
-
-    <div class="nav-sec" style="margin-top:10px">Architecture</div>
-    <div class="nav-item" data-page="layer-01">
-      <div class="nav-dot" style="background:#7C3AED"></div>
-      01 Ethical OS
-      <span class="nav-num" id="nb-01"></span>
-    </div>
-    <div class="nav-item" data-page="layer-02">
-      <div class="nav-dot" style="background:#1D6FC0"></div>
-      02 Social Protocol
-      <span class="nav-num" id="nb-02"></span>
-    </div>
-    <div class="nav-item" data-page="layer-03">
-      <div class="nav-dot" style="background:#059669"></div>
-      03 Meta Ecosystems
-      <span class="nav-num" id="nb-03"></span>
-    </div>
-    <div class="nav-item" data-page="layer-04">
-      <div class="nav-dot" style="background:#2563EB"></div>
-      04 Technical Nodes
-      <span class="nav-num" id="nb-04"></span>
-    </div>
-    <div class="nav-item" data-page="layer-05">
-      <div class="nav-dot" style="background:#D97706"></div>
-      05 Reality Hardware
-      <span class="nav-num" id="nb-05"></span>
-    </div>
-    <div class="nav-item" data-page="layer-06">
-      <div class="nav-dot" style="background:#DB2777"></div>
-      06 Social Impact
-      <span class="nav-num" id="nb-06"></span>
-    </div>
-    <div class="nav-item" data-page="layer-07">
-      <div class="nav-dot" style="background:#4F46E5"></div>
-      07 Research Lab
-      <span class="nav-num" id="nb-07"></span>
-    </div>
-    <div class="nav-item" data-page="layer-08">
-      <div class="nav-dot" style="background:#6B7280"></div>
-      08 Archive
-      <span class="nav-num" id="nb-08"></span>
-    </div>
-
-    <div class="nav-sec" style="margin-top:10px">Tools</div>
-    <div class="nav-item" data-page="graph">
-      <div class="nav-dot" style="background:#94A3B8"></div>
-      Knowledge Graph
-    </div>
-    <div class="nav-item" data-page="settings">
-      <div class="nav-dot" style="background:#94A3B8"></div>
-      Settings
-    </div>
-  </div>
-
-  <div class="sb-bottom">
-    <button class="sb-btn sb-btn-gold" onclick="nav('new')">＋ New Idea</button>
-    <button class="sb-btn sb-btn-ghost" onclick="triggerImport()">↑ Import JSON</button>
-  </div>
-  <div class="sb-foot" style="flex-direction:column;align-items:flex-start;gap:5px;padding:10px 18px">
-    <div style="display:flex;align-items:center;gap:7px">
-      <div class="live-dot"></div>
-      <span id="sb-date" style="font-size:8px;color:rgba(255,255,255,.18);letter-spacing:1.5px;text-transform:uppercase">–</span>
-    </div>
-    <div style="display:flex;align-items:center;gap:6px">
-      <span style="font-size:7px;color:rgba(255,255,255,.15);letter-spacing:2px;text-transform:uppercase">GH</span>
-      <span id="sync-lbl" style="font-size:8.5px;color:var(--ink3)">—</span>
-      <button onclick="triggerSync()" style="background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;font-size:12px;padding:0;line-height:1;transition:color .12s" onmouseover="this.style.color='rgba(255,255,255,.5)'" onmouseout="this.style.color='rgba(255,255,255,.2)'" title="Pull from GitHub">↻</button>
-    </div>
-  </div>
+<div class="sb-head">
+<div class="sb-title">Reality Refactor Lab</div>
+<div class="sb-num">1149</div>
+<div class="sb-sub">Idea Repository · AlexSheff</div>
 </div>
-
-<!-- ═══════════ PAGES ═══════════ -->
+<div class="sb-nav">
+<div class="nav-sec">Navigation</div>
+<div class="nav-item active" data-page="dashboard"><div class="nav-dot" style="background:#94A3B8"></div>Overview</div>
+<div class="nav-item" data-page="ideas"><div class="nav-dot" style="background:#94A3B8"></div>All Ideas<span class="nav-badge" id="nb-ideas">0</span></div>
+<div class="nav-sec" style="margin-top:10px">Architecture</div>
+<div class="nav-item" data-page="layer-01"><div class="nav-dot" style="background:#7C3AED"></div>01 Ethical OS<span class="nav-num" id="nb-01"></span></div>
+<div class="nav-item" data-page="layer-02"><div class="nav-dot" style="background:#1D6FC0"></div>02 Social Protocol<span class="nav-num" id="nb-02"></span></div>
+<div class="nav-item" data-page="layer-03"><div class="nav-dot" style="background:#059669"></div>03 Meta Ecosystems<span class="nav-num" id="nb-03"></span></div>
+<div class="nav-item" data-page="layer-04"><div class="nav-dot" style="background:#2563EB"></div>04 Technical Nodes<span class="nav-num" id="nb-04"></span></div>
+<div class="nav-item" data-page="layer-05"><div class="nav-dot" style="background:#D97706"></div>05 Reality Hardware<span class="nav-num" id="nb-05"></span></div>
+<div class="nav-item" data-page="layer-06"><div class="nav-dot" style="background:#DB2777"></div>06 Social Impact<span class="nav-num" id="nb-06"></span></div>
+<div class="nav-item" data-page="layer-07"><div class="nav-dot" style="background:#4F46E5"></div>07 Research Lab<span class="nav-num" id="nb-07"></span></div>
+<div class="nav-item" data-page="layer-08"><div class="nav-dot" style="background:#6B7280"></div>08 Archive<span class="nav-num" id="nb-08"></span></div>
+<div class="nav-sec" style="margin-top:10px">Tools</div>
+<div class="nav-item" data-page="graph"><div class="nav-dot" style="background:#94A3B8"></div>Knowledge Graph</div>
+<div class="nav-item" data-page="settings"><div class="nav-dot" style="background:#94A3B8"></div>Settings</div>
+</div>
+<div class="sb-bottom">
+<button class="sb-btn sb-btn-gold" onclick="nav('new')">+ New Idea</button>
+<button class="sb-btn sb-btn-ghost" onclick="triggerImport()">Import JSON</button>
+</div>
+<div class="sb-foot" style="flex-direction:column;align-items:flex-start;gap:5px;padding:10px 18px">
+<div style="display:flex;align-items:center;gap:7px"><div class="live-dot"></div><span id="sb-date" style="font-size:8px;color:rgba(255,255,255,.18);letter-spacing:1.5px;text-transform:uppercase">–</span></div>
+<div style="display:flex;align-items:center;gap:6px">
+<span style="font-size:7px;color:rgba(255,255,255,.15);letter-spacing:2px;text-transform:uppercase">GH</span>
+<span id="sync-lbl" style="font-size:8.5px;color:var(--ink3)">—</span>
+<button onclick="triggerSync()" style="background:none;border:none;color:rgba(255,255,255,.2);cursor:pointer;font-size:12px;padding:0;line-height:1;transition:color .12s" onmouseover="this.style.color='rgba(255,255,255,.5)'" onmouseout="this.style.color='rgba(255,255,255,.2)'" title="Pull from GitHub">↻</button>
+</div>
+</div>
+</div>
 <div id="content">
-
-<!-- ── DASHBOARD ── -->
 <div id="page-dashboard" class="page active">
-  <div class="pg-head">
-    <div class="pg-title-block">
-      <div class="pg-eyebrow">Reality Refactor Lab</div>
-      <div class="pg-title">Overview</div>
-      <div class="pg-sub">From Ethical OS → Physical Reality. 8 layers. One thread.</div>
-    </div>
-    <div style="text-align:right;font-size:9px;color:var(--ink3);line-height:1.9" id="dash-date-head"></div>
-  </div>
-
-  <div class="stats-row s4" id="dash-stats"></div>
-
-  <div class="g-side">
-    <div>
-      <div class="sh">Architecture Layers</div>
-      <div id="dash-layers"></div>
-    </div>
-    <div>
-      <div class="sh">Recent Activity</div>
-      <div id="dash-recent"></div>
-      <button class="btn btn-ghost btn-sm" onclick="nav('ideas')" style="margin-top:10px;width:100%">View All Ideas →</button>
-    </div>
-  </div>
-
-  <div class="axiom">
-    <div class="axiom-label">License Agreement · CODE 1149</div>
-    <div class="axiom-text">
-      "Who am I in the context of the universe?" —<br>
-      This repository is structured Why → Environment → Tools → Physical World.<br>
-      Every collaborator accepts the Ethical OS first, then proceeds to assembly.<br>
-      Solidarity is structural, not rhetorical. Ideas do not expire. They wait.
-    </div>
-  </div>
+<div class="pg-head">
+<div class="pg-title-block">
+<div class="pg-eyebrow">Reality Refactor Lab</div>
+<div class="pg-title">Overview</div>
+<div class="pg-sub">From Ethical OS → Physical Reality. 8 layers. One thread.</div>
 </div>
-
-<!-- ── ALL IDEAS ── -->
+<div style="text-align:right;font-size:9px;color:var(--ink3);line-height:1.9" id="dash-date-head"></div>
+</div>
+<div class="stats-row s4" id="dash-stats"></div>
+<div class="g-side">
+<div><div class="sh">Architecture Layers</div><div id="dash-layers"></div></div>
+<div><div class="sh">Recent Activity</div><div id="dash-recent"></div><button class="btn btn-ghost btn-sm" onclick="nav('ideas')" style="margin-top:10px;width:100%">View All Ideas →</button></div>
+</div>
+<div class="axiom">
+<div class="axiom-label">License Agreement · CODE 1149</div>
+<div class="axiom-text">"Who am I in the context of the universe?" —<br>This repository is structured Why → Environment → Tools → Physical World.<br>Every collaborator accepts the Ethical OS first, then proceeds to assembly.<br>Solidarity is structural, not rhetorical. Ideas do not expire. They wait.</div>
+</div>
+</div>
 <div id="page-ideas" class="page">
-  <div class="pg-head">
-    <div class="pg-title-block">
-      <div class="pg-eyebrow">Repository</div>
-      <div class="pg-title">All Ideas</div>
-      <div class="pg-sub" id="ideas-sub">Loading…</div>
-    </div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-ghost btn-sm" onclick="triggerExport()">↓ Export</button>
-      <button class="btn btn-primary btn-sm" onclick="nav('new')">＋ New Idea</button>
-    </div>
-  </div>
-  <div class="search-wrap">
-    <span class="s-ico">⌕</span>
-    <input type="text" class="form-input" id="ideas-search" placeholder="Search titles, descriptions, tags…" oninput="renderIdeas()">
-    <button class="s-clear" id="search-clear" onclick="clearSearch()">✕</button>
-  </div>
-  <div class="filter-bar" id="ideas-filters"></div>
-  <div class="g3" id="ideas-grid"></div>
+<div class="pg-head">
+<div class="pg-title-block">
+<div class="pg-eyebrow">Repository</div>
+<div class="pg-title">All Ideas</div>
+<div class="pg-sub" id="ideas-sub">Loading…</div>
 </div>
-
-<!-- ── LAYER PAGES (01–08) ── -->
-<div id="page-layer-01" class="page"></div>
-<div id="page-layer-02" class="page"></div>
-<div id="page-layer-03" class="page"></div>
-<div id="page-layer-04" class="page"></div>
-<div id="page-layer-05" class="page"></div>
-<div id="page-layer-06" class="page"></div>
-<div id="page-layer-07" class="page"></div>
-<div id="page-layer-08" class="page"></div>
-
-<!-- ── IDEA DETAIL ── -->
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-ghost btn-sm" onclick="triggerExport()">↓ Export</button>
+<button class="btn btn-primary btn-sm" onclick="nav('new')">+ New Idea</button>
+</div>
+</div>
+<div class="search-wrap">
+<span class="s-ico">⌕</span>
+<input type="text" class="form-input" id="ideas-search" placeholder="Search titles, descriptions, tags…" oninput="renderIdeas()">
+<button class="s-clear" id="search-clear" onclick="clearSearch()">✕</button>
+</div>
+<div class="filter-bar" id="ideas-filters"></div>
+<div class="g3" id="ideas-grid"></div>
+</div>
+<div id="page-layer-01" class="page"></div><div id="page-layer-02" class="page"></div><div id="page-layer-03" class="page"></div><div id="page-layer-04" class="page"></div>
+<div id="page-layer-05" class="page"></div><div id="page-layer-06" class="page"></div><div id="page-layer-07" class="page"></div><div id="page-layer-08" class="page"></div>
 <div id="page-idea" class="page">
-  <button class="back-link" id="detail-back" onclick="history.back()">← Back</button>
-  <div id="idea-detail"></div>
+<button class="back-link" id="detail-back" onclick="history.back()">← Back</button>
+<div id="idea-detail"></div>
 </div>
-
-<!-- ── NEW / EDIT ── -->
 <div id="page-new" class="page">
-  <div class="pg-head">
-    <div class="pg-title-block">
-      <div class="pg-eyebrow" id="form-eyebrow">New Entry</div>
-      <div class="pg-title" id="form-title">New Idea</div>
-    </div>
-  </div>
-  <form id="idea-form" onsubmit="submitIdea(event)">
-    <div class="g-side" style="align-items:start">
-      <div>
-        <div class="form-group">
-          <label class="form-label">Title <span class="form-req">*</span></label>
-          <input type="text" class="form-input" id="f-title" placeholder="Name of this idea" required>
-        </div>
-        <div class="form-group">
-          <label class="form-label">One-line Tagline <span class="form-req">*</span></label>
-          <input type="text" class="form-input" id="f-tagline" placeholder="One precise sentence — the essence of this idea" required>
-        </div>
-        <div class="form-row3">
-          <div class="form-group">
-            <label class="form-label">Layer <span class="form-req">*</span></label>
-            <select class="form-input form-select" id="f-layer" required>
-              <option value="">Select layer…</option>
-              <option value="01_Ethical_OS">01 · Ethical OS</option>
-              <option value="02_Social_Protocol">02 · Social Protocol</option>
-              <option value="03_Meta_Ecosystems">03 · Meta Ecosystems</option>
-              <option value="04_Technical_Nodes">04 · Technical Nodes</option>
-              <option value="05_Reality_Hardware">05 · Reality Hardware</option>
-              <option value="06_Social_Impact">06 · Social Impact</option>
-              <option value="07_Research_Lab">07 · Research Lab</option>
-              <option value="08_Archive">08 · Archive</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Status</label>
-            <select class="form-input form-select" id="f-status">
-              <option value="concept">Concept</option>
-              <option value="research">Research</option>
-              <option value="active">Active</option>
-              <option value="paused">Paused</option>
-              <option value="archived">Archived</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Priority</label>
-            <select class="form-input form-select" id="f-priority">
-              <option value="medium">Medium</option>
-              <option value="critical">Critical</option>
-              <option value="high">High</option>
-              <option value="low">Low</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Document Type</label>
-            <input type="text" class="form-input" id="f-doctype" placeholder="e.g. Manifesto, Protocol, White Paper…">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Progress %</label>
-            <input type="number" class="form-input" id="f-progress" placeholder="0–100" min="0" max="100" value="0">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Tags <span class="form-hint" style="display:inline;text-transform:none;letter-spacing:0;font-size:9px">(comma separated)</span></label>
-          <input type="text" class="form-input" id="f-tags" placeholder="ethics, solidarity, AI, blockchain, …">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Related Idea IDs</label>
-          <input type="text" class="form-input" id="f-related" placeholder="Comma-separated IDs">
-          <div class="form-hint">Link to other ideas in the knowledge graph.</div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">White Paper / Core Content</label>
-          <textarea class="form-input form-textarea" id="f-whitepaper" rows="12" placeholder="Philosophy, vision, mechanism, arguments… Markdown supported."></textarea>
-          <div class="form-hint">Markdown: ## headings, **bold**, `code`, tables, > blockquotes</div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Technical Specification</label>
-          <textarea class="form-input form-textarea" id="f-techspec" rows="8" placeholder="Architecture, stack, algorithms, data models, code…"></textarea>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Solidarity / Ethics Mechanism</label>
-          <textarea class="form-input form-textarea" id="f-solidarity" rows="3" placeholder="Where does solidarity happen structurally? Describe the mechanism, not the intention."></textarea>
-          <div class="form-hint">If the answer is "we hope people will be generous" — the design is incomplete.</div>
-        </div>
-        <div style="display:flex;gap:9px;margin-top:6px;flex-wrap:wrap;align-items:center">
-          <button type="submit" class="btn btn-primary">Save Idea</button>
-          <button type="button" class="btn btn-ghost" onclick="navBack()">Cancel</button>
-          <button type="button" class="btn btn-danger btn-sm" id="delete-btn" onclick="confirmDelete()" style="display:none;margin-left:auto">Delete Idea</button>
-        </div>
-      </div>
-
-      <div>
-        <div class="sh">Attachments</div>
-        <div class="file-drop" id="file-drop"
-          onclick="document.getElementById('file-input').click()"
-          ondragover="handleDragOver(event)"
-          ondragleave="handleDragLeave()"
-          ondrop="handleDrop(event)">
-          <div class="file-drop-ico">⬆</div>
-          <div class="file-drop-txt">Click or drag & drop files here</div>
-          <div class="file-drop-sub">PDF, images, docs, any type · Max 2MB each</div>
-        </div>
-        <input type="file" id="file-input" multiple onchange="handleFileSelect(event)">
-        <div class="file-list" id="file-list"></div>
-        <div class="form-hint" style="margin-top:8px" id="storage-hint"></div>
-
-        <div class="divider"></div>
-        <div class="sh">Metadata</div>
-        <div class="form-group">
-          <label class="form-label">1149 Connection</label>
-          <select class="form-input form-select" id="f-1149">
-            <option value="false">Not connected to 1149 thread</option>
-            <option value="true">Connected — part of the 1149 mythological thread</option>
-          </select>
-        </div>
-      </div>
-    </div>
-  </form>
+<div class="pg-head">
+<div class="pg-title-block">
+<div class="pg-eyebrow" id="form-eyebrow">New Entry</div>
+<div class="pg-title" id="form-title">New Idea</div>
 </div>
-
-<!-- ── GRAPH ── -->
+</div>
+<form id="idea-form" onsubmit="submitIdea(event)">
+<div class="g-side" style="align-items:start">
+<div>
+<div class="form-group"><label class="form-label">Title <span class="form-req">*</span></label><input type="text" class="form-input" id="f-title" placeholder="Name of this idea" required></div>
+<div class="form-group"><label class="form-label">One-line Tagline <span class="form-req">*</span></label><input type="text" class="form-input" id="f-tagline" placeholder="One precise sentence — the essence of this idea" required></div>
+<div class="form-row3">
+<div class="form-group"><label class="form-label">Layer <span class="form-req">*</span></label><select class="form-input form-select" id="f-layer" required><option value="">Select layer…</option><option value="01_Ethical_OS">01 · Ethical OS</option><option value="02_Social_Protocol">02 · Social Protocol</option><option value="03_Meta_Ecosystems">03 · Meta Ecosystems</option><option value="04_Technical_Nodes">04 · Technical Nodes</option><option value="05_Reality_Hardware">05 · Reality Hardware</option><option value="06_Social_Impact">06 · Social Impact</option><option value="07_Research_Lab">07 · Research Lab</option><option value="08_Archive">08 · Archive</option></select></div>
+<div class="form-group"><label class="form-label">Status</label><select class="form-input form-select" id="f-status"><option value="concept">Concept</option><option value="research">Research</option><option value="active">Active</option><option value="paused">Paused</option><option value="archived">Archived</option></select></div>
+<div class="form-group"><label class="form-label">Priority</label><select class="form-input form-select" id="f-priority"><option value="medium">Medium</option><option value="critical">Critical</option><option value="high">High</option><option value="low">Low</option></select></div>
+</div>
+<div class="form-row">
+<div class="form-group"><label class="form-label">Document Type</label><input type="text" class="form-input" id="f-doctype" placeholder="e.g. Manifesto, Protocol, White Paper…"></div>
+<div class="form-group"><label class="form-label">Progress %</label><input type="number" class="form-input" id="f-progress" placeholder="0–100" min="0" max="100" value="0"></div>
+</div>
+<div class="form-group"><label class="form-label">Tags <span class="form-hint" style="display:inline;text-transform:none;letter-spacing:0;font-size:9px">(comma separated)</span></label><input type="text" class="form-input" id="f-tags" placeholder="ethics, solidarity, AI, blockchain, …"></div>
+<div class="form-group"><label class="form-label">Related Idea IDs</label><input type="text" class="form-input" id="f-related" placeholder="Comma-separated IDs"><div class="form-hint">Link to other ideas in the knowledge graph.</div></div>
+<div class="form-group"><label class="form-label">White Paper / Core Content</label><textarea class="form-input form-textarea" id="f-whitepaper" rows="12" placeholder="Philosophy, vision, mechanism, arguments… Markdown supported."></textarea><div class="form-hint">Markdown: ## headings, **bold**, `code`, tables, > blockquotes</div></div>
+<div class="form-group"><label class="form-label">Technical Specification</label><textarea class="form-input form-textarea" id="f-techspec" rows="8" placeholder="Architecture, stack, algorithms, data models, code…"></textarea></div>
+<div class="form-group"><label class="form-label">Solidarity / Ethics Mechanism</label><textarea class="form-input form-textarea" id="f-solidarity" rows="3" placeholder="Where does solidarity happen structurally? Describe the mechanism, not the intention."></textarea><div class="form-hint">If the answer is "we hope people will be generous" — the design is incomplete.</div></div>
+<div style="display:flex;gap:9px;margin-top:6px;flex-wrap:wrap;align-items:center">
+<button type="submit" class="btn btn-primary" id="save-btn">Save Idea</button>
+<button type="button" class="btn btn-ghost" onclick="navBack()">Cancel</button>
+<button type="button" class="btn btn-danger btn-sm" id="delete-btn" onclick="confirmDelete()" style="display:none;margin-left:auto">Delete Idea</button>
+</div>
+</div>
+<div>
+<div class="sh">Attachments</div>
+<div class="file-drop" id="file-drop" onclick="document.getElementById('file-input').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave()" ondrop="handleDrop(event)">
+<div class="file-drop-ico">⬆</div><div class="file-drop-txt">Click or drag & drop files here</div><div class="file-drop-sub">PDF, images, docs, any type · Max 2MB each</div>
+</div>
+<input type="file" id="file-input" multiple onchange="handleFileSelect(event)">
+<div class="file-list" id="file-list"></div>
+<div class="form-hint" style="margin-top:8px" id="storage-hint"></div>
+<div class="divider"></div>
+<div class="sh">Metadata</div>
+<div class="form-group"><label class="form-label">1149 Connection</label><select class="form-input form-select" id="f-1149"><option value="false">Not connected to 1149 thread</option><option value="true">Connected — part of the 1149 mythological thread</option></select></div>
+</div>
+</div>
+</form>
+</div>
 <div id="page-graph" class="page">
-  <div class="pg-head">
-    <div class="pg-title-block">
-      <div class="pg-eyebrow">Visualization</div>
-      <div class="pg-title">Knowledge Graph</div>
-      <div class="pg-sub">Drag to reposition · Click node to open idea</div>
-    </div>
-  </div>
-  <div class="card" style="padding:0;overflow:hidden;margin-bottom:16px">
-    <canvas id="graph-canvas" height="540"></canvas>
-  </div>
-  <div style="display:flex;gap:16px;flex-wrap:wrap" id="graph-legend"></div>
+<div class="pg-head">
+<div class="pg-title-block">
+<div class="pg-eyebrow">Visualization</div>
+<div class="pg-title">Knowledge Graph</div>
+<div class="pg-sub">Drag to reposition · Click node to open idea</div>
 </div>
-
-<!-- ── SETTINGS ── -->
+</div>
+<div class="card" style="padding:0;overflow:hidden;margin-bottom:16px"><canvas id="graph-canvas" height="540"></canvas></div>
+<div style="display:flex;gap:16px;flex-wrap:wrap" id="graph-legend"></div>
+</div>
 <div id="page-settings" class="page">
-  <div class="pg-head">
-    <div class="pg-title-block">
-      <div class="pg-eyebrow">Configuration</div>
-      <div class="pg-title">Settings</div>
-    </div>
-  </div>
-
-  <div class="card" style="padding:22px;margin-bottom:20px;border-left:3px solid var(--gold);border-radius:0 var(--r2) var(--r2) 0">
-    <div class="sh">GitHub Sync</div>
-    <p style="font-size:11px;color:var(--ink2);line-height:1.7;margin-bottom:16px">Every saved idea is committed to <strong style="color:var(--ink)">github.com/AlexSheff/1149</strong> as <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd2);border-radius:3px;padding:1px 5px">data/ideas.json</code>. Ideas are version-controlled and accessible from any device.</p>
-    <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
-      <div style="flex:1;min-width:240px">
-        <label class="form-label">Personal Access Token</label>
-        <input type="password" class="form-input" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false">
-      </div>
-      <button class="btn btn-primary" onclick="saveToken()">Save token</button>
-      <button class="btn btn-ghost" onclick="testConnection()">Test</button>
-    </div>
-    <div id="gh-status" style="font-size:11px;color:var(--ink3);line-height:1.65;min-height:18px"></div>
-    <details style="margin-top:14px">
-      <summary style="font-size:10.5px;color:var(--ink3);cursor:pointer;user-select:none">How to create a token ▾</summary>
-      <div style="margin-top:10px;padding:12px 16px;background:var(--surface2);border:1px solid var(--brd);border-radius:var(--r2);font-size:10.5px;color:var(--ink3);line-height:2">
-        1. Go to <strong style="color:var(--ink)">github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong><br>
-        2. <strong style="color:var(--ink)">Generate new token (classic)</strong> · Note: <em>1149 ideas</em> · Expiration: <strong style="color:var(--ink)">No expiration</strong><br>
-        3. Scopes: check only <strong style="color:var(--ink)">repo</strong><br>
-        4. Copy the <code style="background:var(--surface);border:1px solid var(--brd2);border-radius:3px;padding:1px 5px">ghp_…</code> value here and click Save.<br>
-        <span style="color:var(--ink4);font-size:10px">Token is stored in your browser's localStorage only — never transmitted except to api.github.com.</span>
-      </div>
-    </details>
-  </div>
-
-  <div class="g2" style="margin-bottom:20px">
-    <div class="card" style="padding:20px">
-      <div class="sh">Data</div>
-      <div id="storage-stats" style="font-size:11px;color:var(--ink2);line-height:2.2;margin-bottom:14px"></div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-primary btn-sm" onclick="triggerSync()">↻ Pull ideas.json</button>
-        <button class="btn btn-primary btn-sm" onclick="fullRepoSync()" title="Read all WHITE_PAPER.md files from repo folders">⊞ Scan Repo Folders</button>
-        <button class="btn btn-ghost btn-sm" onclick="pushNow()">↑ Push to GitHub</button>
-        <button class="btn btn-ghost btn-sm" onclick="triggerExport()">↓ Export JSON</button>
-        <button class="btn btn-ghost btn-sm" onclick="triggerImport()">↑ Import JSON</button>
-      </div>
-      <div style="margin-top:10px;font-size:10.5px;color:var(--ink3);line-height:1.65">
-        <strong style="color:var(--ink2)">↻ Pull ideas.json</strong> — fast: loads the index file.<br>
-        <strong style="color:var(--ink2)">⊞ Scan Repo Folders</strong> — full scan: reads every WHITE_PAPER.md in the 8 layer folders and imports them. Use this after adding files directly to GitHub.
-      </div>
-    </div>
-    <div class="card" style="padding:20px">
-      <div class="sh">Seed default data</div>
-      <p style="font-size:11px;color:var(--ink2);line-height:1.7;margin-bottom:14px">Fill the repo with the 20 default Reality Refactor Lab ideas across all 8 layers. Skips IDs that already exist.</p>
-      <button class="btn btn-ghost btn-sm" onclick="seedDefaultIdeas()">Seed &amp; push to GitHub</button>
-      <div style="margin-top:12px">
-        <button class="btn btn-danger btn-sm" onclick="confirmClearAll()">⚠ Clear local cache</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="card" style="padding:20px">
-    <div class="sh">About</div>
-    <div style="font-size:11px;color:var(--ink2);line-height:2.4">
-      <div>Repo: <a href="https://github.com/AlexSheff/1149" target="_blank" style="color:var(--gold)">github.com/AlexSheff/1149</a></div>
-      <div>Live: <a href="https://alexsheff.github.io/1149" target="_blank" style="color:var(--gold)">alexsheff.github.io/1149</a></div>
-      <div>Founder: Alexandr Tokarev (Founder Alex) · Dumaguete, Philippines</div>
-      <div>Version: 3.1.0 — Reality Refactor Lab + GitHub Sync</div>
-    </div>
-  </div>
+<div class="pg-head">
+<div class="pg-title-block">
+<div class="pg-eyebrow">Configuration</div>
+<div class="pg-title">Settings</div>
 </div>
-
-</div><!-- #content -->
-</div><!-- #app -->
-
-<!-- Modal & Toast -->
-<div id="modal-overlay" onclick="closeModalOutside(event)">
-  <div class="modal" id="modal-box">
-    <div class="modal-title" id="modal-title"></div>
-    <div class="modal-body" id="modal-body"></div>
-    <div class="modal-actions" id="modal-actions"></div>
-  </div>
 </div>
+<div class="card" style="padding:22px;margin-bottom:20px;border-left:3px solid var(--gold);border-radius:0 var(--r2) var(--r2) 0">
+<div class="sh">GitHub Sync</div>
+<p style="font-size:11px;color:var(--ink2);line-height:1.7;margin-bottom:16px">Every saved idea is committed to <strong style="color:var(--ink)">github.com/AlexSheff/1149</strong> as <code style="font-size:10px;background:var(--surface2);border:1px solid var(--brd2);border-radius:3px;padding:1px 5px">data/ideas.json</code>. Ideas are version-controlled and accessible from any device.</p>
+<div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;margin-bottom:14px">
+<div style="flex:1;min-width:240px"><label class="form-label">Personal Access Token</label><input type="password" class="form-input" id="gh-token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" spellcheck="false"></div>
+<button class="btn btn-primary" onclick="saveToken()">Save token</button>
+<button class="btn btn-ghost" onclick="testConnection()">Test</button>
+</div>
+<div id="gh-status" style="font-size:11px;color:var(--ink3);line-height:1.65;min-height:18px"></div>
+<details style="margin-top:14px">
+<summary style="font-size:10.5px;color:var(--ink3);cursor:pointer;user-select:none">How to create a token ▾</summary>
+<div style="margin-top:10px;padding:12px 16px;background:var(--surface2);border:1px solid var(--brd);border-radius:var(--r2);font-size:10.5px;color:var(--ink3);line-height:2">
+1. Go to <strong style="color:var(--ink)">github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</strong><br>
+2. <strong style="color:var(--ink)">Generate new token (classic)</strong> · Note: <em>1149 ideas</em> · Expiration: <strong style="color:var(--ink)">No expiration</strong><br>
+3. Scopes: check only <strong style="color:var(--ink)">repo</strong><br>
+4. Copy the <code style="background:var(--surface);border:1px solid var(--brd2);border-radius:3px;padding:1px 5px">ghp_…</code> value here and click Save.<br>
+<span style="color:var(--ink4);font-size:10px">Token is stored in your browser's localStorage only — never transmitted except to api.github.com.</span>
+</div>
+</details>
+</div>
+<div class="g2" style="margin-bottom:20px">
+<div class="card" style="padding:20px">
+<div class="sh">Data</div>
+<div id="storage-stats" style="font-size:11px;color:var(--ink2);line-height:2.2;margin-bottom:14px"></div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn btn-primary btn-sm" onclick="triggerSync()">↻ Pull ideas.json</button>
+<button class="btn btn-primary btn-sm" onclick="fullRepoSync()" title="Read all WHITE_PAPER.md files from repo folders">⊞ Scan Repo Folders</button>
+<button class="btn btn-ghost btn-sm" onclick="pushNow()">↑ Push to GitHub</button>
+<button class="btn btn-ghost btn-sm" onclick="triggerExport()">↓ Export JSON</button>
+<button class="btn btn-ghost btn-sm" onclick="triggerImport()">↑ Import JSON</button>
+</div>
+<div style="margin-top:10px;font-size:10.5px;color:var(--ink3);line-height:1.65">
+<strong style="color:var(--ink2)">↻ Pull ideas.json</strong> — fast: loads the index file.<br>
+<strong style="color:var(--ink2)">⊞ Scan Repo Folders</strong> — full scan: reads every WHITE_PAPER.md in the 8 layer folders and imports them. Use this after adding files directly to GitHub.
+</div>
+</div>
+<div class="card" style="padding:20px">
+<div class="sh">Seed default data</div>
+<p style="font-size:11px;color:var(--ink2);line-height:1.7;margin-bottom:14px">Fill the repo with the 20 default Reality Refactor Lab ideas across all 8 layers. Skips IDs that already exist.</p>
+<button class="btn btn-ghost btn-sm" onclick="seedDefaultIdeas()">Seed & push to GitHub</button>
+<div style="margin-top:12px"><button class="btn btn-danger btn-sm" onclick="confirmClearAll()">⚠ Clear local cache</button></div>
+</div>
+</div>
+<div class="card" style="padding:20px">
+<div class="sh">About</div>
+<div style="font-size:11px;color:var(--ink2);line-height:2.4">
+<div>Repo: <a href="https://github.com/AlexSheff/1149" target="_blank" style="color:var(--gold)">github.com/AlexSheff/1149</a></div>
+<div>Live: <a href="https://AlexSheff.github.io/1149" target="_blank" style="color:var(--gold)">AlexSheff.github.io/1149</a></div>
+<div>Founder: Alexandr Tokarev (Founder) · Dumaguete, Philippines</div>
+<div>Version: 3.2.2 — Fixed UTF-8 + Project file uploads</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="modal-overlay" onclick="closeModalOutside(event)"><div class="modal" id="modal-box"><div class="modal-title" id="modal-title"></div><div class="modal-body" id="modal-body"></div><div class="modal-actions" id="modal-actions"></div></div></div>
 <div id="toast"></div>
 <input type="file" id="import-input" accept=".json" style="display:none" onchange="handleImport(event)">
-
 <script>
-// ════════════════════════════════════════════════════════════════
-// LAYER CONFIG
-// ════════════════════════════════════════════════════════════════
 const LAYERS = {
-  '01_Ethical_OS':     { num:'01', label:'Ethical OS',       color:'#7C3AED', desc:'Core rules and ethical protocols — the "license agreement" of the system' },
-  '02_Social_Protocol':{ num:'02', label:'Social Protocol',  color:'#1D6FC0', desc:'Global interface for human interaction and citizenship frameworks' },
-  '03_Meta_Ecosystems':{ num:'03', label:'Meta Ecosystems',  color:'#059669', desc:'Primary environments for consciousness defragmentation' },
-  '04_Technical_Nodes':{ num:'04', label:'Technical Nodes',  color:'#2563EB', desc:'Tools for digital sovereignty, AI, and cryptographic infrastructure' },
-  '05_Reality_Hardware':{ num:'05', label:'Reality Hardware', color:'#D97706', desc:'Physical and economic interfaces between digital vision and material world' },
-  '06_Social_Impact':  { num:'06', label:'Social Impact',    color:'#DB2777', desc:'Communities, cultural filters, and solidarity-in-practice structures' },
-  '07_Research_Lab':   { num:'07', label:'Research Lab',     color:'#4F46E5', desc:'Future hypotheses, speculative research, frontier thinking' },
-  '08_Archive':        { num:'08', label:'Archive',          color:'#6B7280', desc:'Personal logbook, verified data, and historical record' },
+'01_Ethical_OS': { num: '01', label: 'Ethical OS', color: '#7C3AED', desc: 'Core rules and ethical protocols — the "license agreement" of the system' },
+'02_Social_Protocol': { num: '02', label: 'Social Protocol', color: '#1D6FC0', desc: 'Global interface for human interaction and citizenship frameworks' },
+'03_Meta_Ecosystems': { num: '03', label: 'Meta Ecosystems', color: '#059669', desc: 'Primary environments for consciousness defragmentation' },
+'04_Technical_Nodes': { num: '04', label: 'Technical Nodes', color: '#2563EB', desc: 'Tools for digital sovereignty, AI, and cryptographic infrastructure' },
+'05_Reality_Hardware': { num: '05', label: 'Reality Hardware', color: '#D97706', desc: 'Physical and economic interfaces between digital vision and material world' },
+'06_Social_Impact': { num: '06', label: 'Social Impact', color: '#DB2777', desc: 'Communities, cultural filters, and solidarity-in-practice structures' },
+'07_Research_Lab': { num: '07', label: 'Research Lab', color: '#4F46E5', desc: 'Future hypotheses, speculative research, frontier thinking' },
+'08_Archive': { num: '08', label: 'Archive', color: '#6B7280', desc: 'Personal logbook, verified data, and historical record' },
 };
-
-// ════════════════════════════════════════════════════════════════
-// STORAGE — GitHub API + localStorage cache
-// ════════════════════════════════════════════════════════════════
-const GH_REPO   = 'AlexSheff/1149';
-const GH_FILE   = 'data/ideas.json';
+const GH_REPO = 'AlexSheff/1149';
+const GH_FILE = 'data/ideas.json';
 const GH_BRANCH = 'main';
 const CACHE_KEY = 'rrl_cache_v3';
-const CFG_KEY   = 'rrl_cfg_v3';
+const CFG_KEY = 'rrl_cfg_v3';
+const MAX_FILE = 2 * 1024 * 1024;
 
-function cfgGet()    { try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch { return {}; } }
-function cfgSet(obj) { localStorage.setItem(CFG_KEY, JSON.stringify({...cfgGet(),...obj})); }
-function getToken()  { return cfgGet().token || ''; }
-function getSha()    { return cfgGet().sha   || ''; }
+function cfgGet() { try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch { return {}; } }
+function cfgSet(obj) { localStorage.setItem(CFG_KEY, JSON.stringify({ ...cfgGet(), ...obj })); }
+function getToken() { return cfgGet().token || ''; }
+function getSha() { return cfgGet().sha || ''; }
 function cacheRead() { try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || []; } catch { return []; } }
-function cacheWrite(d){ try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch(e) {} }
-function getIdeas()  { return cacheRead(); }
-function storageKB() { try { return Math.round((localStorage.getItem(CACHE_KEY)||'').length/1024); } catch { return 0; } }
+function cacheWrite(d) { try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch (e) { } }
+function getIdeas() { return cacheRead(); }
+function storageKB() { try { return Math.round((localStorage.getItem(CACHE_KEY) || '').length / 1024); } catch { return 0; } }
 
-let syncState = 'idle'; // idle | loading | saving | ok | error | no-token
+let syncState = 'idle';
 function setSyncUI(state, msg) {
-  syncState = state;
-  const el = document.getElementById('sync-lbl');
-  if (!el) return;
-  const MAP = { idle:'—', loading:'Loading…', saving:'Saving…', ok:'Synced ✓', error:'Error ✗', 'no-token':'No token' };
-  el.textContent = msg || MAP[state] || '—';
-  const C = { idle:'var(--ink4)', loading:'var(--blue)', saving:'var(--gold)', ok:'var(--green)', error:'var(--orange)', 'no-token':'var(--ink3)' };
-  el.style.color = C[state] || 'var(--ink3)';
+syncState = state;
+const el = document.getElementById('sync-lbl');
+if (!el) return;
+const MAP = { idle: '—', loading: 'Loading…', saving: 'Saving…', ok: 'Synced ✓', error: 'Error ✗', 'no-token': 'No token' };
+el.textContent = msg || MAP[state] || '—';
+const C = { idle: 'var(--ink4)', loading: 'var(--blue)', saving: 'var(--gold)', ok: 'var(--green)', error: 'var(--orange)', 'no-token': 'var(--ink3)' };
+el.style.color = C[state] || 'var(--ink3)';
 }
 
 // ════════════════════════════════════════════════════════════════
-// GITHUB API — Core
+// GITHUB API — FIXED UTF-8 ENCODING
 // ════════════════════════════════════════════════════════════════
-
-// Read data/ideas.json (fast cache index)
 async function ghRead() {
-  const token = getToken();
-  if (!token) { setSyncUI('no-token'); return null; }
-  const hdrs = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
-  const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE + '?ref=' + GH_BRANCH, { headers: hdrs });
-  if (res.status === 404) return { ideas: [], sha: null };
-  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || 'Read error ' + res.status); }
-  const file = await res.json();
-  let parsed;
-  try { parsed = JSON.parse(atob(file.content.replace(/\n/g,''))); } catch(e) { parsed = []; }
-  return { ideas: Array.isArray(parsed) ? parsed : (parsed.ideas || []), sha: file.sha };
+const token = getToken();
+if (!token) { setSyncUI('no-token'); return null; }
+const hdrs = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
+const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE + '?ref=' + GH_BRANCH, { headers: hdrs });
+if (res.status === 404) return { ideas: [], sha: null };
+if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Read error ' + res.status); }
+const file = await res.json();
+let parsed;
+try {
+// FIX: Proper UTF-8 decoding
+const decoded = atob(file.content.replace(/\n/g, ''));
+parsed = JSON.parse(decodeURIComponent(escape(decoded)));
+} catch (e) { 
+console.error('Parse error:', e);
+parsed = []; 
+}
+return { ideas: Array.isArray(parsed) ? parsed : (parsed.ideas || []), sha: file.sha };
 }
 
-// Write data/ideas.json
 async function ghWrite(ideas) {
-  const token = getToken();
-  if (!token) { setSyncUI('no-token'); throw new Error('No GitHub token. Add it in Settings.'); }
-  const body = JSON.stringify({ version: 3, updated: new Date().toISOString(), ideas: ideas }, null, 2);
-  const payload = {
-    message: 'data: ' + new Date().toISOString().slice(0,10) + ' (' + ideas.length + ' ideas)',
-    content: btoa(unescape(encodeURIComponent(body))),
-    branch: GH_BRANCH
-  };
-  const sha = getSha();
-  if (sha) payload.sha = sha;
-  const hdrs = { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' };
-  const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE, { method: 'PUT', headers: hdrs, body: JSON.stringify(payload) });
-  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || 'Write error ' + res.status); }
-  const data = await res.json();
-  cfgSet({ sha: data.content.sha });
-  return data;
+const token = getToken();
+if (!token) { setSyncUI('no-token'); throw new Error('No GitHub token. Add it in Settings.'); }
+const body = JSON.stringify({ version: 3, updated: new Date().toISOString(), ideas: ideas }, null, 2);
+// FIX: Proper UTF-8 encoding
+const payload = { 
+message: 'data: ' + new Date().toISOString().slice(0, 10) + ' (' + ideas.length + ' ideas)', 
+content: btoa(unescape(encodeURIComponent(body))), 
+branch: GH_BRANCH 
+};
+const sha = getSha(); if (sha) payload.sha = sha;
+const hdrs = { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' };
+const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE, { method: 'PUT', headers: hdrs, body: JSON.stringify(payload) });
+if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Write error ' + res.status); }
+const data = await res.json(); cfgSet({ sha: data.content.sha }); return data;
 }
 
-// ghLoad: reads ideas.json (fast cache) — secondary source
 async function ghLoad() {
-  setSyncUI('loading');
-  try {
-    const result = await ghRead();
-    if (!result) return null;
-    cacheWrite(result.ideas);
-    if (result.sha) cfgSet({ sha: result.sha });
-    setSyncUI('ok');
-    return result.ideas;
-  } catch(e) {
-    setSyncUI('error', e.message.slice(0,36));
-    return null;
-  }
+setSyncUI('loading');
+try {
+const result = await ghRead();
+if (!result) return null;
+cacheWrite(result.ideas);
+if (result.sha) cfgSet({ sha: result.sha });
+setSyncUI('ok');
+return result.ideas;
+} catch (e) { setSyncUI('error', e.message.slice(0, 36)); return null; }
 }
 
-// ════════════════════════════════════════════════════════════════
-// GITHUB API — Directory scanning + Markdown read/write
-// ════════════════════════════════════════════════════════════════
-
-// Get raw file content from GitHub (returns { content, sha } or null)
 async function ghGetFile(path) {
-  const token = getToken();
-  if (!token) return null;
-  const res = await fetch(
-    'https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH,
-    { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } }
-  );
-  if (!res.ok) return null;
-  const data = await res.json();
-  let content = '';
-  try { content = decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))); } catch(e) { content = ''; }
-  return { content, sha: data.sha, path: data.path };
+const token = getToken(); if (!token) return null;
+const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH, { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } });
+if (!res.ok) return null;
+const data = await res.json();
+let content = ''; 
+try { 
+// FIX: Proper UTF-8 decoding
+content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, '')))); 
+} catch (e) { content = ''; }
+return { content, sha: data.sha, path: data.path };
 }
 
-// Get file SHA only
 async function ghGetSha(path) {
-  const token = getToken();
-  if (!token) return null;
-  const res = await fetch(
-    'https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH,
-    { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } }
-  );
-  if (!res.ok) return null;
-  const data = await res.json();
-  return data.sha || null;
+const token = getToken(); if (!token) return null;
+const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH, { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } });
+if (!res.ok) return null; const data = await res.json(); return data.sha || null;
 }
 
-// Write a single file to GitHub
 async function ghWriteFile(path, content, existingSha, commitMsg) {
-  const token = getToken();
-  if (!token) return null;
-  const msg = commitMsg || ('docs: update ' + path.split('/').pop() + ' (' + new Date().toISOString().slice(0,10) + ')');
-  const body = JSON.stringify({
-    message: msg,
-    content: btoa(unescape(encodeURIComponent(content))),
-    branch: GH_BRANCH,
-    ...(existingSha ? { sha: existingSha } : {})
-  });
-  const res = await fetch(
-    'https://api.github.com/repos/' + GH_REPO + '/contents/' + path,
-    { method: 'PUT', headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' }, body }
-  );
-  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || 'Write error ' + res.status); }
-  return res.json();
+const token = getToken(); if (!token) return null;
+const msg = commitMsg || ('docs: update ' + path.split('/').pop() + ' (' + new Date().toISOString().slice(0, 10) + ')');
+const body = JSON.stringify({ message: msg, content: btoa(unescape(encodeURIComponent(content))), branch: GH_BRANCH, ...(existingSha ? { sha: existingSha } : {}) });
+const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + path, { method: 'PUT', headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' }, body });
+if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Write error ' + res.status); }
+return res.json();
 }
 
-// List directory contents from GitHub
 async function ghListDir(path) {
-  const token = getToken();
-  if (!token) return [];
-  const res = await fetch(
-    'https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH,
-    { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } }
-  );
-  if (!res.ok) return [];
-  const items = await res.json();
-  return Array.isArray(items) ? items : [];
+const token = getToken(); if (!token) return [];
+const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH, { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } });
+if (!res.ok) return []; const items = await res.json(); return Array.isArray(items) ? items : [];
 }
 
-// ── Parse YAML front matter from a Markdown file ─────────────────
 function parseYamlFrontMatter(md) {
-  const meta = {};
-  if (!md || !md.startsWith('---')) return { meta, body: md || '' };
-  const end = md.indexOf('\n---', 4);
-  if (end === -1) return { meta, body: md };
-  const yaml = md.slice(4, end);
-  const body = md.slice(end + 4).replace(/^\n/, '');
-  yaml.split('\n').forEach(line => {
-    const colon = line.indexOf(':');
-    if (colon === -1) return;
-    const key = line.slice(0, colon).trim();
-    let val = line.slice(colon + 1).trim();
-    // arrays: [a, b, c]
-    if (val.startsWith('[') && val.endsWith(']')) {
-      val = val.slice(1,-1).split(',').map(s => s.trim().replace(/^["']|["']$/g,'')).filter(Boolean);
-    } else {
-      // strip quotes
-      val = val.replace(/^["']|["']$/g,'');
-      // booleans
-      if (val === 'true') val = true;
-      else if (val === 'false') val = false;
-      // numbers
-      else if (!isNaN(val) && val !== '') val = Number(val);
-    }
-    meta[key] = val;
-  });
-  return { meta, body };
+const meta = {};
+if (!md || !md.startsWith('---')) return { meta, body: md || '' };
+const end = md.indexOf('\n---', 4); if (end === -1) return { meta, body: md };
+const yaml = md.slice(4, end), body = md.slice(end + 4).replace(/^\n/, '');
+yaml.split('\n').forEach(line => {
+const colon = line.indexOf(':'); if (colon === -1) return;
+const key = line.slice(0, colon).trim(); let val = line.slice(colon + 1).trim();
+if (val.startsWith('[') && val.endsWith(']')) { val = val.slice(1, -1).split(',').map(s => s.trim().replace(/^["']|["']$/g, '')).filter(Boolean); }
+else { val = val.replace(/^["']|["']$/g, ''); if (val === 'true') val = true; else if (val === 'false') val = false; else if (!isNaN(val) && val !== '') val = Number(val); }
+meta[key] = val;
+});
+return { meta, body };
 }
 
-// ── Convert a parsed .md file into an idea object ─────────────────
 function mdFileToIdea(filePath, content) {
-  const { meta, body } = parseYamlFrontMatter(content);
-  // Extract layer from file path: "04_Technical_Nodes/Trustnet/WHITE_PAPER.md"
-  const parts = filePath.split('/');
-  const layer = parts[0] || meta.layer || '';
-  const folderName = parts[1] || '';
-
-  // Split body into whitepaper vs techspec sections
-  const tsMarker = body.indexOf('\n# ' + (meta.title || '') + ' — Technical Specification');
-  const tsMarker2 = body.indexOf('\n## Technical Specification');
-  const wpEnd = tsMarker > 0 ? tsMarker : (tsMarker2 > 0 ? tsMarker2 : body.length);
-  const whitepaper = body.slice(0, wpEnd).trim();
-  const techspec   = wpEnd < body.length ? body.slice(wpEnd).trim() : (meta.techspec || '');
-
-  return {
-    id:         String(meta.id || generateIdFromPath(filePath)),
-    title:      String(meta.title || folderName.replace(/_/g,' ')),
-    layer:      String(meta.layer || layer),
-    doctype:    String(meta.doctype || 'White Paper'),
-    status:     String(meta.status || 'concept'),
-    priority:   String(meta.priority || 'medium'),
-    progress:   Number(meta.progress || 0),
-    tagline:    String(meta.tagline || ''),
-    tags:       Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
-    related:    Array.isArray(meta.related) ? meta.related.map(String) : [],
-    is1149:     meta.is_1149 === true || meta.is_1149 === 'true' || meta.is1149 === true,
-    whitepaper: whitepaper,
-    techspec:   techspec,
-    solidarity: String(meta.solidarity || ''),
-    updated:    String(meta.updated || new Date().toISOString().slice(0,10)),
-    files:      [],
-    _ghPath:    filePath,   // remember where this came from
-    _wpSha:     null,       // filled in during sync
-  };
+const { meta, body } = parseYamlFrontMatter(content);
+const parts = filePath.split('/'), layer = parts[0] || meta.layer || '', folderName = parts[1] || '';
+const tsMarker = body.indexOf('\n# ' + (meta.title || '') + ' — Technical Specification'), tsMarker2 = body.indexOf('\n## Technical Specification');
+const wpEnd = tsMarker > 0 ? tsMarker : (tsMarker2 > 0 ? tsMarker2 : body.length);
+return {
+id: String(meta.id || generateIdFromPath(filePath)), title: String(meta.title || folderName.replace(/_/g, ' ')), layer: String(meta.layer || layer),
+doctype: String(meta.doctype || 'White Paper'), status: String(meta.status || 'concept'), priority: String(meta.priority || 'medium'),
+progress: Number(meta.progress || 0), tagline: String(meta.tagline || ''), tags: Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] : []),
+related: Array.isArray(meta.related) ? meta.related.map(String) : [], is1149: meta.is_1149 === true || meta.is_1149 === 'true' || meta.is1149 === true,
+whitepaper: body.slice(0, wpEnd).trim(), techspec: wpEnd < body.length ? body.slice(wpEnd).trim() : (meta.techspec || ''),
+solidarity: String(meta.solidarity || ''), updated: String(meta.updated || new Date().toISOString().slice(0, 10)), files: [], _ghPath: filePath, _wpSha: null
+};
 }
 
-function generateIdFromPath(path) {
-  // "04_Technical_Nodes/Trustnet/WHITE_PAPER.md" → "04_Trustnet"
-  const parts = path.split('/');
-  return (parts[0] || '').slice(0,2) + '_' + (parts[1] || 'idea');
-}
+function generateIdFromPath(path) { const parts = path.split('/'); return (parts[0] || '').slice(0, 2) + '_' + (parts[1] || 'idea'); }
 
-// ── Scan all 8 layer folders and collect ideas from WHITE_PAPER.md files
-const LAYER_KEYS = [
-  '01_Ethical_OS','02_Social_Protocol','03_Meta_Ecosystems',
-  '04_Technical_Nodes','05_Reality_Hardware','06_Social_Impact',
-  '07_Research_Lab','08_Archive'
-];
+const LAYER_KEYS = ['01_Ethical_OS','02_Social_Protocol','03_Meta_Ecosystems','04_Technical_Nodes','05_Reality_Hardware','06_Social_Impact','07_Research_Lab','08_Archive'];
 
 async function scanRepoForIdeas() {
-  const token = getToken();
-  if (!token) return null;
-  setSyncUI('loading', 'Scanning repo…');
-  const found = [];
-
-  for (const layer of LAYER_KEYS) {
-    let entries;
-    try { entries = await ghListDir(layer); } catch(e) { continue; }
-
-    for (const entry of entries) {
-      if (entry.type !== 'dir') continue;
-      // Look for WHITE_PAPER.md inside this folder
-      // Also look inside apps/ subfolder (City Quest pattern)
-      const candidates = [
-        layer + '/' + entry.name + '/WHITE_PAPER.md',
-      ];
-      // Check for apps/ subfolder
-      if (entry.name === 'apps' || entry.name === 'City_Quest') {
-        try {
-          const subEntries = await ghListDir(layer + '/' + entry.name);
-          for (const sub of subEntries) {
-            if (sub.type === 'dir') {
-              candidates.push(layer + '/' + entry.name + '/' + sub.name + '/WHITE_PAPER.md');
-            }
-          }
-        } catch(e) {}
-      }
-
-      for (const wpPath of candidates) {
-        const file = await ghGetFile(wpPath);
-        if (!file) continue;
-        const idea = mdFileToIdea(wpPath, file.content);
-        idea._wpSha = file.sha;
-        found.push(idea);
-      }
-    }
-  }
-
-  setSyncUI('ok', 'Synced ✓');
-  return found;
+const token = getToken(); if (!token) return null; setSyncUI('loading', 'Scanning repo…'); const found = [];
+for (const layer of LAYER_KEYS) {
+let entries; try { entries = await ghListDir(layer); } catch (e) { continue; }
+for (const entry of entries) {
+if (entry.type !== 'dir') continue;
+const candidates = [layer + '/' + entry.name + '/WHITE_PAPER.md'];
+if (entry.name === 'apps' || entry.name === 'City_Quest') {
+try { const subEntries = await ghListDir(layer + '/' + entry.name); for (const sub of subEntries) { if (sub.type === 'dir') candidates.push(layer + '/' + entry.name + '/' + sub.name + '/WHITE_PAPER.md'); } } catch (e) { }
+}
+for (const wpPath of candidates) { const file = await ghGetFile(wpPath); if (!file) continue; const idea = mdFileToIdea(wpPath, file.content); idea._wpSha = file.sha; found.push(idea); }
+}
+}
+setSyncUI('ok', 'Synced ✓'); return found;
 }
 
-// ── Full repo sync: .md files are the SOURCE OF TRUTH ────────────
-// Rule: file in folder wins over ideas.json at all times.
-// ideas.json is rebuilt from .md files and stored as a performance cache.
-async function fullRepoSync(silent) {
-  setSyncUI('loading', 'Scanning…');
-  if (!silent) toast('Reading repository folders…', 'success');
-  try {
-    const fromRepo = await scanRepoForIdeas();
-    if (!fromRepo) { setSyncUI('no-token'); return null; }
-
-    // .md files WIN. We only preserve `files` (binary attachments) from cache.
-    const cached = cacheRead();
-    const cachedMap = {};
-    cached.forEach(i => { if (i.id) cachedMap[i.id] = i; });
-
-    const merged = fromRepo.map(idea => {
-      const c = cachedMap[idea.id] || {};
-      // repo content fields overwrite everything — that's the contract
-      return Object.assign({}, idea, { files: c.files || [] });
-    });
-
-    // Ideas in cache but NOT in repo = new unsaved ideas (written via form, .md pending)
-    const repoIds = new Set(fromRepo.map(i => i.id));
-    cached.forEach(c => {
-      if (!repoIds.has(c.id)) merged.push(c);
-    });
-
-    // Rebuild cache and update ideas.json index
-    cacheWrite(merged);
-    await ghWrite(merged);  // update the cache file
-    updateBadges();
-    renderAll();
-    if (!silent) toast('Loaded ' + fromRepo.length + ' ideas from repo folders', 'success');
-    setSyncUI('ok');
-    return merged;
-  } catch(e) {
-    setSyncUI('error', e.message.slice(0,36));
-    if (!silent) toast('Scan failed: ' + e.message.slice(0,60), 'error');
-    return null;
-  }
+async function fullRepoSync() {
+setSyncUI('loading', 'Full scan…'); toast('Scanning repository folders…', 'success');
+try {
+const fromRepo = await scanRepoForIdeas(); if (!fromRepo) { setSyncUI('no-token'); return; }
+const cached = cacheRead(), cachedMap = {}; cached.forEach(i => { cachedMap[i.id] = i; });
+const merged = fromRepo.map(idea => { const c = cachedMap[idea.id] || {}; return Object.assign({}, c, idea, { files: c.files || [] }); });
+const repoIds = new Set(fromRepo.map(i => i.id)); cached.forEach(c => { if (!repoIds.has(c.id)) merged.push(c); });
+cacheWrite(merged); await ghWrite(merged); updateBadges(); renderAll(); toast('Scanned ' + fromRepo.length + ' ideas from repo folders', 'success');
+} catch (e) { setSyncUI('error', e.message.slice(0, 36)); toast('Scan failed: ' + e.message.slice(0, 60), 'error'); }
 }
 
-// ════════════════════════════════════════════════════════════════
-// MARKDOWN GENERATORS (idea → .md file)
-// ════════════════════════════════════════════════════════════════
-
-function ideaSlug(title) {
-  return (title || '').trim()
-    .replace(/[^\w\s-]/g,'')
-    .replace(/\s+/g,'_')
-    .replace(/_+/g,'_')
-    .slice(0,60);
-}
-
-function ideaFolderPath(idea) {
-  // Use stored path if available (repo-sourced ideas)
-  if (idea._ghPath) return idea._ghPath.replace('/WHITE_PAPER.md','');
-  return (idea.layer || '01_Ethical_OS') + '/' + ideaSlug(idea.title);
-}
+function ideaSlug(title) { return (title || '').trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '_').replace(/_+/g, '_').slice(0, 60); }
+function ideaFolderPath(idea) { if (idea._ghPath) return idea._ghPath.replace('/WHITE_PAPER.md', ''); return (idea.layer || '01_Ethical_OS') + '/' + ideaSlug(idea.title); }
 
 function buildWhitePaper(idea) {
-  const tags    = (idea.tags || []).join(', ');
-  const related = (idea.related || []).join(', ');
-  const now     = new Date().toISOString().slice(0,10);
-  return '---\n' +
-    'id: "' + idea.id + '"\n' +
-    'title: "' + String(idea.title||'').replace(/"/g,'\\"') + '"\n' +
-    'layer: "' + (idea.layer||'') + '"\n' +
-    'doctype: "' + (idea.doctype||'White Paper') + '"\n' +
-    'status: ' + (idea.status||'concept') + '\n' +
-    'priority: ' + (idea.priority||'medium') + '\n' +
-    'progress: ' + (idea.progress||0) + '\n' +
-    'tags: [' + tags + ']\n' +
-    'related: [' + related + ']\n' +
-    'is_1149: ' + (idea.is1149 ? 'true':'false') + '\n' +
-    (idea.solidarity ? 'solidarity: "' + String(idea.solidarity).replace(/"/g,'\\"').slice(0,200) + '"\n' : '') +
-    'updated: ' + now + '\n' +
-    'author: Founder Alex\n' +
-    'tagline: "' + String(idea.tagline||'').replace(/"/g,'\\"') + '"\n' +
-    '---\n\n' +
-    '# ' + (idea.title||'') + ' — White Paper\n\n' +
-    '> *' + (idea.tagline||'') + '*\n\n' +
-    '---\n\n' +
-    (idea.whitepaper||'') + '\n\n' +
-    '---\n\n*White Paper · Reality Refactor Lab · 1149*\n';
+const tags = (idea.tags || []).join(', '), related = (idea.related || []).join(', '), now = new Date().toISOString().slice(0, 10);
+return '---\n' + 'id: "' + idea.id + '"\n' + 'title: "' + String(idea.title || '').replace(/"/g, '\\"') + '"\n' + 'layer: "' + (idea.layer || '') + '"\n' +
+'doctype: "' + (idea.doctype || 'White Paper') + '"\n' + 'status: ' + (idea.status || 'concept') + '\n' + 'priority: ' + (idea.priority || 'medium') + '\n' +
+'progress: ' + (idea.progress || 0) + '\n' + 'tags: [' + tags + ']\n' + 'related: [' + related + ']\n' + 'is_1149: ' + (idea.is1149 ? 'true' : 'false') + '\n' +
+(idea.solidarity ? 'solidarity: "' + String(idea.solidarity).replace(/"/g, '\\"').slice(0, 200) + '"\n' : '') + 'updated: ' + now + '\n' + 'author: Founder\n' +
+'tagline: "' + String(idea.tagline || '').replace(/"/g, '\\"') + '"\n' + '---\n' + '# ' + (idea.title || '') + ' — White Paper\n' + '> *' + (idea.tagline || '') + '*\n' +
+'---\n' + (idea.whitepaper || '') + '\n' + '---\n*White Paper · Reality Refactor Lab · 1149*\n';
 }
 
 function buildTechSpec(idea) {
-  const now = new Date().toISOString().slice(0,10);
-  return '---\n' +
-    'id: "' + idea.id + '"\n' +
-    'title: "' + String(idea.title||'').replace(/"/g,'\\"') + ' — Technical Specification"\n' +
-    'layer: "' + (idea.layer||'') + '"\n' +
-    'status: ' + (idea.status||'concept') + '\n' +
-    'version: 0.1\n' +
-    'updated: ' + now + '\n' +
-    'author: Founder Alex\n' +
-    '---\n\n' +
-    '# ' + (idea.title||'') + ' — Technical Specification\n\n' +
-    (idea.techspec||'') + '\n\n' +
-    '---\n\n*Tech Spec · Reality Refactor Lab · 1149*\n';
+const now = new Date().toISOString().slice(0, 10);
+return '---\n' + 'id: "' + idea.id + '"\n' + 'title: "' + String(idea.title || '').replace(/"/g, '\\"') + ' — Technical Specification"\n' + 'layer: "' + (idea.layer || '') + '"\n' +
+'status: ' + (idea.status || 'concept') + '\n' + 'version: 0.1\n' + 'updated: ' + now + '\n' + 'author: Founder\n' + '---\n' +
+'# ' + (idea.title || '') + ' — Technical Specification\n' + (idea.techspec || '') + '\n' + '---\n*Tech Spec · Reality Refactor Lab · 1149*\n';
 }
 
-// ── Sync a single idea's .md files to GitHub (background) ─────────
 async function syncIdeaMarkdown(idea) {
-  if (!getToken()) return;
-  const folder = ideaFolderPath(idea);
-  try {
-    if (idea.whitepaper || idea.tagline) {
-      const wpPath = folder + '/WHITE_PAPER.md';
-      const wpSha  = idea._wpSha || await ghGetSha(wpPath);
-      await ghWriteFile(wpPath, buildWhitePaper(idea), wpSha,
-        'docs: ' + idea.title + ' · WHITE_PAPER.md · ' + new Date().toISOString().slice(0,10));
-    }
-    if (idea.techspec && idea.techspec.trim().length > 10) {
-      const tsSha = await ghGetSha(folder + '/TECH_SPEC.md');
-      await ghWriteFile(folder + '/TECH_SPEC.md', buildTechSpec(idea), tsSha,
-        'docs: ' + idea.title + ' · TECH_SPEC.md · ' + new Date().toISOString().slice(0,10));
-    }
-  } catch(e) {
-    console.warn('syncIdeaMarkdown:', idea.id, e.message);
-  }
+if (!getToken()) return; const folder = ideaFolderPath(idea);
+try {
+if (idea.whitepaper || idea.tagline) { const wpPath = folder + '/WHITE_PAPER.md'; const wpSha = idea._wpSha || await ghGetSha(wpPath); await ghWriteFile(wpPath, buildWhitePaper(idea), wpSha, 'docs: ' + idea.title + ' · WHITE_PAPER.md · ' + new Date().toISOString().slice(0, 10)); }
+if (idea.techspec && idea.techspec.trim().length > 10) { const tsSha = await ghGetSha(folder + '/TECH_SPEC.md'); await ghWriteFile(folder + '/TECH_SPEC.md', buildTechSpec(idea), tsSha, 'docs: ' + idea.title + ' · TECH_SPEC.md · ' + new Date().toISOString().slice(0, 10)); }
+} catch (e) { console.warn('syncIdeaMarkdown:', idea.id, e.message); }
 }
 
-async function syncSingleIdea(idea) {
-  syncIdeaMarkdown(idea).catch(e => console.warn('Background md sync:', e.message));
+async function syncSingleIdea(idea) { syncIdeaMarkdown(idea).catch(e => console.warn('Background md sync:', e.message)); }
+
+async function save(ideas) { cacheWrite(ideas); updateBadges(); setSyncUI('saving'); try { await ghWrite(ideas); setSyncUI('ok'); } catch (e) { setSyncUI('error', e.message.slice(0, 36)); toast('GitHub sync failed: ' + e.message.slice(0, 50), 'error'); } }
+
+async function seedDefaultIdeas() { 
+const existing = cacheRead(); 
+const existingIds = new Set(existing.map(i => i.id)); 
+const toAdd = (window.SEED || []).filter(i => !existingIds.has(i.id)); 
+if (!toAdd.length) { toast('All default ideas already exist — use Push to sync', 'error'); return; } 
+await save([...existing, ...toAdd]); 
+toast('Seeded ' + toAdd.length + ' ideas and pushed to GitHub', 'success'); 
+renderAll(); 
 }
 
-// ════════════════════════════════════════════════════════════════
-// MAIN SAVE — .md files are primary, ideas.json is the cache
-// ════════════════════════════════════════════════════════════════
-
-// Save a batch of ideas: update cache + write ideas.json index
-async function save(ideas) {
-  cacheWrite(ideas);
-  updateBadges();
-  setSyncUI('saving');
-  try {
-    await ghWrite(ideas);
-    setSyncUI('ok');
-  } catch(e) {
-    setSyncUI('error', e.message.slice(0,36));
-    toast('GitHub sync failed: ' + e.message.slice(0,50), 'error');
-  }
-}
-
-// Save a SINGLE idea as the primary action:
-// 1. Write WHITE_PAPER.md (and TECH_SPEC.md) to the layer folder — SOURCE OF TRUTH
-// 2. Update ideas.json cache
-async function saveIdea(idea) {
-  setSyncUI('saving');
-  // Step 1: Write .md files to repo folder (PRIMARY)
-  try {
-    const folder = ideaFolderPath(idea);
-    if (idea.whitepaper || idea.tagline) {
-      const wpPath = folder + '/WHITE_PAPER.md';
-      const wpSha  = idea._wpSha || await ghGetSha(wpPath);
-      const result = await ghWriteFile(wpPath, buildWhitePaper(idea), wpSha,
-        'idea: ' + idea.title + ' (' + new Date().toISOString().slice(0,10) + ')');
-      // Store new SHA so next save doesn't conflict
-      if (result && result.content) idea._wpSha = result.content.sha;
-    }
-    if (idea.techspec && idea.techspec.trim().length > 10) {
-      const tsPath = folder + '/TECH_SPEC.md';
-      const tsSha  = await ghGetSha(tsPath);
-      await ghWriteFile(tsPath, buildTechSpec(idea), tsSha,
-        'spec: ' + idea.title + ' (' + new Date().toISOString().slice(0,10) + ')');
-    }
-  } catch(e) {
-    setSyncUI('error', e.message.slice(0,36));
-    toast('Failed to write .md file: ' + e.message.slice(0,60), 'error');
-    // Still update cache even if .md write failed
-  }
-  // Step 2: Update ideas.json cache (SECONDARY)
-  const ideas = getIdeas();
-  const idx = ideas.findIndex(i => i.id === idea.id);
-  if (idx !== -1) ideas[idx] = idea; else ideas.push(idea);
-  await save(ideas);
-}
-
-
-async function seedDefaultIdeas() {
-  const existing = cacheRead();
-  const existingIds = new Set(existing.map(i => i.id));
-  const toAdd = SEED.filter(i => !existingIds.has(i.id));
-  if (!toAdd.length) { toast('All default ideas already exist — use Push to sync', 'error'); return; }
-  await save([...existing, ...toAdd]);
-  toast('Seeded ' + toAdd.length + ' ideas and pushed to GitHub', 'success');
-  renderAll();
-}
-
-// ════════════════════════════════════════════════════════════════
-// ROUTING
-// ════════════════════════════════════════════════════════════════
-let currentPage = 'dashboard';
-let editingId = null;
-let pendingFiles = [];
-let prevPage = 'dashboard';
+let currentPage = 'dashboard', editingId = null, pendingFiles = [], prevPage = 'dashboard';
 
 function nav(page, id) {
-  prevPage = currentPage;
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item[data-page]').forEach(n => n.classList.remove('active'));
-
-  // 'edit' reuses page-new DOM element
-  const domId = (page === 'edit') ? 'new' : page;
-  let pageEl = document.getElementById('page-' + domId);
-  if (!pageEl) return;
-  pageEl.classList.add('active');
-
-  const navEl = document.querySelector('[data-page="' + domId + '"]');
-  if (navEl) navEl.classList.add('active');
-
-  currentPage = page;
-
-  if (page === 'dashboard')        renderDashboard();
-  if (page === 'ideas')            renderIdeas();
-  if (page.startsWith('layer-'))   renderLayer(page.replace('layer-',''));
-  if (page === 'idea' && id)       renderIdeaDetail(id);
-  if (page === 'new')              openNewForm();
-  if (page === 'edit' && id)       openEditForm(id);
-  if (page === 'graph')            setTimeout(renderGraph, 50);
-  if (page === 'settings')         renderSettings();
-
-  window.location.hash = id ? `${page}/${id}` : page;
-  document.getElementById('content').scrollTop = 0;
+prevPage = currentPage; document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.querySelectorAll('.nav-item[data-page]').forEach(n => n.classList.remove('active'));
+const domId = (page === 'edit') ? 'new' : page; const pageEl = document.getElementById('page-' + domId); if (!pageEl) return;
+pageEl.classList.add('active'); const navEl = document.querySelector('[data-page="' + domId + '"]'); if (navEl) navEl.classList.add('active');
+currentPage = page;
+if (page === 'dashboard') renderDashboard(); if (page === 'ideas') renderIdeas(); if (page.startsWith('layer-')) renderLayer(page.replace('layer-', ''));
+if (page === 'idea' && id) renderIdeaDetail(id); if (page === 'new') openNewForm(); if (page === 'edit' && id) openEditForm(id);
+if (page === 'graph') setTimeout(renderGraph, 50); if (page === 'settings') renderSettings();
+window.location.hash = id ? `${page}/${id}` : page; document.getElementById('content').scrollTop = 0;
 }
 
-function navBack() {
-  nav(prevPage.startsWith('layer-') ? prevPage : 'ideas');
-}
-
-function handleHash() {
-  const h = window.location.hash.replace('#','').split('/');
-  if (!h[0]) { nav('dashboard'); return; }
-  if (h[0]==='idea' && h[1]) nav('idea', h[1]);
-  else if (h[0]==='edit' && h[1]) nav('edit', h[1]);
-  else nav(h[0]);
-}
+function navBack() { nav(prevPage.startsWith('layer-') ? prevPage : 'ideas'); }
+function handleHash() { const h = window.location.hash.replace('#', '').split('/'); if (!h[0]) { nav('dashboard'); return; } if (h[0] === 'idea' && h[1]) nav('idea', h[1]); else if (h[0] === 'edit' && h[1]) nav('edit', h[1]); else nav(h[0]); }
 window.addEventListener('hashchange', handleHash);
 
-// ════════════════════════════════════════════════════════════════
-// HELPERS
-// ════════════════════════════════════════════════════════════════
-const PRI_C = { critical:'#B91C1C', high:'#C2410C', medium:'#B8721A', low:'#6B7280' };
-const STATUS_CLS = { active:'b-active', research:'b-research', concept:'b-concept', paused:'b-paused', archived:'b-archived' };
-const PRI_CLS   = { critical:'b-critical', high:'b-high', medium:'b-medium', low:'b-low' };
+const PRI_C = { critical: '#B91C1C', high: '#C2410C', medium: '#B8721A', low: '#6B7280' };
+const STATUS_CLS = { active: 'b-active', research: 'b-research', concept: 'b-concept', paused: 'b-paused', archived: 'b-archived' };
+const PRI_CLS = { critical: 'b-critical', high: 'b-high', medium: 'b-medium', low: 'b-low' };
 
 function badge(cls, txt) { return `<span class="badge ${cls}">${txt}</span>`; }
-function pbar(p, paused) { return `<div class="pbar"><div class="pbar-f${paused?' paused':''}" style="width:${p||0}%"></div></div>`; }
-function tagsHtml(arr, max=4) { return (arr||[]).slice(0,max).map(t=>`<span class="tag">${t}</span>`).join(''); }
-function fmtDate(s) { if(!s) return ''; const d=new Date(s); return isNaN(d)?s:d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}); }
-function storageKB() { try { return Math.round((localStorage.getItem(KEY)||'').length/1024); } catch { return 0; } }
-function layerInfo(k) { return LAYERS[k] || { num:'?', label:k, color:'#888', desc:'' }; }
-function layerKey(l) { return Object.keys(LAYERS).find(k=>k===l) || l; }
+function pbar(p, paused) { return `<div class="pbar"><div class="pbar-f${paused ? ' paused' : ''}" style="width:${p || 0}%"></div></div>`; }
+function tagsHtml(arr, max = 4) { return (arr || []).slice(0, max).map(t => `<span class="tag">${t}</span>`).join(''); }
+function fmtDate(s) { if (!s) return ''; const d = new Date(s); return isNaN(d) ? s : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }); }
+function layerInfo(k) { return LAYERS[k] || { num: '?', label: k, color: '#888', desc: '' }; }
+
 function updateBadges() {
-  const ideas = getIdeas();
-  document.getElementById('nb-ideas').textContent = ideas.length;
-  Object.keys(LAYERS).forEach(lk => {
-    const num = LAYERS[lk].num;
-    const el = document.getElementById(`nb-${num}`);
-    const count = ideas.filter(i=>i.layer===lk).length;
-    if (el) el.textContent = count || '';
-  });
-}
-function generateId() {
-  const ideas = getIdeas();
-  const nums = ideas.map(i=>parseInt(i.id)).filter(n=>!isNaN(n));
-  const max = nums.length ? Math.max(...nums) : 0;
-  return String(max + 1).padStart(4,'0');
+const ideas = getIdeas(); document.getElementById('nb-ideas').textContent = ideas.length;
+Object.keys(LAYERS).forEach(lk => { const num = LAYERS[lk].num, el = document.getElementById(`nb-${num}`), count = ideas.filter(i => i.layer === lk).length; if (el) el.textContent = count || ''; });
 }
 
-// ════════════════════════════════════════════════════════════════
-// DASHBOARD
-// ════════════════════════════════════════════════════════════════
+function generateId() { const ideas = getIdeas(), nums = ideas.map(i => parseInt(i.id)).filter(n => !isNaN(n)), max = nums.length ? Math.max(...nums) : 0; return String(max + 1).padStart(4, '0'); }
+
 function renderDashboard() {
-  const ideas = getIdeas();
-  const now = new Date();
-  document.getElementById('dash-date-head').innerHTML =
-    now.toLocaleDateString('en-US',{weekday:'long'}) + '<br>' +
-    now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-
-  const active   = ideas.filter(i=>i.status==='active').length;
-  const research = ideas.filter(i=>i.status==='research').length;
-  const is1149   = ideas.filter(i=>i.is1149).length;
-
-  document.getElementById('dash-stats').innerHTML = `
-    <div class="stat-card" style="--ac:${LAYERS['01_Ethical_OS'].color}"><div class="stat-num">${ideas.length}</div><div class="stat-lbl">Total Ideas</div></div>
-    <div class="stat-card" style="--ac:${LAYERS['03_Meta_Ecosystems'].color}"><div class="stat-num">${active}</div><div class="stat-lbl">Active</div></div>
-    <div class="stat-card" style="--ac:${LAYERS['04_Technical_Nodes'].color}"><div class="stat-num">${research}</div><div class="stat-lbl">In Research</div></div>
-    <div class="stat-card" style="--ac:${LAYERS['05_Reality_Hardware'].color}"><div class="stat-num">${is1149}</div><div class="stat-lbl">1149 Thread</div></div>
-  `;
-
-  // Layer overview
-  document.getElementById('dash-layers').innerHTML = Object.keys(LAYERS).map(lk => {
-    const L = LAYERS[lk];
-    const count = ideas.filter(i=>i.layer===lk).length;
-    const activeInLayer = ideas.filter(i=>i.layer===lk&&i.status==='active').length;
-    const avgProgress = count ? Math.round(ideas.filter(i=>i.layer===lk).reduce((s,i)=>s+(i.progress||0),0)/count) : 0;
-    return `
-    <div class="mini-row" onclick="nav('layer-${L.num}')">
-      <div style="width:28px;height:28px;border-radius:var(--r);background:${L.color}15;border:1.5px solid ${L.color}40;display:flex;align-items:center;justify-content:center;flex-shrink:0">
-        <span style="font-size:8px;font-weight:500;color:${L.color}">${L.num}</span>
-      </div>
-      <div class="mini-body">
-        <div class="mini-t">${L.label}</div>
-        <div style="margin-top:5px;height:2px;background:var(--brd);border-radius:1px;overflow:hidden">
-          <div style="width:${avgProgress}%;height:100%;background:${L.color}88;border-radius:1px"></div>
-        </div>
-      </div>
-      <div style="text-align:right;flex-shrink:0">
-        <div style="font-size:11px;font-weight:500;color:var(--ink)">${count}</div>
-        <div style="font-size:8px;color:var(--ink3)">${activeInLayer} active</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // Recent
-  const recent = [...ideas].sort((a,b)=>new Date(b.updated)-new Date(a.updated)).slice(0,7);
-  document.getElementById('dash-recent').innerHTML = recent.map(i => {
-    const L = layerInfo(i.layer);
-    return `
-    <div class="mini-row" onclick="nav('idea','${i.id}')">
-      <div style="width:3px;min-height:36px;border-radius:1px;background:${L.color};flex-shrink:0"></div>
-      <div class="mini-body">
-        <div class="mini-t">${i.title}</div>
-        <div class="mini-s">${L.label}</div>
-      </div>
-      ${badge(STATUS_CLS[i.status]||'b-paused',i.status)}
-    </div>`;
-  }).join('');
+const ideas = getIdeas(), now = new Date();
+document.getElementById('dash-date-head').innerHTML = now.toLocaleDateString('en-US', { weekday: 'long' }) + '<br>' + now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+const active = ideas.filter(i => i.status === 'active').length, research = ideas.filter(i => i.status === 'research').length, is1149 = ideas.filter(i => i.is1149).length;
+document.getElementById('dash-stats').innerHTML = `<div class="stat-card" style="--ac:${LAYERS['01_Ethical_OS'].color}"><div class="stat-num">${ideas.length}</div><div class="stat-lbl">Total Ideas</div></div><div class="stat-card" style="--ac:${LAYERS['03_Meta_Ecosystems'].color}"><div class="stat-num">${active}</div><div class="stat-lbl">Active</div></div><div class="stat-card" style="--ac:${LAYERS['04_Technical_Nodes'].color}"><div class="stat-num">${research}</div><div class="stat-lbl">In Research</div></div><div class="stat-card" style="--ac:${LAYERS['05_Reality_Hardware'].color}"><div class="stat-num">${is1149}</div><div class="stat-lbl">1149 Thread</div></div>`;
+document.getElementById('dash-layers').innerHTML = Object.keys(LAYERS).map(lk => { const L = LAYERS[lk], count = ideas.filter(i => i.layer === lk).length, activeInLayer = ideas.filter(i => i.layer === lk && i.status === 'active').length, avgProgress = count ? Math.round(ideas.filter(i => i.layer === lk).reduce((s, i) => s + (i.progress || 0), 0) / count) : 0; return `<div class="mini-row" onclick="nav('layer-${L.num}')"><div style="width:28px;height:28px;border-radius:var(--r);background:${L.color}15;border:1.5px solid ${L.color}40;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:8px;font-weight:500;color:${L.color}">${L.num}</span></div><div class="mini-body"><div class="mini-t">${L.label}</div><div style="margin-top:5px;height:2px;background:var(--brd);border-radius:1px;overflow:hidden"><div style="width:${avgProgress}%;height:100%;background:${L.color}88;border-radius:1px"></div></div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:11px;font-weight:500;color:var(--ink)">${count}</div><div style="font-size:8px;color:var(--ink3)">${activeInLayer} active</div></div></div>`; }).join('');
+const recent = [...ideas].sort((a, b) => new Date(b.updated) - new Date(a.updated)).slice(0, 7);
+document.getElementById('dash-recent').innerHTML = recent.map(i => { const L = layerInfo(i.layer); return `<div class="mini-row" onclick="nav('idea','${i.id}')"><div style="width:3px;min-height:36px;border-radius:1px;background:${L.color};flex-shrink:0"></div><div class="mini-body"><div class="mini-t">${i.title}</div><div class="mini-s">${L.label}</div></div>${badge(STATUS_CLS[i.status] || 'b-paused', i.status)}</div>`; }).join('');
 }
 
-// ════════════════════════════════════════════════════════════════
-// LAYER PAGE
-// ════════════════════════════════════════════════════════════════
 function renderLayer(num) {
-  const lk = Object.keys(LAYERS).find(k=>LAYERS[k].num===num);
-  if (!lk) return;
-  const L = LAYERS[lk];
-  const ideas = getIdeas().filter(i=>i.layer===lk);
-  const el = document.getElementById(`page-layer-${num}`);
-  if (!el) return;
-
-  el.innerHTML = `
-    <div class="pg-head">
-      <div class="pg-title-block">
-        <div class="pg-eyebrow" style="color:${L.color}">${L.num} · Reality Refactor Lab</div>
-        <div class="pg-title">${L.label}</div>
-        <div class="pg-sub">${L.desc}</div>
-      </div>
-      <button class="btn btn-primary btn-sm" onclick="openNewInLayer('${lk}')">＋ Add to ${L.label}</button>
-    </div>
-    ${ideas.length===0
-      ? `<div class="empty-state"><div class="empty-ico">◈</div><div class="empty-title">Empty Layer</div><div class="empty-sub">Add the first idea to ${L.label}</div></div>`
-      : `<div class="g3">${ideas.map(i=>ideaCardHtml(i)).join('')}</div>`
-    }`;
+const lk = Object.keys(LAYERS).find(k => LAYERS[k].num === num); if (!lk) return; const L = LAYERS[lk], ideas = getIdeas().filter(i => i.layer === lk), el = document.getElementById(`page-layer-${num}`); if (!el) return;
+el.innerHTML = `<div class="pg-head"><div class="pg-title-block"><div class="pg-eyebrow" style="color:${L.color}">${L.num} · Reality Refactor Lab</div><div class="pg-title">${L.label}</div><div class="pg-sub">${L.desc}</div></div><button class="btn btn-primary btn-sm" onclick="openNewInLayer('${lk}')">+ Add to ${L.label}</button></div>${ideas.length === 0 ? `<div class="empty-state"><div class="empty-ico">◈</div><div class="empty-title">Empty Layer</div><div class="empty-sub">Add the first idea to ${L.label}</div></div>` : `<div class="g3">${ideas.map(i => ideaCardHtml(i)).join('')}</div>`}`;
 }
 
-function openNewInLayer(lk) {
-  nav('new');
-  setTimeout(() => { document.getElementById('f-layer').value = lk; }, 80);
-}
+function openNewInLayer(lk) { nav('new'); setTimeout(() => { document.getElementById('f-layer').value = lk; }, 80); }
 
-// ════════════════════════════════════════════════════════════════
-// ALL IDEAS
-// ════════════════════════════════════════════════════════════════
-let ideasF = { status:'all', layer:'all' };
+let ideasF = { status: 'all', layer: 'all' };
 
 function renderIdeas() {
-  const ideas = getIdeas();
-  const q = (document.getElementById('ideas-search')?.value||'').toLowerCase().trim();
-  const sc = document.getElementById('search-clear');
-  if (sc) sc.classList.toggle('vis', q.length>0);
-
-  const layerOpts = ['all', ...Object.keys(LAYERS)];
-  const statusOpts = ['all','active','research','concept','paused','archived'];
-
-  document.getElementById('ideas-filters').innerHTML =
-    statusOpts.map(s=>`<button class="fb ${ideasF.status===s?'on':''}" onclick="setF('status','${s}')">${s}</button>`).join('') +
-    '<div class="f-sep"></div>' +
-    layerOpts.map(l=>{
-      const lbl = l==='all' ? 'All Layers' : LAYERS[l].num + ' ' + LAYERS[l].label;
-      return `<button class="fb ${ideasF.layer===l?'on':''}" onclick="setF('layer','${encodeURIComponent(l)}')">${lbl}</button>`;
-    }).join('');
-
-  let fil = ideas.filter(i => {
-    if (ideasF.status!=='all' && i.status!==ideasF.status) return false;
-    if (ideasF.layer!=='all' && i.layer!==decodeURIComponent(ideasF.layer)) return false;
-    if (q) { const hay=[i.title,i.tagline,i.layer,...(i.tags||[])].join(' ').toLowerCase(); if(!hay.includes(q)) return false; }
-    return true;
-  });
-
-  document.getElementById('ideas-sub').textContent = `${fil.length} of ${ideas.length} ideas`;
-
-  if (!fil.length) {
-    document.getElementById('ideas-grid').innerHTML = `
-      <div class="empty-state" style="grid-column:1/-1">
-        <div class="empty-ico">◈</div>
-        <div class="empty-title">No Ideas Found</div>
-        <div class="empty-sub">${q?`No results for "${q}"`:'Adjust filters or add a new idea'}</div>
-      </div>`;
-    return;
-  }
-  document.getElementById('ideas-grid').innerHTML = fil.map(i=>ideaCardHtml(i)).join('');
+const ideas = getIdeas(), q = (document.getElementById('ideas-search')?.value || '').toLowerCase().trim(), sc = document.getElementById('search-clear'); if (sc) sc.classList.toggle('vis', q.length > 0);
+const layerOpts = ['all', ...Object.keys(LAYERS)], statusOpts = ['all', 'active', 'research', 'concept', 'paused', 'archived'];
+document.getElementById('ideas-filters').innerHTML = statusOpts.map(s => `<button class="fb ${ideasF.status === s ? 'on' : ''}" onclick="setF('status','${s}')">${s}</button>`).join('') + '<div class="f-sep"></div>' + layerOpts.map(l => { const lbl = l === 'all' ? 'All Layers' : LAYERS[l].num + ' ' + LAYERS[l].label; return `<button class="fb ${ideasF.layer === l ? 'on' : ''}" onclick="setF('layer','${encodeURIComponent(l)}')">${lbl}</button>`; }).join('');
+let fil = ideas.filter(i => { if (ideasF.status !== 'all' && i.status !== ideasF.status) return false; if (ideasF.layer !== 'all' && i.layer !== decodeURIComponent(ideasF.layer)) return false; if (q) { const hay = [i.title, i.tagline, i.layer, ...(i.tags || [])].join(' ').toLowerCase(); if (!hay.includes(q)) return false; } return true; });
+document.getElementById('ideas-sub').textContent = `${fil.length} of ${ideas.length} ideas`;
+if (!fil.length) { document.getElementById('ideas-grid').innerHTML = `<div class="empty-state" style="grid-column:1/-1"><div class="empty-ico">◈</div><div class="empty-title">No Ideas Found</div><div class="empty-sub">${q ? `No results for "${q}"` : 'Adjust filters or add a new idea'}</div></div>`; return; }
+document.getElementById('ideas-grid').innerHTML = fil.map(i => ideaCardHtml(i)).join('');
 }
 
-function ideaCardHtml(i) {
-  const L = layerInfo(i.layer);
-  const hasFiles = i.files && i.files.length > 0;
-  return `
-  <div class="idea-card" onclick="nav('idea','${i.id}')">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px">
-      <div class="ic-section" style="color:${L.color}">${L.num} · ${L.label}</div>
-      ${badge(STATUS_CLS[i.status]||'b-paused',i.status)}
-    </div>
-    <div class="ic-title">${i.title}</div>
-    ${i.doctype?`<div style="font-size:8px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">${i.doctype}</div>`:''}
-    <div class="ic-tagline">${i.tagline}</div>
-    ${pbar(i.progress, i.status==='paused')}
-    <div class="ic-foot">
-      <div class="ic-tags">${tagsHtml(i.tags,3)}</div>
-      <div class="ic-meta">
-        <div class="ic-pct" style="color:${PRI_C[i.priority]||'var(--gold)'}">${i.progress||0}%</div>
-        <div class="ic-upd">${fmtDate(i.updated)}</div>
-      </div>
-    </div>
-    ${hasFiles?`<div class="ic-files">📎 ${i.files.length} file${i.files.length>1?'s':''}</div>`:''}
-  </div>`;
-}
+function ideaCardHtml(i) { const L = layerInfo(i.layer), hasFiles = i.files && i.files.length > 0; return `<div class="idea-card" onclick="nav('idea','${i.id}')"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px"><div class="ic-section" style="color:${L.color}">${L.num} · ${L.label}</div>${badge(STATUS_CLS[i.status] || 'b-paused', i.status)}</div><div class="ic-title">${i.title}</div>${i.doctype ? `<div style="font-size:8px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">${i.doctype}</div>` : ''}<div class="ic-tagline">${i.tagline}</div>${pbar(i.progress, i.status === 'paused')}<div class="ic-foot"><div class="ic-tags">${tagsHtml(i.tags, 3)}</div><div class="ic-meta"><div class="ic-pct" style="color:${PRI_C[i.priority] || 'var(--gold)'}">${i.progress || 0}%</div><div class="ic-upd">${fmtDate(i.updated)}</div></div></div>${hasFiles ? `<div class="ic-files">📎 ${i.files.length} file${i.files.length > 1 ? 's' : ''}</div>` : ''}</div>`; }
 
-function setF(k,v) { ideasF[k]=decodeURIComponent(v); renderIdeas(); }
-function clearSearch() { const el=document.getElementById('ideas-search'); if(el){el.value='';} renderIdeas(); }
+function setF(k, v) { ideasF[k] = decodeURIComponent(v); renderIdeas(); }
+function clearSearch() { const el = document.getElementById('ideas-search'); if (el) { el.value = ''; } renderIdeas(); }
 
-// ════════════════════════════════════════════════════════════════
-// IDEA DETAIL
-// ════════════════════════════════════════════════════════════════
 function renderIdeaDetail(id) {
-  const ideas = getIdeas();
-  const i = ideas.find(x=>x.id===id);
-  if (!i) { nav('ideas'); return; }
-  const L = layerInfo(i.layer);
-  const related = (i.related||[]).map(rid=>ideas.find(x=>x.id===rid)).filter(Boolean);
-
-  const backBtn = document.getElementById('detail-back');
-  if (backBtn) backBtn.onclick = () => nav(`layer-${L.num}`);
-
-  let html = `
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px">
-      <div style="flex:1">
-        <div class="section-path">
-          <span style="color:${L.color}">${L.num}</span>
-          <span>·</span>
-          <span>${L.label}</span>
-          ${i.doctype?`<span>·</span><span>${i.doctype}</span>`:''}
-        </div>
-        <div class="detail-title">${i.title}</div>
-        <div class="detail-badges">
-          ${badge(STATUS_CLS[i.status]||'b-paused',i.status)}
-          ${badge(PRI_CLS[i.priority]||'b-medium',(i.priority||'medium')+' priority')}
-          ${i.is1149?`<span class="badge" style="color:var(--gold);border-color:var(--gold-brd);background:var(--gold-bg)">1149 Thread</span>`:''}
-          <span class="badge" style="color:${L.color};border-color:${L.color}30;background:${L.color}10">${L.label}</span>
-        </div>
-        <div class="detail-progress-row">
-          <div style="flex:1">${pbar(i.progress,i.status==='paused')}</div>
-          <span style="font-size:12px;font-weight:500;color:${PRI_C[i.priority]};flex-shrink:0">${i.progress||0}%</span>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:20px">${tagsHtml(i.tags,10)}</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:7px;flex-shrink:0">
-        <button class="btn btn-ghost btn-sm" onclick="nav('edit','${i.id}')">✎ Edit</button>
-        <div style="font-size:8px;color:var(--ink3);text-align:right">${fmtDate(i.updated)}</div>
-      </div>
-    </div>`;
-
-  if (i.tagline) html += `<div class="detail-tagline">${i.tagline}</div>`;
-
-  html += `<div class="g-side" style="align-items:start">`;
-  html += `<div>`;
-
-  if (i.whitepaper) html += `<div class="sh">White Paper</div><div class="md-content">${md2html(i.whitepaper)}</div>`;
-  if (i.techspec)   html += `<div class="sh" style="margin-top:26px">Technical Specification</div><div class="md-content">${md2html(i.techspec)}</div>`;
-
-  html += `</div><div>`;
-
-  if (i.solidarity) {
-    html += `<div class="sh">Solidarity Mechanism</div>
-      <div class="solidarity-box">
-        <div class="solidarity-label">Structural Design</div>
-        <div class="solidarity-text">${i.solidarity}</div>
-      </div>`;
-  }
-
-  if (i.files && i.files.length) {
-    html += `<div class="sh" style="margin-top:20px">Attachments</div><div class="file-list">`;
-    i.files.forEach((f,idx) => {
-      const iconMap={'pdf':'📄','doc':'📝','docx':'📝','png':'🖼','jpg':'🖼','jpeg':'🖼','mp3':'🎵','mp4':'🎬','json':'📋'};
-      const ico = iconMap[f.name.split('.').pop().toLowerCase()] || '📎';
-      html += `<div class="file-item">
-        <div class="file-ico">${ico}</div>
-        <div class="file-name">${f.name}</div>
-        <span class="file-size">${fmtSize(f.size)}</span>
-        <button class="btn btn-ghost btn-sm" onclick="downloadFile('${id}',${idx})">↓</button>
-      </div>`;
-    });
-    html += `</div>`;
-  }
-
-  if (related.length) {
-    html += `<div class="sh" style="margin-top:20px">Connected Ideas</div>`;
-    related.forEach(r => {
-      const RL = layerInfo(r.layer);
-      html += `<div class="conn-item" onclick="nav('idea','${r.id}')">
-        <span class="conn-arrow">→</span>
-        <div>
-          <div class="conn-name">${r.title}</div>
-          <div class="conn-rel" style="color:${RL.color}">${RL.num} · ${RL.label}</div>
-        </div>
-        ${badge(STATUS_CLS[r.status]||'b-paused',r.status)}
-      </div>`;
-    });
-  }
-
-  html += `</div></div>`;
-  document.getElementById('idea-detail').innerHTML = html;
+const ideas = getIdeas(), i = ideas.find(x => x.id === id); if (!i) { nav('ideas'); return; }
+const L = layerInfo(i.layer), related = (i.related || []).map(rid => ideas.find(x => x.id === rid)).filter(Boolean), backBtn = document.getElementById('detail-back');
+if (backBtn) backBtn.onclick = () => nav(`layer-${L.num}`);
+let html = `<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px"><div style="flex:1"><div class="section-path"><span style="color:${L.color}">${L.num}</span><span>·</span><span>${L.label}</span>${i.doctype ? `<span>·</span><span>${i.doctype}</span>` : ''}</div><div class="detail-title">${i.title}</div><div class="detail-badges">${badge(STATUS_CLS[i.status] || 'b-paused', i.status)}${badge(PRI_CLS[i.priority] || 'b-medium', (i.priority || 'medium') + ' priority')}${i.is1149 ? `<span class="badge" style="color:var(--gold);border-color:var(--gold-brd);background:var(--gold-bg)">1149 Thread</span>` : ''}<span class="badge" style="color:${L.color};border-color:${L.color}30;background:${L.color}10">${L.label}</span></div><div class="detail-progress-row"><div style="flex:1">${pbar(i.progress, i.status === 'paused')}</div><span style="font-size:12px;font-weight:500;color:${PRI_C[i.priority]};flex-shrink:0">${i.progress || 0}%</span></div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:20px">${tagsHtml(i.tags, 10)}</div></div><div style="display:flex;flex-direction:column;gap:7px;flex-shrink:0"><button class="btn btn-ghost btn-sm" onclick="nav('edit','${i.id}')">✎ Edit</button><div style="font-size:8px;color:var(--ink3);text-align:right">${fmtDate(i.updated)}</div></div></div>`;
+if (i.tagline) html += `<div class="detail-tagline">${i.tagline}</div>`;
+html += `<div class="g-side" style="align-items:start"><div>`;
+if (i.whitepaper) html += `<div class="sh">White Paper</div><div class="md-content">${md2html(i.whitepaper)}</div>`;
+if (i.techspec) html += `<div class="sh" style="margin-top:26px">Technical Specification</div><div class="md-content">${md2html(i.techspec)}</div>`;
+html += `</div><div>`;
+if (i.solidarity) html += `<div class="sh">Solidarity Mechanism</div><div class="solidarity-box"><div class="solidarity-label">Structural Design</div><div class="solidarity-text">${i.solidarity}</div></div>`;
+if (i.files && i.files.length) {
+html += `<div class="sh" style="margin-top:20px">Attachments</div><div class="file-list">`;
+i.files.forEach((f, idx) => {
+const iconMap = { 'pdf': '📄', 'doc': '📝', 'docx': '📝', 'png': '🖼', 'jpg': '🖼', 'jpeg': '🖼', 'mp3': '🎵', 'mp4': '🎬', 'json': '📋' }, ext = f.name.split('.').pop().toLowerCase(), ico = iconMap[ext] || '📎';
+html += `<div class="file-item"><div class="file-ico">${ico}</div><div class="file-name"><a href="${f.url || '#'}" target="_blank" style="text-decoration:underline">${f.name}</a></div><span class="file-size">${fmtSize(f.size)}</span><button class="btn btn-ghost btn-sm" onclick="downloadFile('${id}',${idx})" title="Download">↓</button></div>`;
+});
+html += `</div>`;
+}
+if (related.length) { html += `<div class="sh" style="margin-top:20px">Connected Ideas</div>`; related.forEach(r => { const RL = layerInfo(r.layer); html += `<div class="conn-item" onclick="nav('idea','${r.id}')"><span class="conn-arrow">→</span><div><div class="conn-name">${r.title}</div><div class="conn-rel" style="color:${RL.color}">${RL.num} · ${RL.label}</div></div>${badge(STATUS_CLS[r.status] || 'b-paused', r.status)}</div>`; }); }
+html += `</div></div>`; document.getElementById('idea-detail').innerHTML = html;
 }
 
-// ════════════════════════════════════════════════════════════════
-// MARKDOWN
-// ════════════════════════════════════════════════════════════════
 function md2html(md) {
-  if (!md) return '';
-  return md
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/```([a-z]*)\n?([\s\S]*?)```/g,(_,l,c)=>`<pre><code>${c.trim()}</code></pre>`)
-    .replace(/^#### (.+)$/gm,'<h4>$1</h4>')
-    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
-    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
-    .replace(/^# (.+)$/gm,'<h2>$1</h2>')
-    .replace(/\*\*\*(.+?)\*\*\*/g,'<strong><em>$1</em></strong>')
-    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-    .replace(/\*([^*\n]+?)\*/g,'<em>$1</em>')
-    .replace(/`([^`]+)`/g,'<code>$1</code>')
-    .replace(/^&gt; (.+)$/gm,'<blockquote>$1</blockquote>')
-    .replace(/<\/blockquote>\n<blockquote>/g,' ')
-    .replace(/(\|.+\|\n)((?:\|[-: ]+\|\n))(\|.+\|\n?)+/g, t => {
-      const lines = t.trim().split('\n');
-      const th = lines[0].split('|').filter(Boolean).map(c=>`<th>${c.trim()}</th>`).join('');
-      const rows = lines.slice(2).map(r=>'<tr>'+r.split('|').filter(Boolean).map(c=>`<td>${c.trim()}</td>`).join('')+'</tr>').join('');
-      return `<table><thead><tr>${th}</tr></thead><tbody>${rows}</tbody></table>`;
-    })
-    .replace(/(^- .+\n?)+/gm, b=>`<ul>${b.trim().split('\n').map(l=>`<li>${l.replace(/^- /,'')}</li>`).join('')}</ul>`)
-    .replace(/(^\d+\. .+\n?)+/gm, b=>`<ol>${b.trim().split('\n').map(l=>`<li>${l.replace(/^\d+\. /,'')}</li>`).join('')}</ol>`)
-    .replace(/^---+$/gm,'<hr style="border:none;border-top:1.5px solid var(--brd);margin:18px 0">')
-    .replace(/^(?!<)(.+)$/gm, l=>l.trim()?`<p>${l}</p>`:'')
-    .replace(/<\/p>\n<p>/g,'</p><p>');
+if (!md) return '';
+return md.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+.replace(/```([a-z]*)\n?([\s\S]*?)```/g, (_, l, c) => `<pre><code>${c.trim()}</code></pre>`)
+.replace(/^#### (.+)$/gm, '<h4>$1</h4>').replace(/^### (.+)$/gm, '<h3>$1</h3>').replace(/^## (.+)$/gm, '<h2>$1</h2>').replace(/^# (.+)$/gm, '<h2>$1</h2>')
+.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>').replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>').replace(/\*([^*\n]+?)\*/g, '<em>$1</em>')
+.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>').replace(/<\/blockquote>\n<blockquote>/g, ' ')
+.replace(/(\|.+\|\n)((?:\|[-: ]+\|\n))(\|.+\|\n?)+/g, t => { const lines = t.trim().split('\n'), th = lines[0].split('|').filter(Boolean).map(c => `<th>${c.trim()}</th>`).join(''), rows = lines.slice(2).map(r => '<tr>' + r.split('|').filter(Boolean).map(c => `<td>${c.trim()}</td>`).join('') + '</tr>').join(''); return `<table><thead><tr>${th}</tr></thead><tbody>${rows}</tbody></table>`; })
+.replace(/(^- .+\n?)+/gm, b => `<ul>${b.trim().split('\n').map(l => `<li>${l.replace(/^- /, '')}</li>`).join('')}</ul>`).replace(/(^\d+\. .+\n?)+/gm, b => `<ol>${b.trim().split('\n').map(l => `<li>${l.replace(/^\d+\. /, '')}</li>`).join('')}</ol>`)
+.replace(/^---+$/gm, '<hr style="border:none;border-top:1.5px solid var(--brd);margin:18px 0">')
+.replace(/^(?!<)(.+)$/gm, l => l.trim() ? `<p>${l}</p>` : '').replace(/<\/p>\n<p>/g, '</p><p>');
 }
 
-// ════════════════════════════════════════════════════════════════
-// FORM
-// ════════════════════════════════════════════════════════════════
-function openNewForm() {
-  editingId = null; pendingFiles = [];
-  document.getElementById('form-eyebrow').textContent = 'New Entry';
-  document.getElementById('form-title').textContent = 'New Idea';
-  document.getElementById('delete-btn').style.display = 'none';
-  document.getElementById('idea-form').reset();
-  document.getElementById('file-list').innerHTML = '';
-  updateStorageHint();
-}
+function openNewForm() { editingId = null; pendingFiles = []; document.getElementById('form-eyebrow').textContent = 'New Entry'; document.getElementById('form-title').textContent = 'New Idea'; document.getElementById('delete-btn').style.display = 'none'; document.getElementById('idea-form').reset(); document.getElementById('file-list').innerHTML = ''; updateStorageHint(); }
 
 function openEditForm(id) {
-  const i = getIdeas().find(x=>x.id===id);
-  if (!i) { nav('ideas'); return; }
-  editingId = id; pendingFiles = [...(i.files||[])];
-  document.getElementById('form-eyebrow').textContent = 'Edit Entry';
-  document.getElementById('form-title').textContent = i.title;
-  document.getElementById('delete-btn').style.display = 'inline-flex';
-  const F = s => document.getElementById(s);
-  F('f-title').value    = i.title||'';
-  F('f-tagline').value  = i.tagline||'';
-  F('f-layer').value    = i.layer||'';
-  F('f-status').value   = i.status||'concept';
-  F('f-priority').value = i.priority||'medium';
-  F('f-doctype').value  = i.doctype||'';
-  F('f-progress').value = i.progress||0;
-  F('f-tags').value     = (i.tags||[]).join(', ');
-  F('f-related').value  = (i.related||[]).join(', ');
-  F('f-whitepaper').value = i.whitepaper||'';
-  F('f-techspec').value   = i.techspec||'';
-  F('f-solidarity').value = i.solidarity||'';
-  F('f-1149').value       = i.is1149?'true':'false';
-  renderFileList(); updateStorageHint();
+const i = getIdeas().find(x => x.id === id); if (!i) { nav('ideas'); return; }
+editingId = id; pendingFiles = [...(i.files || [])]; document.getElementById('form-eyebrow').textContent = 'Edit Entry'; document.getElementById('form-title').textContent = i.title; document.getElementById('delete-btn').style.display = 'inline-flex';
+const F = s => document.getElementById(s); F('f-title').value = i.title || ''; F('f-tagline').value = i.tagline || ''; F('f-layer').value = i.layer || ''; F('f-status').value = i.status || 'concept'; F('f-priority').value = i.priority || 'medium'; F('f-doctype').value = i.doctype || ''; F('f-progress').value = i.progress || 0; F('f-tags').value = (i.tags || []).join(', '); F('f-related').value = (i.related || []).join(', '); F('f-whitepaper').value = i.whitepaper || ''; F('f-techspec').value = i.techspec || ''; F('f-solidarity').value = i.solidarity || ''; F('f-1149').value = i.is1149 ? 'true' : 'false'; renderFileList(); updateStorageHint();
+}
+
+// ════════════════════════════════════════════════════════════════
+// FILE UPLOAD — FIXED: Project folder + UTF-8
+// ════════════════════════════════════════════════════════════════
+async function uploadFileToGitHub(fileObj, projectPath, existingFile = null) {
+const token = getToken(); if (!token) throw new Error('No GitHub token');
+let base64Content = fileObj.data; if (base64Content.startsWith('data:')) base64Content = base64Content.split(',')[1];
+const safeName = fileObj.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+// FIX: Save in project folder, not root uploads/
+const uploadPath = projectPath + '/uploads/' + Date.now() + '_' + safeName;
+const body = JSON.stringify({ message: 'Upload: ' + safeName + ' (' + new Date().toISOString().slice(0, 10) + ')', content: base64Content, branch: GH_BRANCH, ...(existingFile && existingFile._ghSha ? { sha: existingFile._ghSha } : {}) });
+const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + uploadPath, { method: 'PUT', headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' }, body });
+if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Error uploading file'); }
+const data = await res.json();
+// FIX: Return GitHub Pages URL, not raw.githubusercontent.com
+return { url: 'https://alexsheff.github.io/1149/' + uploadPath, path: uploadPath, sha: data.content.sha };
 }
 
 async function submitIdea(e) {
-  e.preventDefault();
-  const ideas = getIdeas();
-  const now = new Date().toISOString().split('T')[0];
-  const F = s => document.getElementById(s).value.trim();
-  const idea = {
-    id: editingId || generateId(),
-    title: F('f-title'), tagline: F('f-tagline'),
-    layer: F('f-layer'), status: document.getElementById('f-status').value,
-    priority: document.getElementById('f-priority').value,
-    doctype: F('f-doctype'),
-    progress: parseInt(document.getElementById('f-progress').value)||0,
-    tags: F('f-tags').split(',').map(t=>t.trim()).filter(Boolean),
-    related: F('f-related').split(',').map(t=>t.trim()).filter(Boolean),
-    whitepaper: document.getElementById('f-whitepaper').value.trim(),
-    techspec: document.getElementById('f-techspec').value.trim(),
-    solidarity: document.getElementById('f-solidarity').value.trim(),
-    is1149: document.getElementById('f-1149').value === 'true',
-    updated: now, files: pendingFiles
-  };
-  // saveIdea writes .md to repo folder FIRST (source of truth), then updates cache
-  await saveIdea(idea);
-  toast((editingId ? 'Idea updated' : 'Idea saved') + ' ✓', 'success');
-  nav('idea', idea.id);
+e.preventDefault(); const token = getToken(), F = s => document.getElementById(s).value.trim(), formLayer = F('f-layer');
+if (!formLayer) { toast('Please select a layer', 'error'); return; }
+const saveBtn = document.getElementById('save-btn');
+if (pendingFiles.length > 0 && token) { toast('Saving idea and uploading files...', 'success'); saveBtn.classList.add('loading'); saveBtn.disabled = true; }
+else { toast('Saving idea...', 'success'); }
+// FIX: Build project path for file storage
+const titleSlug = F('f-title').replace(/[^\w\s-]/g, '').replace(/\s+/g, '_').slice(0, 40);
+const projectPath = formLayer + '/' + (titleSlug || 'untitled');
+let processedFiles = [];
+try {
+for (const f of pendingFiles) {
+if (f.data && f.data.startsWith('data:') && token) {
+const existingFile = f._ghSha ? f : null;
+const uploadResult = await uploadFileToGitHub(f, projectPath, existingFile);
+processedFiles.push({ name: f.name, size: f.size, type: f.type, url: uploadResult.url, path: uploadResult.path, _ghSha: uploadResult.sha, uploaded: new Date().toISOString() });
+} else if (f.url) { processedFiles.push(f); }
+}
+} catch (err) { toast('File upload failed: ' + err.message, 'error'); saveBtn.classList.remove('loading'); saveBtn.disabled = false; return; }
+const ideas = getIdeas(), now = new Date().toISOString().split('T')[0];
+const idea = { id: editingId || generateId(), title: F('f-title'), tagline: F('f-tagline'), layer: formLayer, status: document.getElementById('f-status').value, priority: document.getElementById('f-priority').value, doctype: F('f-doctype'), progress: parseInt(document.getElementById('f-progress').value) || 0, tags: F('f-tags').split(',').map(t => t.trim()).filter(Boolean), related: F('f-related').split(',').map(t => t.trim()).filter(Boolean), whitepaper: document.getElementById('f-whitepaper').value.trim(), techspec: document.getElementById('f-techspec').value.trim(), solidarity: document.getElementById('f-solidarity').value.trim(), is1149: document.getElementById('f-1149').value === 'true', updated: now, files: processedFiles, _ghPath: projectPath };
+if (editingId) { const idx = ideas.findIndex(x => x.id === editingId); if (idx !== -1) ideas[idx] = idea; else ideas.push(idea); } else { ideas.push(idea); }
+await save(ideas); toast((editingId ? 'Idea updated' : 'Idea saved') + ' — syncing markdown...', 'success'); nav('idea', idea.id); syncSingleIdea(idea);
+saveBtn.classList.remove('loading'); saveBtn.disabled = false;
 }
 
-function confirmDelete() {
-  if (!editingId) return;
-  const i = getIdeas().find(x=>x.id===editingId);
-  showModal('Delete Idea', `Delete "<strong>${i?.title}</strong>"? This cannot be undone.`, [
-    {label:'Delete', cls:'btn-danger', fn:async ()=>{ await save(getIdeas().filter(x=>x.id!==editingId)); closeModal(); toast('Deleted','success'); nav('ideas'); }},
-    {label:'Cancel', cls:'btn-ghost', fn:closeModal}
-  ]);
-}
+function confirmDelete() { if (!editingId) return; const i = getIdeas().find(x => x.id === editingId); showModal('Delete Idea', `Delete "<strong>${i?.title}</strong>"? This cannot be undone.`, [{ label: 'Delete', cls: 'btn-danger', fn: async () => { await save(getIdeas().filter(x => x.id !== editingId)); closeModal(); toast('Deleted', 'success'); nav('ideas'); } }, { label: 'Cancel', cls: 'btn-ghost', fn: closeModal }]); }
 
-// ════════════════════════════════════════════════════════════════
-// FILES
-// ════════════════════════════════════════════════════════════════
-const MAX_FILE = 2*1024*1024;
-function handleFileSelect(e) { processFiles([...e.target.files]); e.target.value=''; }
+function handleFileSelect(e) { processFiles([...e.target.files]); e.target.value = ''; }
 function handleDragOver(e) { e.preventDefault(); document.getElementById('file-drop').classList.add('drag-over'); }
 function handleDragLeave() { document.getElementById('file-drop').classList.remove('drag-over'); }
 function handleDrop(e) { e.preventDefault(); document.getElementById('file-drop').classList.remove('drag-over'); processFiles([...e.dataTransfer.files]); }
-function processFiles(files) {
-  files.forEach(f => {
-    if (f.size > MAX_FILE) { toast(`${f.name} exceeds 2MB`, 'error'); return; }
-    const r = new FileReader();
-    r.onload = ev => { pendingFiles.push({name:f.name,type:f.type,size:f.size,data:ev.target.result}); renderFileList(); updateStorageHint(); };
-    r.readAsDataURL(f);
-  });
-}
-function renderFileList() {
-  const el = document.getElementById('file-list'); if(!el) return;
-  el.innerHTML = pendingFiles.map((f,i)=>`
-    <div class="file-item">
-      <div class="file-ico">📎</div>
-      <div class="file-name">${f.name}</div>
-      <span class="file-size">${fmtSize(f.size)}</span>
-      <button class="file-del" onclick="pendingFiles.splice(${i},1);renderFileList();updateStorageHint()">✕</button>
-    </div>`).join('');
-}
-function updateStorageHint() {
-  const el=document.getElementById('storage-hint'); if(!el) return;
-  const sz=pendingFiles.reduce((s,f)=>s+f.size,0);
-  el.textContent=`Pending: ${fmtSize(sz)} · Total storage: ${storageKB()}KB`;
-  el.style.color = sz>1024*1024 ? '#C2410C' : 'var(--ink3)';
-}
-function downloadFile(ideaId, idx) {
-  const i = getIdeas().find(x=>x.id===ideaId); if(!i||!i.files[idx]) return;
-  const f=i.files[idx]; const a=document.createElement('a'); a.href=f.data; a.download=f.name; a.click();
-}
-function fmtSize(b) { if(b<1024) return b+'B'; if(b<1048576) return (b/1024).toFixed(1)+'KB'; return (b/1048576).toFixed(1)+'MB'; }
 
-// ════════════════════════════════════════════════════════════════
-// KNOWLEDGE GRAPH
-// ════════════════════════════════════════════════════════════════
-let gNodes=[], gLinks=[], gDrag=null, gOff={x:0,y:0}, gReady=false;
+function processFiles(files) {
+files.forEach(f => {
+if (f.size > MAX_FILE) { toast(`${f.name} exceeds 2MB`, 'error'); return; }
+const r = new FileReader();
+r.onload = ev => {
+const existingIdx = pendingFiles.findIndex(pf => pf.name === f.name);
+if (existingIdx >= 0) { pendingFiles[existingIdx] = { ...pendingFiles[existingIdx], name: f.name, type: f.type, size: f.size, data: ev.target.result }; }
+else { pendingFiles.push({ name: f.name, type: f.type, size: f.size, data: ev.target.result }); }
+renderFileList(); updateStorageHint();
+};
+r.readAsDataURL(f);
+});
+}
+
+function renderFileList() {
+const el = document.getElementById('file-list'); if (!el) return;
+el.innerHTML = pendingFiles.map((f, i) => `<div class="file-item"><div class="file-ico">📎</div><div class="file-name">${f.name}${f.uploaded ? ' ✓' : ''}</div><span class="file-size">${fmtSize(f.size)}</span><button class="file-del" onclick="pendingFiles.splice(${i},1);renderFileList();updateStorageHint()">✕</button></div>`).join('');
+}
+
+function updateStorageHint() { const el = document.getElementById('storage-hint'); if (!el) return; const sz = pendingFiles.reduce((s, f) => s + f.size, 0); el.textContent = `Pending: ${fmtSize(sz)} · Total storage: ${storageKB()}KB`; el.style.color = sz > 1024 * 1024 ? '#C2410C' : 'var(--ink3)'; }
+
+function downloadFile(ideaId, idx) { const i = getIdeas().find(x => x.id === ideaId); if (!i || !i.files[idx]) return; const f = i.files[idx]; if (f.url) { window.open(f.url, '_blank'); } else if (f.data) { const a = document.createElement('a'); a.href = f.data; a.download = f.name; a.click(); } }
+
+function fmtSize(b) { if (b < 1024) return b + 'B'; if (b < 1048576) return (b / 1024).toFixed(1) + 'KB'; return (b / 1048576).toFixed(1) + 'MB'; }
+
+let gNodes = [], gLinks = [], gDrag = null, gOff = { x: 0, y: 0 }, gReady = false;
 
 function renderGraph() {
-  const canvas = document.getElementById('graph-canvas');
-  const ideas  = getIdeas();
-  if (!ideas.length || !canvas) return;
+const canvas = document.getElementById('graph-canvas');
+const ideas = getIdeas();
+if (!ideas.length || !canvas) return;
+canvas.width = canvas.offsetWidth || 900;
+const W = canvas.width, H = canvas.height;
+const ctx = canvas.getContext('2d');
+if (!gReady || gNodes.length !== ideas.length) {
+gReady = true;
+gNodes = ideas.map((idea, idx) => {
+const layerKeys = Object.keys(LAYERS);
+const lIdx = layerKeys.indexOf(idea.layer);
+const ideasInLayer = ideas.filter(i => i.layer === idea.layer);
+const iIdx = ideasInLayer.indexOf(idea);
+const layerAngle = (lIdx / layerKeys.length) * Math.PI * 2;
+const layerR = 160 + (lIdx % 3) * 50;
+const spread = (iIdx / Math.max(ideasInLayer.length, 1)) * 1.2 - 0.6;
+return {
+id: idea.id, title: idea.title, layer: idea.layer,
+status: idea.status, priority: idea.priority,
+x: W / 2 + Math.cos(layerAngle + spread) * layerR + (Math.random() - .5) * 40,
+y: H / 2 + Math.sin(layerAngle + spread) * layerR + (Math.random() - .5) * 40,
+r: 20, vx: 0, vy: 0
+};
+});
+}
+gLinks = [];
+ideas.forEach(i => {
+(i.related || []).forEach(rid => {
+const s = gNodes.find(n => n.id === i.id), t = gNodes.find(n => n.id === rid);
+if (s && t) gLinks.push({ s, t, color: layerInfo(i.layer).color });
+});
+});
+const leg = document.getElementById('graph-legend');
+if (leg) leg.innerHTML = Object.keys(LAYERS).map(lk => {
+const L = LAYERS[lk];
+const cnt = ideas.filter(i => i.layer === lk).length;
+return `<div style="display:flex;align-items:center;gap:6px">
+<div style="width:10px;height:10px;border-radius:2px;background:${L.color}22;border:1.5px solid ${L.color}66"></div>
+<span style="font-size:8.5px;color:${L.color};letter-spacing:1.5px;text-transform:uppercase">${L.num} ${L.label}</span>
+<span style="font-size:8.5px;color:var(--ink3)">(${cnt})</span>
+</div>`;
+}).join('');
 
-  canvas.width  = canvas.offsetWidth || 900;
-  const W=canvas.width, H=canvas.height;
-  const ctx = canvas.getContext('2d');
+function draw() {
+ctx.clearRect(0, 0, W, H);
+Object.keys(LAYERS).forEach(lk => {
+const L = LAYERS[lk], lIdx = Object.keys(LAYERS).indexOf(lk);
+const lAngle = (lIdx / Object.keys(LAYERS).length) * Math.PI * 2;
+const lR = 160 + (lIdx % 3) * 50;
+const cx = W / 2 + Math.cos(lAngle) * lR, cy = H / 2 + Math.sin(lAngle) * lR;
+ctx.beginPath(); ctx.arc(cx, cy, 52, 0, Math.PI * 2);
+ctx.fillStyle = L.color + '0A'; ctx.fill();
+ctx.strokeStyle = L.color + '20'; ctx.lineWidth = 1; ctx.stroke();
+});
+gNodes.forEach(n => {
+n.vx += (W / 2 - n.x) * .0006; n.vy += (H / 2 - n.y) * .0006;
+gNodes.forEach(m => { if (n === m) return; const dx = n.x - m.x, dy = n.y - m.y, d = Math.max(Math.hypot(dx, dy), 1); if (d < 110) { n.vx += dx / d * .5; n.vy += dy / d * .5; } });
+gLinks.forEach(l => { if (l.s === n || l.t === n) { const o = l.s === n ? l.t : l.s, dx = o.x - n.x, dy = o.y - n.y, d = Math.hypot(dx, dy); if (d > 90) { n.vx += dx / d * .18; n.vy += dy / d * .18; } } });
+n.vx *= .86; n.vy *= .86;
+if (!gDrag || gDrag !== n) { n.x = Math.max(n.r + 6, Math.min(W - n.r - 6, n.x + n.vx)); n.y = Math.max(n.r + 6, Math.min(H - n.r - 6, n.y + n.vy)); }
+});
+gLinks.forEach(l => {
+ctx.beginPath(); ctx.moveTo(l.s.x, l.s.y); ctx.lineTo(l.t.x, l.t.y);
+ctx.strokeStyle = l.color + '55'; ctx.lineWidth = 1.5; ctx.stroke();
+});
+gNodes.forEach(n => {
+const L = layerInfo(n.layer);
+ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+ctx.fillStyle = '#1D2035'; ctx.fill();
+ctx.strokeStyle = L.color + (n.status === 'active' ? 'EE' : '66');
+ctx.lineWidth = n.priority === 'critical' ? 3 : n.priority === 'high' ? 2 : 1.5; ctx.stroke();
+const label = n.title.length > 11 ? n.title.slice(0, 10) + '...' : n.title;
+ctx.font = `500 7.5px 'JetBrains Mono',monospace`;
+ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+ctx.fillStyle = L.color + (n.status === 'active' ? 'DD' : '88');
+ctx.fillText(label, n.x, n.y);
+});
+requestAnimationFrame(draw);
+}
+draw();
 
-  if (!gReady || gNodes.length !== ideas.length) {
-    gReady = true;
-    // Arrange by layer in a spiral
-    gNodes = ideas.map((idea, idx) => {
-      const layerKeys = Object.keys(LAYERS);
-      const lIdx = layerKeys.indexOf(idea.layer);
-      const ideasInLayer = ideas.filter(i=>i.layer===idea.layer);
-      const iIdx = ideasInLayer.indexOf(idea);
-      const layerAngle = (lIdx / layerKeys.length) * Math.PI * 2;
-      const layerR = 160 + (lIdx % 3) * 50;
-      const spread = (iIdx / Math.max(ideasInLayer.length,1)) * 1.2 - 0.6;
-      return {
-        id: idea.id, title: idea.title, layer: idea.layer,
-        status: idea.status, priority: idea.priority,
-        x: W/2 + Math.cos(layerAngle+spread) * layerR + (Math.random()-.5)*40,
-        y: H/2 + Math.sin(layerAngle+spread) * layerR + (Math.random()-.5)*40,
-        r: 20, vx:0, vy:0
-      };
-    });
-    gReady = true;
-  }
-
-  gLinks = [];
-  ideas.forEach(i=>{
-    (i.related||[]).forEach(rid=>{
-      const s=gNodes.find(n=>n.id===i.id), t=gNodes.find(n=>n.id===rid);
-      if(s&&t) gLinks.push({s,t,color:layerInfo(i.layer).color});
-    });
-  });
-
-  const leg=document.getElementById('graph-legend');
-  if(leg) leg.innerHTML=Object.keys(LAYERS).map(lk=>{
-    const L=LAYERS[lk];
-    const cnt=ideas.filter(i=>i.layer===lk).length;
-    return `<div style="display:flex;align-items:center;gap:6px">
-      <div style="width:10px;height:10px;border-radius:2px;background:${L.color}22;border:1.5px solid ${L.color}66"></div>
-      <span style="font-size:8.5px;color:${L.color};letter-spacing:1.5px;text-transform:uppercase">${L.num} ${L.label}</span>
-      <span style="font-size:8.5px;color:var(--ink3)">(${cnt})</span>
-    </div>`;
-  }).join('');
-
-  function draw() {
-    ctx.clearRect(0,0,W,H);
-
-    // Draw layer zone outlines on dark bg
-    Object.keys(LAYERS).forEach(lk=>{
-      const L=LAYERS[lk],lIdx=Object.keys(LAYERS).indexOf(lk);
-      const lAngle=(lIdx/Object.keys(LAYERS).length)*Math.PI*2;
-      const lR=160+(lIdx%3)*50;
-      const cx=W/2+Math.cos(lAngle)*lR, cy=H/2+Math.sin(lAngle)*lR;
-      ctx.beginPath(); ctx.arc(cx,cy,52,0,Math.PI*2);
-      ctx.fillStyle=L.color+'0A'; ctx.fill();
-      ctx.strokeStyle=L.color+'20'; ctx.lineWidth=1; ctx.stroke();
-    });
-
-    // Force sim
-    gNodes.forEach(n=>{
-      n.vx+=(W/2-n.x)*.0006; n.vy+=(H/2-n.y)*.0006;
-      gNodes.forEach(m=>{ if(n===m) return; const dx=n.x-m.x,dy=n.y-m.y,d=Math.max(Math.hypot(dx,dy),1); if(d<110){n.vx+=dx/d*.5;n.vy+=dy/d*.5;} });
-      gLinks.forEach(l=>{ if(l.s===n||l.t===n){const o=l.s===n?l.t:l.s,dx=o.x-n.x,dy=o.y-n.y,d=Math.hypot(dx,dy);if(d>90){n.vx+=dx/d*.18;n.vy+=dy/d*.18;}} });
-      n.vx*=.86; n.vy*=.86;
-      if(!gDrag||gDrag!==n){n.x=Math.max(n.r+6,Math.min(W-n.r-6,n.x+n.vx));n.y=Math.max(n.r+6,Math.min(H-n.r-6,n.y+n.vy));}
-    });
-
-    // Links
-    gLinks.forEach(l=>{
-      ctx.beginPath(); ctx.moveTo(l.s.x,l.s.y); ctx.lineTo(l.t.x,l.t.y);
-      ctx.strokeStyle=l.color+'55'; ctx.lineWidth=1.5; ctx.stroke();
-    });
-
-    // Nodes
-    gNodes.forEach(n=>{
-      const L=layerInfo(n.layer);
-      ctx.beginPath(); ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
-      ctx.fillStyle='#1D2035'; ctx.fill();
-      ctx.strokeStyle=L.color+(n.status==='active'?'EE':'66');
-      ctx.lineWidth=n.priority==='critical'?3:n.priority==='high'?2:1.5; ctx.stroke();
-
-      // Label
-      const label=n.title.length>11?n.title.slice(0,10)+'…':n.title;
-      ctx.font=`500 7.5px 'JetBrains Mono',monospace`;
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillStyle=L.color+(n.status==='active'?'DD':'88');
-      ctx.fillText(label,n.x,n.y);
-    });
-
-    requestAnimationFrame(draw);
-  }
-  draw();
-
-  // Events
-  function getNode(e) {
-    const r=canvas.getBoundingClientRect();
-    const mx=(e.clientX-r.left)*(W/r.width), my=(e.clientY-r.top)*(H/r.height);
-    return {node:gNodes.find(n=>Math.hypot(n.x-mx,n.y-my)<n.r+4)||null, mx, my};
-  }
-  canvas.onmousedown=e=>{const{node,mx,my}=getNode(e);if(node){gDrag=node;gOff={x:mx-node.x,y:my-node.y};}};
-  canvas.onmousemove=e=>{if(!gDrag)return;const r=canvas.getBoundingClientRect();gDrag.x=(e.clientX-r.left)*(W/r.width)-gOff.x;gDrag.y=(e.clientY-r.top)*(H/r.height)-gOff.y;};
-  canvas.onmouseup=e=>{
-    if(gDrag){const r=canvas.getBoundingClientRect();const dx=(e.clientX-r.left)*(W/r.width)-(gDrag.x+gOff.x),dy=(e.clientY-r.top)*(H/r.height)-(gDrag.y+gOff.y);if(Math.hypot(dx,dy)<5)nav('idea',gDrag.id);}
-    gDrag=null;
-  };
+function getNode(e) {
+const r = canvas.getBoundingClientRect();
+const mx = (e.clientX - r.left) * (W / r.width), my = (e.clientY - r.top) * (H / r.height);
+return { node: gNodes.find(n => Math.hypot(n.x - mx, n.y - my) < n.r + 4) || null, mx, my };
+}
+canvas.onmousedown = e => { const { node, mx, my } = getNode(e); if (node) { gDrag = node; gOff = { x: mx - node.x, y: my - node.y }; } };
+canvas.onmousemove = e => { if (!gDrag) return; const r = canvas.getBoundingClientRect(); gDrag.x = (e.clientX - r.left) * (W / r.width) - gOff.x; gDrag.y = (e.clientY - r.top) * (H / r.height) - gOff.y; };
+canvas.onmouseup = e => {
+if (gDrag) { const r = canvas.getBoundingClientRect(); const dx = (e.clientX - r.left) * (W / r.width) - (gDrag.x + gOff.x), dy = (e.clientY - r.top) * (H / r.height) - (gDrag.y + gOff.y); if (Math.hypot(dx, dy) < 5) nav('idea', gDrag.id); }
+gDrag = null;
+};
 }
 
-// ════════════════════════════════════════════════════════════════
-// ════════════════════════════════════════════════════════════════
-// SETTINGS
-// ════════════════════════════════════════════════════════════════
 function renderSettings() {
-  const ideas = getIdeas();
-  const totalFiles = ideas.reduce((s,i)=>s+(i.files||[]).length,0);
-  const totalSize  = ideas.reduce((s,i)=>(i.files||[]).reduce((ss,f)=>ss+f.size,s),0);
-  const token = getToken();
-  const sha   = getSha();
-  const inp   = document.getElementById('gh-token-input');
-  if (inp && token) inp.placeholder = token.slice(0,7) + '...' + token.slice(-4) + ' (set)';
-  const ghStatus = document.getElementById('gh-status');
-  if (ghStatus && !ghStatus.textContent) {
-    ghStatus.innerHTML = token
-      ? '<span style="color:var(--green)">Token saved. ' + (sha ? 'SHA: ' + sha.slice(0,10) + '...' : 'Not yet synced.') + '</span>'
-      : '<span style="color:var(--orange)">No token set — ideas will only be saved locally.</span>';
-  }
-  document.getElementById('storage-stats').innerHTML =
-    'Ideas in cache: <strong>' + ideas.length + '</strong><br>' +
-    'Attached files: <strong>' + totalFiles + '</strong> (' + fmtSize(totalSize) + ')<br>' +
-    'Cache size: <strong>' + storageKB() + ' KB</strong><br>' +
-    'Token: <strong style="color:' + (token ? 'var(--green)' : 'var(--orange)') + '">' + (token ? 'Set ✓' : 'Not set') + '</strong>';
+const ideas = getIdeas();
+const totalFiles = ideas.reduce((s, i) => s + (i.files || []).length, 0);
+const totalSize = ideas.reduce((s, i) => (i.files || []).reduce((ss, f) => ss + f.size, s), 0);
+const token = getToken();
+const sha = getSha();
+const inp = document.getElementById('gh-token-input');
+if (inp && token) inp.placeholder = token.slice(0, 7) + '...' + token.slice(-4) + ' (set)';
+const ghStatus = document.getElementById('gh-status');
+if (ghStatus && !ghStatus.textContent) {
+ghStatus.innerHTML = token
+? '<span style="color:var(--green)">Token saved. ' + (sha ? 'SHA: ' + sha.slice(0, 10) + '...' : 'Not yet synced.') + '</span>'
+: '<span style="color:var(--orange)">No token set — ideas will only be saved locally.</span>';
+}
+document.getElementById('storage-stats').innerHTML =
+'Ideas in cache: <strong>' + ideas.length + '</strong><br>' +
+'Attached files: <strong>' + totalFiles + '</strong> (' + fmtSize(totalSize) + ')<br>' +
+'Cache size: <strong>' + storageKB() + ' KB</strong><br>' +
+'Token: <strong style="color:' + (token ? 'var(--green)' : 'var(--orange)') + '">' + (token ? 'Set ✓' : 'Not set') + '</strong>';
 }
 
 function saveToken() {
-  const val = (document.getElementById('gh-token-input').value || '').trim();
-  if (!val) { toast('Paste your token first', 'error'); return; }
-  if (!val.startsWith('ghp_') && !val.startsWith('github_pat_')) {
-    toast('Token should start with ghp_ or github_pat_', 'error'); return;
-  }
-  cfgSet({ token: val, sha: '' });
-  document.getElementById('gh-token-input').value = '';
-  document.getElementById('gh-status').innerHTML = '<span style="color:var(--blue)">Token saved. Testing connection…</span>';
-  testConnection();
+const val = (document.getElementById('gh-token-input').value || '').trim();
+if (!val) { toast('Paste your token first', 'error'); return; }
+if (!val.startsWith('ghp_') && !val.startsWith('github_pat_')) {
+toast('Token should start with ghp_ or github_pat_', 'error'); return;
+}
+cfgSet({ token: val, sha: '' });
+document.getElementById('gh-token-input').value = '';
+document.getElementById('gh-status').innerHTML = '<span style="color:var(--blue)">Token saved. Testing connection…</span>';
+testConnection();
 }
 
 async function testConnection() {
-  const token = getToken();
-  const el = document.getElementById('gh-status');
-  if (!token) { if (el) el.innerHTML = '<span style="color:var(--orange)">No token set.</span>'; return; }
-  if (el) el.innerHTML = '<span style="color:var(--blue)">Connecting to github.com/AlexSheff/1149…</span>';
-  try {
-    const res = await fetch('https://api.github.com/repos/' + GH_REPO, {
-      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if (res.status === 401) throw new Error('Token invalid or expired');
-    if (res.status === 404) throw new Error('Repo not found — check AlexSheff/1149 exists and is accessible');
-    if (!res.ok) throw new Error('Error ' + res.status);
-    const data = await res.json();
-    if (el) el.innerHTML = '<span style="color:var(--green)">Connected: <strong>' + data.full_name + '</strong></span>';
-    toast('GitHub connected ✓', 'success');
-    // Now load ideas from GitHub
-    const ideas = await ghLoad();
-    if (ideas !== null) {
-      if (ideas.length === 0) {
-        if (el) el.innerHTML += ' — <span style="color:var(--orange)">data/ideas.json empty or missing. Click "Seed &amp; push" below.</span>';
-      } else {
-        if (el) el.innerHTML += ' — <span style="color:var(--green)">' + ideas.length + ' ideas loaded.</span>';
-        renderAll();
-      }
-    }
-    renderSettings();
-  } catch(e) {
-    if (el) el.innerHTML = '<span style="color:var(--orange)">Error: ' + e.message + '</span>';
-    toast('Connection failed: ' + e.message.slice(0,50), 'error');
-  }
+const token = getToken();
+const el = document.getElementById('gh-status');
+if (!token) { if (el) el.innerHTML = '<span style="color:var(--orange)">No token set.</span>'; return; }
+if (el) el.innerHTML = '<span style="color:var(--blue)">Connecting to github.com/AlexSheff/1149…</span>';
+try {
+const res = await fetch('https://api.github.com/repos/' + GH_REPO, {
+headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+});
+if (res.status === 401) throw new Error('Token invalid or expired');
+if (res.status === 404) throw new Error('Repo not found — check AlexSheff/1149 exists and is accessible');
+if (!res.ok) throw new Error('Error ' + res.status);
+const data = await res.json();
+if (el) el.innerHTML = '<span style="color:var(--green)">Connected: <strong>' + data.full_name + '</strong></span>';
+toast('GitHub connected ✓', 'success');
+const ideas = await ghLoad();
+if (ideas !== null) {
+if (ideas.length === 0) {
+if (el) el.innerHTML += ' — <span style="color:var(--orange)">data/ideas.json empty or missing. Click "Seed & push" below.</span>';
+} else {
+if (el) el.innerHTML += ' — <span style="color:var(--green)">' + ideas.length + ' ideas loaded.</span>';
+renderAll();
+}
+}
+renderSettings();
+} catch (e) {
+if (el) el.innerHTML = '<span style="color:var(--orange)">Error: ' + e.message + '</span>';
+toast('Connection failed: ' + e.message.slice(0, 50), 'error');
+}
 }
 
 async function triggerSync() {
-  setSyncUI('loading');
-  const ideas = await ghLoad();
-  if (ideas === null) return;
-  if (ideas.length === 0 && cacheRead().length === 0) {
-    toast('Repo is empty. Use "Seed & push" in Settings to populate.', 'error');
-  } else {
-    renderAll();
-    toast('Synced — ' + getIdeas().length + ' ideas', 'success');
-  }
+setSyncUI('loading');
+const ideas = await ghLoad();
+if (ideas === null) return;
+if (ideas.length === 0 && cacheRead().length === 0) {
+toast('Repo is empty. Use "Seed & push" in Settings to populate.', 'error');
+} else {
+renderAll();
+toast('Synced — ' + getIdeas().length + ' ideas', 'success');
+}
 }
 
 async function pushNow() {
-  const ideas = cacheRead();
-  if (!ideas.length) { toast('Nothing to push — cache is empty', 'error'); return; }
-  setSyncUI('saving');
-  try {
-    await ghWrite(ideas);
-    setSyncUI('ok');
-    toast('Pushed ' + ideas.length + ' ideas to GitHub ✓', 'success');
-    renderSettings();
-  } catch(e) {
-    setSyncUI('error', e.message.slice(0,36));
-    toast('Push failed: ' + e.message.slice(0,60), 'error');
-  }
+const ideas = cacheRead();
+if (!ideas.length) { toast('Nothing to push — cache is empty', 'error'); return; }
+setSyncUI('saving');
+try {
+await ghWrite(ideas);
+setSyncUI('ok');
+toast('Pushed ' + ideas.length + ' ideas to GitHub ✓', 'success');
+renderSettings();
+} catch (e) {
+setSyncUI('error', e.message.slice(0, 36));
+toast('Push failed: ' + e.message.slice(0, 60), 'error');
+}
 }
 
-// ════════════════════════════════════════════════════════════════
-// EXPORT / IMPORT
-// ════════════════════════════════════════════════════════════════
 function triggerExport() {
-  const ideas=getIdeas();
-  const json=JSON.stringify({version:3,structure:'reality-refactor-lab',repo:'github.com/AlexSheff/1149',exported:new Date().toISOString(),ideas},null,2);
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));
-  a.download=`rrl-1149-${new Date().toISOString().split('T')[0]}.json`;
-  a.click();
-  toast(`Exported ${ideas.length} ideas`,'success');
+const ideas = getIdeas();
+const json = JSON.stringify({ version: 3, structure: 'reality-refactor-lab', repo: 'github.com/AlexSheff/1149', exported: new Date().toISOString(), ideas }, null, 2);
+const a = document.createElement('a');
+a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+a.download = `rrl-1149-${new Date().toISOString().split('T')[0]}.json`;
+a.click();
+toast(`Exported ${ideas.length} ideas`, 'success');
 }
+
 function triggerImport() { document.getElementById('import-input').click(); }
+
 function handleImport(e) {
-  const f=e.target.files[0]; if(!f) return;
-  const r=new FileReader();
-  r.onload=async ev=>{
-    try {
-      const p=JSON.parse(ev.target.result);
-      const incoming=p.ideas||(Array.isArray(p)?p:[]);
-      if(!incoming.length) throw new Error('No ideas found');
-      const existing=getIdeas();
-      const existingIds=new Set(existing.map(i=>i.id));
-      const toAdd=incoming.filter(i=>!existingIds.has(i.id));
-      const toUpd=incoming.filter(i=>existingIds.has(i.id));
-      await save([...existing.map(ex=>{const u=toUpd.find(x=>x.id===ex.id);return u||ex;}),...toAdd]);
-      toast(`Imported: ${toAdd.length} added, ${toUpd.length} updated`,'success');
-      renderAll();
-    } catch(err) { toast('Import failed: '+err.message,'error'); }
-  };
-  r.readAsText(f); e.target.value='';
+const f = e.target.files[0]; if (!f) return;
+const r = new FileReader();
+r.onload = async ev => {
+try {
+const p = JSON.parse(ev.target.result);
+const incoming = p.ideas || (Array.isArray(p) ? p : []);
+if (!incoming.length) throw new Error('No ideas found');
+const existing = getIdeas();
+const existingIds = new Set(existing.map(i => i.id));
+const toAdd = incoming.filter(i => !existingIds.has(i.id));
+const toUpd = incoming.filter(i => existingIds.has(i.id));
+await save([...existing.map(ex => { const u = toUpd.find(x => x.id === ex.id); return u || ex; }), ...toAdd]);
+toast(`Imported: ${toAdd.length} added, ${toUpd.length} updated`, 'success');
+renderAll();
+} catch (err) { toast('Import failed: ' + err.message, 'error'); }
+};
+r.readAsText(f); e.target.value = '';
 }
+
 function confirmClearAll() {
-  showModal('Clear local cache','This clears the browser cache. Your ideas stay safe in GitHub.',[
-    {label:'Clear cache',cls:'btn-danger',fn:()=>{localStorage.removeItem(CACHE_KEY);closeModal();toast('Cache cleared. Pull from GitHub to restore.','success');renderAll();}},
-    {label:'Cancel',cls:'btn-ghost',fn:closeModal}
-  ]);
+showModal('Clear local cache', 'This clears the browser cache. Your ideas stay safe in GitHub.', [
+{ label: 'Clear cache', cls: 'btn-danger', fn: () => { localStorage.removeItem(CACHE_KEY); closeModal(); toast('Cache cleared. Pull from GitHub to restore.', 'success'); renderAll(); } },
+{ label: 'Cancel', cls: 'btn-ghost', fn: closeModal }
+]);
 }
 
-// ════════════════════════════════════════════════════════════════
-// MODAL / TOAST
-// ════════════════════════════════════════════════════════════════
-function showModal(title,body,actions) {
-  document.getElementById('modal-title').innerHTML=title;
-  document.getElementById('modal-body').innerHTML=body;
-  document.getElementById('modal-actions').innerHTML=actions.map((a,i)=>`<button class="btn ${a.cls}" onclick="window._ma[${i}].fn()">${a.label}</button>`).join('');
-  window._ma=actions;
-  document.getElementById('modal-overlay').classList.add('open');
+function showModal(title, body, actions) {
+document.getElementById('modal-title').innerHTML = title;
+document.getElementById('modal-body').innerHTML = body;
+document.getElementById('modal-actions').innerHTML = actions.map((a, i) => `<button class="btn ${a.cls}" onclick="window._ma[${i}].fn()">${a.label}</button>`).join('');
+window._ma = actions;
+document.getElementById('modal-overlay').classList.add('open');
 }
+
 function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
-function closeModalOutside(e) { if(e.target.id==='modal-overlay') closeModal(); }
-function toast(msg,type='success') {
-  const c=document.getElementById('toast');
-  const el=document.createElement('div');
-  el.className=`toast ${type}`;
-  el.innerHTML=`<span>${type==='success'?'✓':'✕'}</span> ${msg}`;
-  c.appendChild(el);
-  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(8px)';el.style.transition='all .3s';setTimeout(()=>el.remove(),300);},3000);
+function closeModalOutside(e) { if (e.target.id === 'modal-overlay') closeModal(); }
+
+function toast(msg, type = 'success') {
+const c = document.getElementById('toast');
+const el = document.createElement('div');
+el.className = `toast ${type}`;
+el.innerHTML = `<span>${type === 'success' ? '✓' : '✕'}</span> ${msg}`;
+c.appendChild(el);
+setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(8px)'; el.style.transition = 'all .3s'; setTimeout(() => el.remove(), 300); }, 3000);
 }
 
-// ════════════════════════════════════════════════════════════════
-// NAV LISTENERS
-// ════════════════════════════════════════════════════════════════
-document.querySelectorAll('.nav-item[data-page]').forEach(el=>{
-  el.addEventListener('click',()=>nav(el.dataset.page));
-});
+document.querySelectorAll('.nav-item[data-page]').forEach(el => { el.addEventListener('click', () => nav(el.dataset.page)); });
 
-// ════════════════════════════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════════════════════════════
-function renderAll() {
-  updateBadges();
-  if(currentPage==='dashboard') renderDashboard();
-  else if(currentPage==='ideas') renderIdeas();
-  else if(currentPage.startsWith('layer-')) renderLayer(currentPage.replace('layer-',''));
-  else if(currentPage==='settings') renderSettings();
-}
+function renderAll() { updateBadges(); if (currentPage === 'dashboard') renderDashboard(); else if (currentPage === 'ideas') renderIdeas(); else if (currentPage.startsWith('layer-')) renderLayer(currentPage.replace('layer-', '')); else if (currentPage === 'settings') renderSettings(); }
 
 (async function init() {
-  document.getElementById('sb-date').textContent =
-    new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-
-  const token = getToken();
-
-  // Always show cached data immediately (avoids blank screen while loading)
-  const cached = cacheRead();
-  if (cached.length) { updateBadges(); handleHash(); }
-
-  if (!token) {
-    setSyncUI('no-token');
-    if (!cached.length) await seedDefaultIdeas();
-    else { updateBadges(); if (!cached.length) handleHash(); }
-    if (!localStorage.getItem('rrl_gh_hint')) {
-      localStorage.setItem('rrl_gh_hint','1');
-      setTimeout(() => toast('Add a GitHub token in Settings → GitHub Sync to enable repo storage', 'success'), 2000);
-    }
-    return;
-  }
-
-  // Token present — .md files are the source of truth.
-  // Strategy: scan repo folders. If repo has no .md files yet → seed and push them.
-  setSyncUI('loading', 'Loading…');
-  try {
-    const fromRepo = await scanRepoForIdeas();
-    if (!fromRepo) return; // token invalid or network error
-
-    if (fromRepo.length === 0) {
-      // Empty repo: either brand new or only ideas.json exists.
-      // Try fast-loading ideas.json first as a starting point.
-      const jsonLoad = await ghRead();
-      if (jsonLoad && jsonLoad.ideas && jsonLoad.ideas.length > 0) {
-        // ideas.json has data — use it and write .md files for all of them
-        cacheWrite(jsonLoad.ideas);
-        if (jsonLoad.sha) cfgSet({ sha: jsonLoad.sha });
-        updateBadges(); renderAll();
-        setSyncUI('ok', 'Writing .md files…');
-        toast('Found ' + jsonLoad.ideas.length + ' ideas in ideas.json — writing .md files to repo folders…', 'success');
-        // Write each idea as a .md file in the background
-        for (const idea of jsonLoad.ideas) {
-          await syncIdeaMarkdown(idea).catch(e => console.warn(e.message));
-        }
-        setSyncUI('ok');
-        toast('All .md files written to repo folders ✓', 'success');
-      } else if (cached.length > 0) {
-        // Cache has data, repo is empty — push cache as .md files
-        setSyncUI('ok', 'Pushing to repo…');
-        toast('Writing cached ideas to repo folders…', 'success');
-        for (const idea of cached) {
-          await syncIdeaMarkdown(idea).catch(e => console.warn(e.message));
-        }
-        await save(cached);
-        setSyncUI('ok'); toast('Pushed ' + cached.length + ' ideas to repo ✓', 'success');
-      } else {
-        // Truly empty — seed
-        await seedDefaultIdeas();
-      }
-    } else {
-      // Repo has .md files — they WIN. Merge and render.
-      const cachedMap = {};
-      cached.forEach(i => { if (i.id) cachedMap[i.id] = i; });
-      const merged = fromRepo.map(idea => Object.assign({}, idea, { files: (cachedMap[idea.id]||{}).files||[] }));
-      const repoIds = new Set(fromRepo.map(i => i.id));
-      cached.forEach(c => { if (!repoIds.has(c.id)) merged.push(c); });
-      cacheWrite(merged);
-      // Rebuild ideas.json index silently
-      ghWrite(merged).catch(e => console.warn('index rebuild:', e.message));
-      updateBadges(); renderAll();
-      setSyncUI('ok');
-      if (!cached.length) handleHash();
-    }
-  } catch(e) {
-    setSyncUI('error', e.message.slice(0,36));
-    if (!cached.length) { await seedDefaultIdeas(); }
-  }
+document.getElementById('sb-date').textContent = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+const cached = cacheRead(); if (cached.length) { updateBadges(); handleHash(); }
+const token = getToken();
+if (token) { 
+const fresh = await ghLoad(); 
+if (fresh !== null && fresh.length === 0 && cached.length === 0) { 
+setSyncUI('no-token', 'Repo empty'); 
+if (!localStorage.getItem('rrl_seed_hint')) { 
+localStorage.setItem('rrl_seed_hint', '1'); 
+setTimeout(() => toast('Repo is empty — go to Settings and click "Seed & push"', 'error'), 1000); 
+} 
+} else if (fresh !== null) { renderAll(); } 
+} else { 
+setSyncUI('no-token'); 
+if (!cached.length) { await seedDefaultIdeas(); } 
+else { updateBadges(); handleHash(); } 
+if (!localStorage.getItem('rrl_gh_hint')) { 
+localStorage.setItem('rrl_gh_hint', '1'); 
+setTimeout(() => toast('Add a GitHub token in Settings to sync ideas to your repo', 'success'), 2000); 
+} 
+}
 })();
 </script>
 </body>
