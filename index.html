@@ -1125,7 +1125,11 @@ async function ghWrite(ideas) {
   const body = JSON.stringify({ version: 3, updated: new Date().toISOString(), ideas: ideas }, null, 2);
   const payload = {
     message: 'data: ' + new Date().toISOString().slice(0,10) + ' (' + ideas.length + ' ideas)',
-    content: btoa(unescape(encodeURIComponent(body))),
+    content: (function(s){
+      const bytes = new TextEncoder().encode(s);
+      let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b));
+      return btoa(bin);
+    })(body),
     branch: GH_BRANCH
   };
   const sha = getSha();
@@ -1197,7 +1201,11 @@ async function ghWriteFile(path, content, existingSha, commitMsg) {
   const msg = commitMsg || ('docs: update ' + path.split('/').pop() + ' (' + new Date().toISOString().slice(0,10) + ')');
   const body = JSON.stringify({
     message: msg,
-    content: btoa(unescape(encodeURIComponent(content))),
+    content: (function(s){
+      const bytes = new TextEncoder().encode(s);
+      let bin = ''; bytes.forEach(b => bin += String.fromCharCode(b));
+      return btoa(bin);
+    })(content),
     branch: GH_BRANCH,
     ...(existingSha ? { sha: existingSha } : {})
   });
@@ -1492,15 +1500,17 @@ async function syncIdeaMarkdown(idea) {
   const folder = ideaFolderPath(idea);
   try {
     if (idea.whitepaper || idea.tagline) {
-      const wpPath = folder + '/WHITE_PAPER.md';
-      const wpSha  = idea._wpSha || await ghGetSha(wpPath);
-      await ghWriteFile(wpPath, buildWhitePaper(idea), wpSha,
-        'docs: ' + idea.title + ' · WHITE_PAPER.md · ' + new Date().toISOString().slice(0,10));
+      const readmeSha = await ghGetSha(folder + '/README.md');
+      await ghWriteFile(folder + '/README.md', buildWhitePaper(idea), readmeSha,
+        'docs: ' + idea.title + ' · README.md');
+      const wpSha = await ghGetSha(folder + '/WHITE_PAPER.md');
+      await ghWriteFile(folder + '/WHITE_PAPER.md', buildWhitePaper(idea), wpSha,
+        'docs: ' + idea.title + ' · WHITE_PAPER.md');
     }
     if (idea.techspec && idea.techspec.trim().length > 10) {
       const tsSha = await ghGetSha(folder + '/TECH_SPEC.md');
       await ghWriteFile(folder + '/TECH_SPEC.md', buildTechSpec(idea), tsSha,
-        'docs: ' + idea.title + ' · TECH_SPEC.md · ' + new Date().toISOString().slice(0,10));
+        'docs: ' + idea.title + ' · TECH_SPEC.md');
     }
     // Upload any new binary attachments
     if (idea.files && idea.files.some(f => !f._repoPath)) {
@@ -1549,22 +1559,34 @@ async function saveIdea(idea) {
   // Step 1b: Write .md files to repo folder (PRIMARY)
   try {
     const folder = ideaFolderPath(idea);
-    if (idea.whitepaper || idea.tagline) {
-      const wpPath = folder + '/WHITE_PAPER.md';
-      const wpSha  = idea._wpSha || await ghGetSha(wpPath);
-      const result = await ghWriteFile(wpPath, buildWhitePaper(idea), wpSha,
-        'idea: ' + idea.title + ' (' + new Date().toISOString().slice(0,10) + ')');
-      if (result && result.content) idea._wpSha = result.content.sha;
-    }
+    // Write README.md — GitHub renders this automatically in folder view
+    const readmePath = folder + '/README.md';
+    const readmeSha  = idea._wpSha || await ghGetSha(readmePath);
+    const readmeResult = await ghWriteFile(
+      readmePath, buildWhitePaper(idea), readmeSha,
+      'idea: ' + idea.title + ' (' + new Date().toISOString().slice(0,10) + ')'
+    );
+    if (readmeResult && readmeResult.content) idea._wpSha = readmeResult.content.sha;
+
+    // Also write WHITE_PAPER.md for repo conventions
+    const wpSha = await ghGetSha(folder + '/WHITE_PAPER.md');
+    await ghWriteFile(
+      folder + '/WHITE_PAPER.md', buildWhitePaper(idea), wpSha,
+      'docs: ' + idea.title + ' · WHITE_PAPER.md'
+    );
+
+    // Write TECH_SPEC.md if content exists
     if (idea.techspec && idea.techspec.trim().length > 10) {
-      const tsPath = folder + '/TECH_SPEC.md';
-      const tsSha  = await ghGetSha(tsPath);
-      await ghWriteFile(tsPath, buildTechSpec(idea), tsSha,
-        'spec: ' + idea.title + ' (' + new Date().toISOString().slice(0,10) + ')');
+      const tsSha = await ghGetSha(folder + '/TECH_SPEC.md');
+      await ghWriteFile(
+        folder + '/TECH_SPEC.md', buildTechSpec(idea), tsSha,
+        'spec: ' + idea.title + ' · TECH_SPEC.md'
+      );
     }
   } catch(e) {
-    setSyncUI('error', e.message.slice(0,36));
-    toast('Failed to write .md file: ' + e.message.slice(0,60), 'error');
+    setSyncUI('error', e.message.slice(0,40));
+    toast('Failed to write .md to repo: ' + e.message.slice(0,80), 'error');
+    console.error('saveIdea .md write error:', e);
   }
   // Step 2: Update ideas.json cache (SECONDARY)
   const ideas = getIdeas();
