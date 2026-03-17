@@ -27,6 +27,7 @@ OrbitForum: A Decentralized Satellite-Based Forum for Global Freedom
 Whitepaper Version 1.0
 Date: January 2026
 Authors: The OrbitForum DAO Community
+https://sites.google.com/view/orbitforum/home
 
 Abstract
 OrbitForum is a groundbreaking initiative to launch a CubeSat satellite hosting an isolated, decentralized forum. The platform creates a "celestial intranet," enabling global citizens to access a read-only broadcast of discussions independent of terrestrial internet infrastructure. While read access is universal, write access is secured via cryptographic subscription.
