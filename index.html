@@ -581,83 +581,110 @@ el.style.color = C[state] || 'var(--ink3)';
 }
 
 // ════════════════════════════════════════════════════════════════
-// GITHUB API — FIXED UTF-8 ENCODING
+// GITHUB API — Core (FIXED UTF-8)
 // ════════════════════════════════════════════════════════════════
-async function ghRead() {
-const token = getToken();
-if (!token) { setSyncUI('no-token'); return null; }
-const hdrs = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
-const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE + '?ref=' + GH_BRANCH, { headers: hdrs });
-if (res.status === 404) return { ideas: [], sha: null };
-if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Read error ' + res.status); }
-const file = await res.json();
-let parsed;
-try {
-// FIX: Proper UTF-8 decoding
-const decoded = atob(file.content.replace(/\n/g, ''));
-parsed = JSON.parse(decodeURIComponent(escape(decoded)));
-} catch (e) { 
-console.error('Parse error:', e);
-parsed = []; 
+
+// Helper: properly decode base64 to UTF-8 string
+function base64ToUtf8(base64) {
+    try {
+        const binary = atob(base64.replace(/\n/g, ''));
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+            bytes[i] = binary.charCodeAt(i);
+        }
+        return new TextDecoder('utf-8').decode(bytes);
+    } catch (e) {
+        console.error('UTF-8 decode error:', e);
+        return '';
+    }
 }
-return { ideas: Array.isArray(parsed) ? parsed : (parsed.ideas || []), sha: file.sha };
+
+// Helper: properly encode UTF-8 string to base64
+function utf8ToBase64(str) {
+    const encoder = new TextEncoder();
+    const bytes = encoder.encode(str);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+}
+
+async function ghRead() {
+    const token = getToken();
+    if (!token) { setSyncUI('no-token'); return null; }
+    const hdrs = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
+    const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE + '?ref=' + GH_BRANCH, { headers: hdrs });
+    if (res.status === 404) return { ideas: [], sha: null };
+    if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Read error ' + res.status); }
+    const file = await res.json();
+    let parsed;
+    try { 
+        // FIXED: Use proper UTF-8 decoding
+        const content = base64ToUtf8(file.content);
+        parsed = JSON.parse(content);
+    } catch (e) { 
+        console.error('Parse error:', e);
+        parsed = []; 
+    }
+    return { ideas: Array.isArray(parsed) ? parsed : (parsed.ideas || []), sha: file.sha };
 }
 
 async function ghWrite(ideas) {
-const token = getToken();
-if (!token) { setSyncUI('no-token'); throw new Error('No GitHub token. Add it in Settings.'); }
-const body = JSON.stringify({ version: 3, updated: new Date().toISOString(), ideas: ideas }, null, 2);
-// FIX: Proper UTF-8 encoding
-const payload = { 
-message: 'data: ' + new Date().toISOString().slice(0, 10) + ' (' + ideas.length + ' ideas)', 
-content: btoa(unescape(encodeURIComponent(body))), 
-branch: GH_BRANCH 
-};
-const sha = getSha(); if (sha) payload.sha = sha;
-const hdrs = { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' };
-const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE, { method: 'PUT', headers: hdrs, body: JSON.stringify(payload) });
-if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Write error ' + res.status); }
-const data = await res.json(); cfgSet({ sha: data.content.sha }); return data;
-}
-
-async function ghLoad() {
-setSyncUI('loading');
-try {
-const result = await ghRead();
-if (!result) return null;
-cacheWrite(result.ideas);
-if (result.sha) cfgSet({ sha: result.sha });
-setSyncUI('ok');
-return result.ideas;
-} catch (e) { setSyncUI('error', e.message.slice(0, 36)); return null; }
+    const token = getToken();
+    if (!token) { setSyncUI('no-token'); throw new Error('No GitHub token. Add it in Settings.'); }
+    const body = JSON.stringify({ version: 3, updated: new Date().toISOString(), ideas: ideas }, null, 2);
+    const payload = {
+        message: 'data: ' + new Date().toISOString().slice(0, 10) + ' (' + ideas.length + ' ideas)',
+        content: utf8ToBase64(body),  // FIXED: Use proper UTF-8 encoding
+        branch: GH_BRANCH
+    };
+    const sha = getSha();
+    if (sha) payload.sha = sha;
+    const hdrs = { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' };
+    const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + GH_FILE, { method: 'PUT', headers: hdrs, body: JSON.stringify(payload) });
+    if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Write error ' + res.status); }
+    const data = await res.json();
+    cfgSet({ sha: data.content.sha });
+    return data;
 }
 
 async function ghGetFile(path) {
-const token = getToken(); if (!token) return null;
-const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH, { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } });
-if (!res.ok) return null;
-const data = await res.json();
-let content = ''; 
-try { 
-// FIX: Proper UTF-8 decoding
-content = decodeURIComponent(escape(atob(data.content.replace(/\n/g, '')))); 
-} catch (e) { content = ''; }
-return { content, sha: data.sha, path: data.path };
-}
-
-async function ghGetSha(path) {
-const token = getToken(); if (!token) return null;
-const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH, { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } });
-if (!res.ok) return null; const data = await res.json(); return data.sha || null;
+    const token = getToken();
+    if (!token) return null;
+    const res = await fetch(
+        'https://api.github.com/repos/' + GH_REPO + '/contents/' + path + '?ref=' + GH_BRANCH,
+        { headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' } }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    let content = '';
+    try { 
+        // FIXED: Use proper UTF-8 decoding
+        content = base64ToUtf8(data.content);
+    } catch (e) { 
+        console.error('File decode error:', e);
+        content = ''; 
+    }
+    return { content, sha: data.sha, path: data.path };
 }
 
 async function ghWriteFile(path, content, existingSha, commitMsg) {
-const token = getToken(); if (!token) return null;
-const msg = commitMsg || ('docs: update ' + path.split('/').pop() + ' (' + new Date().toISOString().slice(0, 10) + ')');
-const body = JSON.stringify({ message: msg, content: btoa(unescape(encodeURIComponent(content))), branch: GH_BRANCH, ...(existingSha ? { sha: existingSha } : {}) });
-const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + path, { method: 'PUT', headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' }, body });
-if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Write error ' + res.status); }
-return res.json();
+    const token = getToken();
+    if (!token) return null;
+    const msg = commitMsg || ('docs: update ' + path.split('/').pop() + ' (' + new Date().toISOString().slice(0, 10) + ')');
+    const body = JSON.stringify({
+        message: msg,
+        content: utf8ToBase64(content),  // FIXED: Use proper UTF-8 encoding
+        branch: GH_BRANCH,
+        ...(existingSha ? { sha: existingSha } : {})
+    });
+    const res = await fetch(
+        'https://api.github.com/repos/' + GH_REPO + '/contents/' + path,
+        { method: 'PUT', headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' }, body }
+    );
+    if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Write error ' + res.status); }
+    return res.json();
 }
 
 async function ghListDir(path) {
@@ -881,47 +908,113 @@ editingId = id; pendingFiles = [...(i.files || [])]; document.getElementById('fo
 const F = s => document.getElementById(s); F('f-title').value = i.title || ''; F('f-tagline').value = i.tagline || ''; F('f-layer').value = i.layer || ''; F('f-status').value = i.status || 'concept'; F('f-priority').value = i.priority || 'medium'; F('f-doctype').value = i.doctype || ''; F('f-progress').value = i.progress || 0; F('f-tags').value = (i.tags || []).join(', '); F('f-related').value = (i.related || []).join(', '); F('f-whitepaper').value = i.whitepaper || ''; F('f-techspec').value = i.techspec || ''; F('f-solidarity').value = i.solidarity || ''; F('f-1149').value = i.is1149 ? 'true' : 'false'; renderFileList(); updateStorageHint();
 }
 
-// ════════════════════════════════════════════════════════════════
-// FILE UPLOAD — FIXED: Project folder + UTF-8
-// ════════════════════════════════════════════════════════════════
-async function uploadFileToGitHub(fileObj, projectPath, existingFile = null) {
-const token = getToken(); if (!token) throw new Error('No GitHub token');
-let base64Content = fileObj.data; if (base64Content.startsWith('data:')) base64Content = base64Content.split(',')[1];
-const safeName = fileObj.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-// FIX: Save in project folder, not root uploads/
-const uploadPath = projectPath + '/uploads/' + Date.now() + '_' + safeName;
-const body = JSON.stringify({ message: 'Upload: ' + safeName + ' (' + new Date().toISOString().slice(0, 10) + ')', content: base64Content, branch: GH_BRANCH, ...(existingFile && existingFile._ghSha ? { sha: existingFile._ghSha } : {}) });
-const res = await fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + uploadPath, { method: 'PUT', headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' }, body });
-if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.message || 'Error uploading file'); }
-const data = await res.json();
-// FIX: Return GitHub Pages URL, not raw.githubusercontent.com
-return { url: 'https://alexsheff.github.io/1149/' + uploadPath, path: uploadPath, sha: data.content.sha };
+async function uploadFileToGitHub(fileObj, projectPath) {
+    const token = getToken();
+    if (!token) throw new Error('No GitHub token');
+    
+    let base64Content = fileObj.data;
+    if (base64Content.startsWith('data:')) {
+        base64Content = base64Content.split(',')[1];
+    }
+    
+    const safeName = fileObj.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    // FIXED: Save in project folder
+    const path = projectPath + '/uploads/' + Date.now() + '_' + safeName;
+    
+    const body = JSON.stringify({
+        message: 'Upload file: ' + fileObj.name,
+        content: base64Content,
+        branch: GH_BRANCH
+    });
+    
+    const res = await fetch(
+        'https://api.github.com/repos/' + GH_REPO + '/contents/' + path,
+        { method: 'PUT', headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' }, body }
+    );
+    
+    if (!res.ok) {
+        const e = await res.json().catch(() => ({}));
+        throw new Error(e.message || 'Error uploading file');
+    }
+    
+    const data = await res.json();
+    // FIXED: Return GitHub Pages URL, not raw URL
+    return 'https://alexsheff.github.io/1149/' + path;
 }
 
 async function submitIdea(e) {
-e.preventDefault(); const token = getToken(), F = s => document.getElementById(s).value.trim(), formLayer = F('f-layer');
-if (!formLayer) { toast('Please select a layer', 'error'); return; }
-const saveBtn = document.getElementById('save-btn');
-if (pendingFiles.length > 0 && token) { toast('Saving idea and uploading files...', 'success'); saveBtn.classList.add('loading'); saveBtn.disabled = true; }
-else { toast('Saving idea...', 'success'); }
-// FIX: Build project path for file storage
-const titleSlug = F('f-title').replace(/[^\w\s-]/g, '').replace(/\s+/g, '_').slice(0, 40);
-const projectPath = formLayer + '/' + (titleSlug || 'untitled');
-let processedFiles = [];
-try {
-for (const f of pendingFiles) {
-if (f.data && f.data.startsWith('data:') && token) {
-const existingFile = f._ghSha ? f : null;
-const uploadResult = await uploadFileToGitHub(f, projectPath, existingFile);
-processedFiles.push({ name: f.name, size: f.size, type: f.type, url: uploadResult.url, path: uploadResult.path, _ghSha: uploadResult.sha, uploaded: new Date().toISOString() });
-} else if (f.url) { processedFiles.push(f); }
-}
-} catch (err) { toast('File upload failed: ' + err.message, 'error'); saveBtn.classList.remove('loading'); saveBtn.disabled = false; return; }
-const ideas = getIdeas(), now = new Date().toISOString().split('T')[0];
-const idea = { id: editingId || generateId(), title: F('f-title'), tagline: F('f-tagline'), layer: formLayer, status: document.getElementById('f-status').value, priority: document.getElementById('f-priority').value, doctype: F('f-doctype'), progress: parseInt(document.getElementById('f-progress').value) || 0, tags: F('f-tags').split(',').map(t => t.trim()).filter(Boolean), related: F('f-related').split(',').map(t => t.trim()).filter(Boolean), whitepaper: document.getElementById('f-whitepaper').value.trim(), techspec: document.getElementById('f-techspec').value.trim(), solidarity: document.getElementById('f-solidarity').value.trim(), is1149: document.getElementById('f-1149').value === 'true', updated: now, files: processedFiles, _ghPath: projectPath };
-if (editingId) { const idx = ideas.findIndex(x => x.id === editingId); if (idx !== -1) ideas[idx] = idea; else ideas.push(idea); } else { ideas.push(idea); }
-await save(ideas); toast((editingId ? 'Idea updated' : 'Idea saved') + ' — syncing markdown...', 'success'); nav('idea', idea.id); syncSingleIdea(idea);
-saveBtn.classList.remove('loading'); saveBtn.disabled = false;
+    e.preventDefault();
+    const token = getToken();
+    const F = s => document.getElementById(s).value.trim();
+    const formLayer = F('f-layer');
+    
+    if (!formLayer) {
+        toast('Please select a layer', 'error');
+        return;
+    }
+    
+    if (pendingFiles.length > 0 && token) {
+        toast('Saving idea and uploading files...', 'success');
+    } else {
+        toast('Saving idea...', 'success');
+    }
+    
+    // FIXED: Build project path for file storage
+    const titleSlug = F('f-title').replace(/[^\w\s-]/g, '').replace(/\s+/g, '_').slice(0, 40);
+    const projectPath = formLayer + '/' + (titleSlug || 'untitled');
+    
+    let processedFiles = [];
+    try {
+        for (const f of pendingFiles) {
+            if (f.data && f.data.startsWith('data:') && token) {
+                const url = await uploadFileToGitHub(f, projectPath);
+                processedFiles.push({
+                    name: f.name,
+                    size: f.size,
+                    type: f.type,
+                    url: url
+                });
+            } else if (f.url) {
+                processedFiles.push(f);
+            }
+        }
+    } catch (err) {
+        toast('File upload failed: ' + err.message, 'error');
+        return;
+    }
+    
+    const ideas = getIdeas();
+    const now = new Date().toISOString().split('T')[0];
+    const idea = {
+        id: editingId || generateId(),
+        title: F('f-title'), tagline: F('f-tagline'),
+        layer: formLayer, status: document.getElementById('f-status').value,
+        priority: document.getElementById('f-priority').value,
+        doctype: F('f-doctype'),
+        progress: parseInt(document.getElementById('f-progress').value) || 0,
+        tags: F('f-tags').split(',').map(t => t.trim()).filter(Boolean),
+        related: F('f-related').split(',').map(t => t.trim()).filter(Boolean),
+        whitepaper: document.getElementById('f-whitepaper').value.trim(),
+        techspec: document.getElementById('f-techspec').value.trim(),
+        solidarity: document.getElementById('f-solidarity').value.trim(),
+        is1149: document.getElementById('f-1149').value === 'true',
+        updated: now, 
+        files: processedFiles,
+        _ghPath: projectPath  // FIXED: Store project path
+    };
+    
+    if (editingId) { 
+        const idx = ideas.findIndex(x => x.id === editingId); 
+        if (idx !== -1) ideas[idx] = idea; 
+        else ideas.push(idea); 
+    } else {
+        ideas.push(idea);
+    }
+    
+    await save(ideas);
+    toast((editingId ? 'Idea updated' : 'Idea saved') + ' — syncing markdown…', 'success');
+    nav('idea', idea.id);
+    syncSingleIdea(idea);
 }
 
 function confirmDelete() { if (!editingId) return; const i = getIdeas().find(x => x.id === editingId); showModal('Delete Idea', `Delete "<strong>${i?.title}</strong>"? This cannot be undone.`, [{ label: 'Delete', cls: 'btn-danger', fn: async () => { await save(getIdeas().filter(x => x.id !== editingId)); closeModal(); toast('Deleted', 'success'); nav('ideas'); } }, { label: 'Cancel', cls: 'btn-ghost', fn: closeModal }]); }
