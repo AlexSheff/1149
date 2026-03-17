@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "updated": "2026-03-17T12:50:49.177Z",
+  "updated": "2026-03-17T13:19:49.928Z",
   "ideas": [
     {
       "id": "3003",
@@ -154,29 +154,6 @@
       "files": [],
       "_ghPath": "04_Technical_Nodes/P2PAIR/WHITE_PAPER.md",
       "_wpSha": "177a252e82a90acedacf8d20237c47c72e746d5b"
-    },
-    {
-      "id": "8003",
-      "title": "SLSM",
-      "layer": "04_Technical_Nodes",
-      "doctype": "Concept",
-      "status": "concept",
-      "priority": "medium",
-      "progress": 0,
-      "tagline": "Segmented Linear Stepper Muscle",
-      "tags": [
-        "robotic",
-        "muscule"
-      ],
-      "related": [],
-      "is1149": true,
-      "whitepaper": "# SLSM — White Paper\n\n> *Segmented Linear Stepper Muscle*\n\n---\n\n# SLSM ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ White Paper\n\n> *Segmented Linear Stepper Muscle*\n\n---\n\nSLSM\nSegmented Linear Stepper Muscle\nA Bio-Inspired Electromagnetic Actuator Architecture\n\nConceptual White Paper ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ Version 1.0\n2026\n\nAbstract\nThis paper introduces the Segmented Linear Stepper Muscle (SLSM), a novel electromagnetic actuator concept that reframes the linear stepper motor as a flexible, bio-mimetic muscle fiber. Each fiber consists of a PTFE-sleeved tube of alternating-polarity permanent magnets sliding freely within a segmented coil array. Sequential or grouped energization of coil sections produces controlled linear displacement ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ analogous to the sliding-filament mechanism of skeletal muscle. Multiple fibers assembled into a fascicle-like bundle replicate the geometry, force output, and scalability of biological muscle groups. This document resolves the core engineering trade-offs, defines the operating principles from first principles, provides validated performance estimates for a 5 mm ÃÂÃÂÃÂÃÂ 100 mm fiber at 2.5 V, and outlines a practical path to a first prototype.\n\n\n\n1.  Introduction and Motivation\nConventional electromagnetic actuators ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ rotary motors, solenoids, and servo mechanisms ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ achieve linear motion through mechanical intermediaries: gearboxes, rack-and-pinion assemblies, crank linkages, and ball screws. Each such transmission stage introduces backlash, mechanical wear, and geometric constraints that limit the degree to which an artificial limb can replicate the smooth, compliant, distributed force output of biological muscle.\n\nThe Segmented Linear Stepper Muscle (SLSM) concept eliminates all mechanical transmission by operating directly in the linear domain. It recasts the well-understood rotary stepper motor as a thin, flexible tube ÃÂÃÂ¢ÃÂÃÂÃÂÃÂ effectively \"unrolling\" the stator into a straight coil array and replacing the rotor with a magnetically segmented sliding core. The resulting device:\nProduces force directly along its own axis, with no gears or linkages\nCan be physically shaped to match the geometry of any target muscle\nScales from fingertip-fine (3 mm diameter) to limb-strong (60+ mm bundle) by adding parallel fibers\nDraws zero quiescent current in the held position when using a passive magnetic detent\nIs manufacturable with COTS components: NdFeB disc magnets, enamelled magnet wire, PTFE tubing\n\nThe analogy to biological muscle is not merely superficial. In skeletal muscle, force arises from millions of parallel sarcomere units cycling through attachment/detachment events along actinÃÂÃÂ¢ÃÂÃÂÃÂÃÂmyosin filaments. In SLSM, force arises from the interaction of distributed magnetic pole boundaries with sequentially activated coil sections. Both systems are fundamentally distributed, parallel, and scalable by fiber count.\n\n2.  System Architecture\nSee attached doc\n\n---\n\n*White Paper ÃÂÃÂÃÂÃÂ· Reality Refactor Lab ÃÂÃÂÃÂÃÂ· 1149*\n\n---\n\n*White Paper · Reality Refactor Lab · 1149*",
-      "techspec": "",
-      "solidarity": "",
-      "updated": "2026-03-16",
-      "files": [],
-      "_ghPath": "04_Technical_Nodes/SLSM/WHITE_PAPER.md",
-      "_wpSha": "d68e5ddfffaf61295305ea37e4d82d61bda8fe11"
     },
     {
       "id": "4001",
