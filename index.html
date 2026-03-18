@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Reality Refactor Lab · 1149 · AlexSheff</title>
+<title>Reality Refactor Lab · 1149</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -217,7 +217,7 @@ img{max-width:100%}
 .spinner{display:inline-flex;align-items:center;gap:8px;font-size:11px;color:var(--ink3)}
 .spin{animation:spin 1s linear infinite;display:inline-block}
 
-/* Additions for missing modal/toasts */
+/* Modals & Toasts */
 #modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(22,23,42,0.6); z-index:999; justify-content:center; align-items:center; backdrop-filter:blur(2px); }
 #modal-overlay.active { display:flex; }
 .modal { background:var(--surface); border-radius:var(--r3); padding:24px; width:400px; max-width:90vw; box-shadow:var(--shadow3); }
@@ -395,7 +395,7 @@ img{max-width:100%}
         <div class="pg-title" id="form-title">New Idea</div>
         <div class="pg-sub">Draft a new architectural fragment</div>
       </div>
-      <button class="btn btn-primary" onclick="submitIdea(event)">Save to Repository</button>
+      <button type="button" class="btn btn-primary" onclick="submitIdea(event)">Save to Repository</button>
     </div>
     <form id="idea-form" onsubmit="submitIdea(event)">
       <div class="card card-pad" style="margin-bottom:16px">
@@ -569,6 +569,8 @@ const GH_BRANCH = 'main';
 const CACHE_KEY = 'rrl_v5_cache';
 const CFG_KEY = 'rrl_v5_cfg';
 
+// FIX #1: Added missing priority and status color mapping!
+const PRI_C = {critical:'#B91C1C', high:'#C2410C', medium:'#A8651A', low:'#4B5563'};
 const STATUS_CLS = {active:'b-active', research:'b-research', concept:'b-concept', paused:'b-paused', archived:'b-archived'};
 const PRI_CLS = {critical:'b-critical', high:'b-high', medium:'b-medium', low:'b-low'};
 const LANG_COLORS = {JavaScript:'#f1e05a',TypeScript:'#3178c6',Python:'#3572A5',HTML:'#e34c26',CSS:'#563d7c',Rust:'#dea584',Go:'#00ADD8','C++':'#f34b7d',Shell:'#89e051',Markdown:'#083fa1',Vue:'#41b883',Svelte:'#ff3e00','Jupyter Notebook':'#DA5B0B'};
@@ -577,15 +579,24 @@ const cfgGet = () => { try { return JSON.parse(localStorage.getItem(CFG_KEY)) ||
 const cfgSet = o => localStorage.setItem(CFG_KEY, JSON.stringify({...cfgGet(), ...o}));
 const getToken = () => cfgGet().token || '';
 const getSha = () => cfgGet().sha || '';
-const cacheRead = () => { try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || []; } catch { return[]; } };
+
+// FIX #2: Bulletproof cache reading. Stops .filter() TypeError crashes.
+const cacheRead = () => { 
+  try { 
+    const data = JSON.parse(localStorage.getItem(CACHE_KEY)); 
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === 'object' && Array.isArray(data.ideas)) return data.ideas;
+  } catch(e) {} 
+  return[]; 
+};
 const cacheWrite = d => { try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch(e) {} };
-const getIdeas = () => cacheRead();
+const getIdeas = () => cacheRead() ||[];
 
 // Global States
 let currentPage = 'dashboard';
 let prevPage = 'dashboard';
 let editingId = null;
-let pendingFiles =[];
+let pendingFiles = [];
 let allMdFiles = [];
 window._mdFilesCache = [];
 window._reposCache =[];
@@ -681,7 +692,7 @@ async function ghListDir(path) {
   const r = await fetch(url, {headers: ghHeaders()});
   if (!r.ok) return[];
   const d = await r.json();
-  return Array.isArray(d) ? d : [];
+  return Array.isArray(d) ? d :[];
 }
 
 async function scanAllMdFiles() {
@@ -788,7 +799,7 @@ function buildWhitePaper(idea) {
     `priority: ${idea.priority||'medium'}`,
     `progress: ${idea.progress||0}`,
     `tags: [${tags}]`,
-    `related: [${rel}]`,
+    `related:[${rel}]`,
     `is_1149: ${idea.is1149?'true':'false'}`,
     idea.solidarity ? `solidarity: "${String(idea.solidarity).replace(/"/g,'\\"').slice(0,200)}"` : null,
     `updated: ${now}`,
@@ -939,14 +950,7 @@ function nav(page, id = null) {
   if (id) window.location.hash = `${page}/${id}`;
   else window.location.hash = page;
 
-  if (page === 'dashboard') { renderDashboard(); }
-  else if (page === 'ideas') { renderIdeas(); }
-  else if (page === 'repos') { renderRepos(); }
-  else if (page.startsWith('layer-')) { renderLayer(page.replace('layer-','')); }
-  else if (page === 'idea' && id) { renderIdeaDetail(id); }
-  else if (page === 'new') { openNewForm(); }
-  else if (page === 'repo-browser') { initRepoBrowser(); }
-  else if (page === 'graph') { setTimeout(renderGraph, 100); }
+  renderAll();
 }
 
 function navBack() { nav(prevPage === 'dashboard' || prevPage.startsWith('layer-') ? prevPage : 'ideas'); }
@@ -957,10 +961,14 @@ function handleHash() {
 }
 
 function renderAll() {
-  if (currentPage === 'dashboard') renderDashboard();
-  else if (currentPage === 'ideas') renderIdeas();
-  else if (currentPage.startsWith('layer-')) renderLayer(currentPage.replace('layer-',''));
-  else if (currentPage === 'graph') renderGraph();
+  if (currentPage === 'dashboard') { renderDashboard(); }
+  else if (currentPage === 'ideas') { renderIdeas(); }
+  else if (currentPage === 'repos') { renderRepos(); }
+  else if (currentPage.startsWith('layer-')) { renderLayer(currentPage.replace('layer-','')); }
+  else if (currentPage === 'idea') { const id = window.location.hash.split('/')[1]; if(id) renderIdeaDetail(id); }
+  else if (currentPage === 'new') { if (!editingId && !document.getElementById('f-title').value) openNewForm(); }
+  else if (currentPage === 'repo-browser') { if (!window.rbInitiated) initRepoBrowser(); window.rbInitiated = true; }
+  else if (currentPage === 'graph') { setTimeout(renderGraph, 100); }
 }
 
 function updateBadges() {
@@ -983,7 +991,11 @@ function fmtSize(bytes) {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
-function fmtDate(s) { return new Date(s).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); }
+function fmtDate(s) { 
+  if (!s) return '—';
+  const d = new Date(s);
+  return isNaN(d) ? '—' : d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); 
+}
 
 // ════════════════════════════════════════════
 // DASHBOARD
@@ -1028,6 +1040,24 @@ async function renderDashboard() {
       <div class="mini-r"><span class="badge ${STATUS_CLS[i.status]||'b-paused'}">${i.status}</span></div>
     </div>`;
   }).join('') : `<div class="empty-state" style="padding:24px 0"><div class="empty-ico">◈</div><div class="empty-sub">No ideas yet.</div></div>`;
+
+  const drm = document.getElementById('dash-repos-mini');
+  const repos = window._reposCache ||[];
+  const drmTotal = document.getElementById('dash-repos-total');
+  if (drmTotal) drmTotal.textContent = `(${repos.length})`;
+  if (drm) {
+    drm.innerHTML = repos.slice(0,6).map(r => `
+      <div class="mini-row" onclick="window.open('${r.html_url}','_blank')">
+        <div class="mini-body">
+          <div class="mini-t">${r.fork?'🔀 ':''}${esc(r.name)}</div>
+          <div class="mini-s">${r.description ? esc(r.description).slice(0,65)+'…' : (r.language||'—')}</div>
+        </div>
+        <div class="mini-r">
+          ${r.language ? `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${LANG_COLORS[r.language]||'#888'};margin-right:4px"></span>` : ''}
+          <span style="font-size:9px;color:var(--ink3)">⭐${r.stargazers_count}</span>
+        </div>
+      </div>`).join('');
+  }
 
   await loadDashMdFiles();
 }
@@ -1250,6 +1280,10 @@ function updateFormPreview() {
 
 async function submitIdea(e) {
   e.preventDefault();
+  if (!document.getElementById('f-title').value) {
+    toast('Title is required', 'error');
+    return;
+  }
   const idea = {
     id: editingId || Math.random().toString(36).slice(2,10),
     title: document.getElementById('f-title').value,
@@ -1276,7 +1310,7 @@ async function submitIdea(e) {
 }
 
 function deleteIdea(id) {
-  if (!confirm("Delete this idea? (Will only remove from local cache and ideas.json, not the actual .md file on GitHub)")) return;
+  if (!confirm("Delete this idea? (Will only remove from local cache and ideas.json)")) return;
   const ideas = getIdeas().filter(i => i.id !== id);
   save(ideas);
   nav('ideas');
@@ -1288,14 +1322,16 @@ function deleteIdea(id) {
 const dropZone = document.getElementById('f-dropzone');
 const fileInput = document.getElementById('f-file-input');
 
-dropZone.addEventListener('click', () => fileInput.click());
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault(); dropZone.classList.remove('drag-over');
-  handleFiles(e.dataTransfer.files);
-});
-fileInput.addEventListener('change', e => handleFiles(e.target.files));
+if (dropZone && fileInput) {
+  dropZone.addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault(); dropZone.classList.remove('drag-over');
+    handleFiles(e.dataTransfer.files);
+  });
+  fileInput.addEventListener('change', e => handleFiles(e.target.files));
+}
 
 function handleFiles(files) {
   Array.from(files).forEach(file => {
@@ -1378,12 +1414,13 @@ async function rbOpenFile(path, name) {
 // GITHUB PROJECTS
 // ════════════════════════════════════════════
 async function loadRepos(force = false, silent = false) {
-  if (!force && window._reposCache.length) { renderRepos(); return; }
+  if (!force && window._reposCache.length) { if(currentPage==='repos') renderRepos(); return; }
   try {
     const r = await fetch(`https://api.github.com/users/${GH_OWNER}/repos?per_page=100&sort=updated`);
     if (r.ok) {
       window._reposCache = await r.json();
       if (currentPage === 'repos') renderRepos();
+      if (currentPage === 'dashboard') renderDashboard();
       if (!silent) toast('Repos refreshed', 'success');
     }
   } catch(e) {}
@@ -1412,7 +1449,7 @@ function clearReposSearch() { document.getElementById('repos-search').value=''; 
 let graphSim = null;
 function renderGraph() {
   const canvas = document.getElementById('kg-canvas');
-  if (!canvas) return;
+  if (!canvas || currentPage !== 'graph') return;
   const ctx = canvas.getContext('2d');
   const w = canvas.parentElement.clientWidth;
   const h = canvas.parentElement.clientHeight;
@@ -1422,7 +1459,7 @@ function renderGraph() {
   if (!ideas.length) { ctx.fillStyle='var(--ink3)'; ctx.fillText("No ideas to render", 50, 50); return; }
 
   const nodes = ideas.map(i => ({...i, x: w/2 + (Math.random()-0.5)*200, y: h/2 + (Math.random()-0.5)*200, vx:0, vy:0}));
-  const links =[];
+  const links = [];
   nodes.forEach(n => {
     (n.related||[]).forEach(relId => {
       const target = nodes.find(x => x.id === relId);
@@ -1514,10 +1551,12 @@ function handleImport(e) {
   reader.onload = async (ev) => {
     try {
       const data = JSON.parse(ev.target.result);
-      if (data.ideas) {
+      if (data.ideas && Array.isArray(data.ideas)) {
         await save(data.ideas);
         toast('Data imported successfully!', 'success');
         renderAll();
+      } else {
+        toast('Invalid JSON format (missing ideas array)', 'error');
       }
     } catch(err) { toast('Invalid JSON file', 'error'); }
   };
@@ -1567,38 +1606,23 @@ function toast(msg, type='info') {
 }
 
 // ════════════════════════════════════════════
-// INIT
+// INIT & EVENT LISTENERS
 // ════════════════════════════════════════════
 document.querySelectorAll('.nav-item[data-page]').forEach(el => {
   el.addEventListener('click', () => nav(el.dataset.page));
 });
+
 document.addEventListener('input', e => {
   if (e.target && e.target.id === 'f-whitepaper') updateFormPreview();
 });
+
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeModal();
   if ((e.ctrlKey||e.metaKey) && e.key === 'n') { e.preventDefault(); nav('new'); }
-  if ((e.ctrlKey||e.metaKey) && e.key === 's' && currentPage==='new') { e.preventDefault(); document.getElementById('idea-form')?.requestSubmit(); }
-});
-
-window.addEventListener('load', async () => {
-  document.getElementById('sb-date').textContent = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
-  const t = getToken();
-  if (t) document.getElementById('set-token').value = t;
-  
-  const cached = cacheRead();
-  if (cached.length) updateBadges();
-  
-  handleHash();
-  
-  if (t) {
-    ghLoad().then(()=> { updateBadges(); if(currentPage==='dashboard') renderDashboard(); });
-    scanAllMdFiles().then(() => { if(currentPage==='dashboard') loadDashMdFiles(true); });
-  } else {
-    setSyncUI('no-token');
+  if ((e.ctrlKey||e.metaKey) && e.key === 's' && currentPage==='new') { 
+    e.preventDefault(); 
+    document.getElementById('idea-form')?.requestSubmit(); 
   }
-  
-  loadRepos(false, true);
 });
 
 async function ghLoad() {
@@ -1613,7 +1637,32 @@ async function ghLoad() {
   } catch(e) { setSyncUI('error'); }
 }
 
+window.addEventListener('load', async () => {
+  document.getElementById('sb-date').textContent = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+  const t = getToken();
+  if (t) document.getElementById('set-token').value = t;
+  
+  const cached = cacheRead();
+  if (cached.length) updateBadges();
+  
+  // Triggers immediate render sequence
+  handleHash(); 
+  
+  if (t) {
+    ghLoad().then(()=> { 
+      updateBadges(); 
+      if(currentPage==='dashboard') renderDashboard(); 
+    });
+    scanAllMdFiles().then(() => { 
+      if(currentPage==='dashboard') loadDashMdFiles(true); 
+    });
+  } else {
+    setSyncUI('no-token');
+  }
+  
+  loadRepos(false, true);
+});
+
 </script>
 </body>
 </html>
-            
