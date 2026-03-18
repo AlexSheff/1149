@@ -1,747 +1,372 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Reality Refactor Lab · Control Center</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #F2EFE8; --surface: #FDFCF8; --surface2: #F6F3EC; --surface3: #F0EDE6;
-  --sidebar: #18192C; --sidebar2: #21233A; --sidebar3: #2A2D4A;
-  --ink: #16172A; --ink2: #3D4168; --ink3: #7478A0; --ink4: #A8ABCA; --ink5: #D4D6E8;
-  --gold: #A8651A; --gold2: #C47820; --gold3: #E09030;
-  --gold-bg: rgba(168,101,26,.09); --gold-brd: rgba(168,101,26,.22);
-  --green: #16A34A; --green-bg: rgba(22,163,74,.08); --green-brd: rgba(22,163,74,.25);
-  --blue: #1A5FB4; --blue2: #2563EB; --blue-bg: rgba(26,95,180,.08); --blue-brd: rgba(26,95,180,.25);
-  --purple: #6D28D9; --purple-bg: rgba(109,40,217,.08); --purple-brd: rgba(109,40,217,.25);
-  --orange: #B45309; --orange-bg: rgba(180,83,9,.08); --orange-brd: rgba(180,83,9,.25);
-  --red: #B91C1C; --red-bg: rgba(185,28,28,.07); --red-brd: rgba(185,28,28,.25);
-  --gray: #4B5563; --gray-bg: rgba(75,85,99,.07); --gray-brd: rgba(75,85,99,.2);
-  --teal: #0F766E; --teal-bg: rgba(15,118,110,.08); --teal-brd: rgba(15,118,110,.25);
-  --brd: #DDD9D0; --brd2: #C8C3B8; --brd3: #AEA99D;
-  --serif: 'Fraunces', Georgia, serif;
-  --sans: 'Inter', system-ui, sans-serif;
-  --mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
-  --r: 4px; --r2: 8px; --r3: 12px; --r4: 16px;
-  --shadow: 0 1px 3px rgba(22,23,42,.06), 0 4px 16px rgba(22,23,42,.04);
-  --shadow2: 0 2px 8px rgba(22,23,42,.09), 0 8px 32px rgba(22,23,42,.07);
-  --shadow3: 0 4px 16px rgba(22,23,42,.12), 0 16px 48px rgba(22,23,42,.10);
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:13.5px;line-height:1.6;min-height:100%;overflow-x:hidden}
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-track{background:transparent}
-::-webkit-scrollbar-thumb{background:var(--brd2);border-radius:3px}
-::-webkit-scrollbar-thumb:hover{background:var(--brd3)}
-a{color:var(--blue);text-decoration:none}
-a:hover{text-decoration:underline}
-button,input,textarea,select{font-family:var(--sans);font-size:inherit}
-img{max-width:100%; border-radius: 6px;}
-#app{display:flex;height:100vh;overflow:hidden}
-#sidebar{width:234px;min-width:234px;height:100vh;background:var(--sidebar);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;transition:width .2s}
-#content{flex:1;min-width:0;height:100vh;overflow-y:auto;background:var(--bg)}
-.sb-head{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,.06)}
-.sb-brand{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.sb-brand-num{font-family:var(--serif);font-size:36px;color:var(--gold3);font-weight:700;line-height:1;letter-spacing:-1px}
-.sb-brand-name{font-family:var(--mono);font-size:9px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.35);line-height:1.2}
-.sb-brand-sub{font-size:8px;color:rgba(255,255,255,.2);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
-.sb-sync{display:flex;align-items:center;gap:7px;padding:7px 10px;background:rgba(255,255,255,.04);border-radius:var(--r2);margin-top:0}
-.sb-sync-dot{width:6px;height:6px;border-radius:50%;background:#4ADE80;box-shadow:0 0 6px #4ADE80;flex-shrink:0;animation:pulse 2s ease-in-out infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.sb-sync-txt{font-size:8.5px;color:rgba(255,255,255,.3);letter-spacing:1px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.sb-sync-btn{background:none;border:none;color:rgba(255,255,255,.25);cursor:pointer;font-size:13px;padding:0 2px;line-height:1;transition:color .12s}
-.sb-sync-btn:hover{color:rgba(255,255,255,.6)}
-.sb-nav{flex:1;overflow-y:auto;padding:8px 0}
-.nav-section{font-family:var(--mono);font-size:7.5px;color:rgba(255,255,255,.18);letter-spacing:2.5px;text-transform:uppercase;padding:14px 18px 5px}
-.nav-item{display:flex;align-items:center;gap:9px;padding:7px 18px;cursor:pointer;font-size:12px;color:rgba(255,255,255,.38);letter-spacing:.2px;border-left:2px solid transparent;transition:all .12s;user-select:none;position:relative}
-.nav-item:hover{color:rgba(255,255,255,.72);background:rgba(255,255,255,.04)}
-.nav-item.active{color:#fff;border-left-color:var(--gold3);background:rgba(255,255,255,.07)}
-.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;transition:box-shadow .2s}
-.nav-item.active .nav-dot{box-shadow:0 0 8px currentColor}
-.nav-badge{margin-left:auto;font-size:9px;font-family:var(--mono);color:var(--gold3);background:rgba(212,137,30,.15);padding:1px 7px;border-radius:10px;border:1px solid rgba(212,137,30,.25)}
-.sb-actions{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;gap:6px}
-.sb-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border-radius:var(--r2);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;border:1px solid;transition:all .14s;font-family:var(--mono);font-weight:500}
-.sb-btn-gold{background:var(--gold);border-color:var(--gold);color:#fff}
-.sb-btn-gold:hover{background:var(--gold2);border-color:var(--gold2)}
-.sb-btn-ghost{background:transparent;border-color:rgba(255,255,255,.12);color:rgba(255,255,255,.4)}
-.sb-btn-ghost:hover{border-color:rgba(255,255,255,.28);color:rgba(255,255,255,.75)}
-.sb-foot{padding:8px 18px;border-top:1px solid rgba(255,255,255,.04);font-size:8px;color:rgba(255,255,255,.2);letter-spacing:1px;display:flex;flex-direction:column;gap:2px}
-.page{display:none;padding:28px 32px;min-height:100vh}
-.page.active{display:block;animation:fadeUp .18s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
-.pg-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:26px;padding-bottom:20px;border-bottom:1.5px solid var(--brd);gap:16px;flex-wrap:wrap}
-.pg-eyebrow{font-family:var(--mono);font-size:8.5px;color:var(--ink3);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:5px}
-.pg-title{font-family:var(--serif);font-size:34px;font-weight:600;color:var(--ink);line-height:1;letter-spacing:-.4px}
-.pg-sub{font-size:12px;color:var(--ink3);margin-top:5px;letter-spacing:.2px}
-.sh{display:flex;align-items:center;gap:10px;margin-bottom:13px;font-family:var(--mono);font-size:8.5px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;color:var(--ink3)}
-.sh::after{content:'';flex:1;height:1px;background:var(--brd)}
-.sh-act{margin-left:auto;cursor:pointer;font-size:9px;color:var(--gold);letter-spacing:1px;background:none;border:none;font-family:var(--mono)}
-.sh-act:hover{text-decoration:underline}
-.stats-row{display:grid;gap:10px;margin-bottom:24px}
-.s5{grid-template-columns:repeat(5,1fr)}
-.stat-card{background:var(--surface);border:1px solid var(--brd);border-radius:var(--r3);padding:16px 18px 14px;box-shadow:var(--shadow);position:relative;overflow:hidden;cursor:pointer;transition:all .15s}
-.stat-card:hover{transform:translateY(-1px);box-shadow:var(--shadow2);border-color:var(--brd2)}
-.stat-num{font-family:var(--serif);font-size:42px;font-weight:700;color:var(--ac,var(--gold));line-height:1;letter-spacing:-1px}
-.stat-lbl{font-family:var(--mono);font-size:7.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:2px;margin-top:5px}
-.card{background:var(--surface);border:1px solid var(--brd);border-radius:var(--r3);box-shadow:var(--shadow)}
-.card-pad{padding:18px 20px}
-.badge{display:inline-flex;align-items:center;font-family:var(--mono);font-size:7.5px;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;border:1px solid;flex-shrink:0;white-space:nowrap;font-weight:500}
-.b-active{color:var(--green);border-color:var(--green-brd);background:var(--green-bg)}
-.b-research{color:var(--blue);border-color:var(--blue-brd);background:var(--blue-bg)}
-.b-concept{color:var(--purple);border-color:var(--purple-brd);background:var(--purple-bg)}
-.b-paused{color:var(--gray);border-color:var(--gray-brd);background:var(--gray-bg)}
-.b-medium{color:var(--gold);border-color:var(--gold-brd);background:var(--gold-bg)}
-.b-1149{color:var(--gold2);border-color:var(--gold-brd);background:var(--gold-bg)}
-.tag{font-family:var(--mono);font-size:7px;letter-spacing:.8px;text-transform:uppercase;padding:2px 7px;border-radius:3px;border:1px solid var(--brd2);color:var(--ink3);background:var(--surface2)}
-.tag-group{display:flex;flex-wrap:wrap;gap:3px}
-.pbar{height:3px;background:var(--brd);border-radius:2px;overflow:hidden;margin:9px 0 7px}
-.pbar-f{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold3));transition:width .5s ease}
-.pbar-sm{height:2px;margin:5px 0 4px}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r2);font-size:11px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;border:1px solid;transition:all .14s;font-family:var(--mono);font-weight:500;white-space:nowrap}
-.btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
-.btn-primary:hover{background:var(--gold2);border-color:var(--gold2)}
-.btn-ghost{background:var(--surface);border-color:var(--brd2);color:var(--ink2)}
-.btn-ghost:hover{border-color:var(--brd3);background:var(--surface2)}
-.btn-blue{background:var(--blue-bg);border-color:var(--blue-brd);color:var(--blue)}
-.btn-danger{background:var(--surface);border-color:var(--red-brd);color:var(--red)}
-.btn-sm{padding:5px 11px;font-size:9.5px}
-.search-wrap{position:relative;margin-bottom:18px}
-.search-wrap input{padding-left:36px;padding-right:32px; width:100%;background:var(--surface);border:1.5px solid var(--brd);border-radius:var(--r2);padding-top:9px;padding-bottom:9px;font-family:var(--sans);font-size:13px;outline:none;}
-.search-wrap input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-bg)}
-.s-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink4);font-size:14px;pointer-events:none}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-.idea-card{background:var(--surface);border:1.5px solid var(--brd);border-radius:var(--r3);padding:16px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);display:flex;flex-direction:column;position:relative;overflow:hidden}
-.idea-card:hover{border-color:var(--gold-brd);box-shadow:var(--shadow2);transform:translateY(-2px)}
-.idea-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--layer-color,var(--gold));opacity:.7}
-.ic-layer{font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;font-weight:500}
-.ic-title{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:4px}
-.ic-tagline{font-size:11.5px;color:var(--ink2);line-height:1.55;margin-bottom:10px;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.ic-foot{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:5px;margin-top:auto}
-.ic-meta{text-align:right;flex-shrink:0}
-.mini-row{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--surface);border:1px solid var(--brd);border-radius:var(--r2);margin-bottom:6px;cursor:pointer;transition:all .12s}
-.mini-row:hover{border-color:var(--brd2);background:var(--surface2)}
-.mini-body{flex:1;min-width:0}
-.mini-t{font-size:12px;font-weight:500;color:var(--ink);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mini-s{font-size:10px;color:var(--ink3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mini-r{flex-shrink:0;text-align:right}
-.md-content{font-size:13.5px;color:var(--ink2);line-height:1.7}
-.md-content h1{font-family:var(--serif);font-size:26px;font-weight:700;color:var(--ink);margin:24px 0 10px;letter-spacing:-.3px;border-bottom:1.5px solid var(--brd);padding-bottom:8px}
-.md-content h2{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink);margin:22px 0 10px;letter-spacing:-.2px}
-.md-content h3{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--ink);letter-spacing:1.5px;text-transform:uppercase;margin:18px 0 8px}
-.md-content p{margin-bottom:12px}
-.md-content ul,.md-content ol{padding-left:22px;margin-bottom:12px}
-.md-content li{margin-bottom:6px}
-.md-content pre{background:var(--sidebar);color:#C8D0E8;border:1px solid var(--sidebar3);border-radius:var(--r2);padding:16px 18px;overflow-x:auto;margin:12px 0;font-size:11.5px;line-height:1.65}
-.md-content code{background:var(--surface2);border:1px solid var(--brd2);border-radius:3px;padding:2px 5px;font-size:11.5px;color:var(--orange);font-family:var(--mono)}
-.md-content pre code{background:none;border:none;padding:0;color:#C8D0E8}
-.md-content blockquote{border-left:3px solid var(--gold);padding:9px 16px;background:var(--gold-bg);border-radius:0 var(--r) var(--r) 0;margin:10px 0;font-style:italic;color:var(--ink2)}
-.md-content a{color:var(--blue);text-decoration:none;border-bottom:1px solid transparent;transition:all .15s}
-.md-content a:hover{border-bottom-color:var(--blue)}
-.md-content img { display:block; max-width:100%; height:auto; border-radius:8px; margin: 16px 0; box-shadow: var(--shadow); }
-.back-link{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--ink3);letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-bottom:20px;transition:color .12s;border:none;background:none;padding:0}
-.back-link:hover{color:var(--gold)}
-.empty-state{text-align:center;padding:56px 24px}
-.empty-ico{font-size:36px;margin-bottom:14px;opacity:.2}
-.empty-title{font-family:var(--serif);font-size:20px;color:var(--ink3);margin-bottom:7px}
-.empty-sub{font-size:11.5px;color:var(--ink3)}
-.spinner{display:inline-flex;align-items:center;gap:8px;font-size:11px;color:var(--ink3)}
-.spin{animation:spin 1s linear infinite;display:inline-block}
-.file-item{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--surface2);border:1px solid var(--brd);border-radius:var(--r);transition:all .12s; margin-bottom: 5px;}
-.file-item:hover{border-color:var(--brd2); background:var(--surface3);}
-.file-ico{width:26px;height:26px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:var(--brd)}
-.file-name{flex:1;font-size:11.5px;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.file-dl{color:var(--blue); font-size: 11px; font-weight: 500; font-family: var(--mono); padding: 4px 8px; border: 1px solid var(--blue-brd); border-radius: 4px; background: var(--blue-bg); text-transform: uppercase;}
-.file-dl:hover{background: rgba(26,95,180,0.15); text-decoration:none;}
-.layer-readme-box { background: var(--surface); border: 1px solid var(--brd); border-radius: var(--r3); padding: 24px 32px; box-shadow: var(--shadow); margin-bottom: 32px; }
-
-/* Modals & Toasts */
-#modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(22,23,42,0.6); z-index:999; justify-content:center; align-items:center; backdrop-filter:blur(2px); }
-#modal-overlay.active { display:flex; }
-.modal { background:var(--surface); border-radius:var(--r3); padding:24px; width:400px; max-width:90vw; box-shadow:var(--shadow3); }
-.modal-title { font-family:var(--serif); font-size:22px; font-weight:600; margin-bottom:10px; }
-.modal-body { font-size:13px; color:var(--ink2); margin-bottom:20px; line-height:1.5; }
-.modal-actions { display:flex; justify-content:flex-end; gap:10px; }
-#toast-container { position:fixed; bottom:20px; right:20px; display:flex; flex-direction:column; gap:10px; z-index:1000; }
-.toast { background:var(--ink); color:#fff; padding:12px 16px; border-radius:var(--r2); font-size:12px; box-shadow:var(--shadow2); animation:slideIn 0.3s ease forwards; max-width:300px; display:flex; gap:10px; align-items:center; }
-.toast.success { border-left:4px solid var(--green); }
-.toast.error { border-left:4px solid var(--red); }
-@keyframes slideIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
-@keyframes slideOut { to{transform:translateX(100%);opacity:0} }
-
-@media(max-width:1100px){.g3{grid-template-columns:1fr 1fr}.s5{grid-template-columns:1fr 1fr}}
-@media(max-width:800px){#sidebar{width:56px;min-width:56px}.sb-head,.sb-actions,.sb-foot,.nav-section,.nav-badge,.nav-progress,.nav-sub{display:none}.nav-item{justify-content:center;padding:12px;border-left:none;border-bottom:2px solid transparent}.nav-item.active{border-bottom-color:var(--gold3)}.nav-dot{display:none}.page{padding:18px 14px}.g3{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<div id="app">
-<!-- SIDEBAR -->
-<div id="sidebar">
-  <div class="sb-head">
-    <div class="sb-brand">
-      <div class="sb-brand-num">1149</div>
-      <div class="sb-brand-info">
-        <div class="sb-brand-name">Reality Refactor Lab</div>
-        <div class="sb-brand-sub">AlexSheff · Ideas Hub</div>
-      </div>
-    </div>
-    <div class="sb-sync">
-      <div class="sb-sync-dot"></div>
-      <div class="sb-sync-txt" id="sync-lbl">Scanning Repo...</div>
-    </div>
-  </div>
-  <div class="sb-nav">
-    <div class="nav-section">Main</div>
-    <div class="nav-item active" data-page="dashboard"><div class="nav-dot" style="background:#94A3B8"></div>Dashboard</div>
-    <div class="nav-item" data-page="ideas"><div class="nav-dot" style="background:#94A3B8"></div>All Projects <span class="nav-badge" id="nb-ideas">0</span></div>
-    <div class="nav-section" style="margin-top:8px">Architecture Layers</div>
-    <div class="nav-item" data-page="layer-01"><div class="nav-dot" style="background:#7C3AED"></div>01 · Ethical OS <span class="nav-badge" id="nb-01">0</span></div>
-    <div class="nav-item" data-page="layer-02"><div class="nav-dot" style="background:#1A5FB4"></div>02 · Social Protocol <span class="nav-badge" id="nb-02">0</span></div>
-    <div class="nav-item" data-page="layer-03"><div class="nav-dot" style="background:#059669"></div>03 · Meta Ecosystems <span class="nav-badge" id="nb-03">0</span></div>
-    <div class="nav-item" data-page="layer-04"><div class="nav-dot" style="background:#2563EB"></div>04 · Technical Nodes <span class="nav-badge" id="nb-04">0</span></div>
-    <div class="nav-item" data-page="layer-05"><div class="nav-dot" style="background:#D97706"></div>05 · Reality Hardware <span class="nav-badge" id="nb-05">0</span></div>
-    <div class="nav-item" data-page="layer-06"><div class="nav-dot" style="background:#DB2777"></div>06 · Social Impact <span class="nav-badge" id="nb-06">0</span></div>
-    <div class="nav-item" data-page="layer-07"><div class="nav-dot" style="background:#4F46E5"></div>07 · Research Lab <span class="nav-badge" id="nb-07">0</span></div>
-    <div class="nav-item" data-page="layer-08"><div class="nav-dot" style="background:#6B7280"></div>08 · Archive <span class="nav-badge" id="nb-08">0</span></div>
-    <div class="nav-section" style="margin-top:8px">Tools</div>
-    <div class="nav-item" data-page="settings"><div class="nav-dot" style="background:#94A3B8"></div>Settings & Token</div>
-  </div>
-  <div class="sb-actions">
-    <button class="sb-btn sb-btn-ghost" onclick="forceRescan()">↻ Rescan Repository</button>
-  </div>
-  <div class="sb-foot">
-    <div id="sb-date" style="font-family:var(--mono)">—</div>
-    <div style="font-family:var(--mono)">github.com/AlexSheff/1149</div>
-  </div>
-</div>
-
-<div id="content">
-  <!-- DASHBOARD -->
-  <div id="page-dashboard" class="page active">
-    <div class="pg-head">
-      <div>
-        <div class="pg-eyebrow">Reality Refactor Lab</div>
-        <div class="pg-title">Control Center</div>
-        <div class="pg-sub">Direct access to repository files, sub-projects, and documentation.</div>
-      </div>
-    </div>
-    
-    <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start">
-      <div>
-        <div class="sh">Root Repository (README.md)</div>
-        <div class="layer-readme-box" id="dash-readme-box">
-          <div class="spinner"><span class="spin">↻</span> Fetching root README.md...</div>
-        </div>
-
-        <div class="sh" style="margin-top:24px">Architecture Layers Directory</div>
-        <div id="dash-layers" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
-      </div>
-      <div>
-        <div class="sh">All Detected Projects <span id="dash-proj-total" style="font-size:9px;color:var(--ink3);"></span></div>
-        <div id="dash-recent-projects" style="margin-bottom:20px;"></div>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IdeaFlow | Control Center</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fafafa;
+            --sidebar: #f4f4f5;
+            --accent: #000000;
+            --border: #e4e4e7;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: #18181b;
+            overflow: hidden;
+        }
+        .sidebar { background-color: var(--sidebar); border-right: 1px solid var(--border); }
+        .card { background: white; border: 1px solid var(--border); border-radius: 8px; transition: all 0.2s; }
+        .card:hover { border-color: #a1a1aa; }
+        .btn-primary { background: var(--accent); color: white; border-radius: 6px; padding: 8px 16px; font-weight: 500; transition: opacity 0.2s; }
+        .btn-primary:hover { opacity: 0.8; }
+        .btn-secondary { background: white; border: 1px solid var(--border); border-radius: 6px; padding: 8px 16px; }
+        .btn-secondary:hover { background: #f4f4f5; }
         
-        <div class="card card-pad" style="margin-top:18px">
-          <div style="font-family:var(--mono);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">System Status</div>
-          <div style="font-size:12px;color:var(--ink2)" id="sys-status-text">
-            Tree Scanner Active. Exploring GitHub Repository structure via raw endpoints to prevent API limits.
-          </div>
+        /* Markdown Styling */
+        .prose h1 { font-size: 1.875rem; font-weight: 700; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem; }
+        .prose h2 { font-size: 1.5rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+        .prose p { margin-bottom: 1rem; line-height: 1.6; }
+        .prose code { font-family: 'JetBrains Mono', monospace; background: #f4f4f5; padding: 0.2rem 0.4rem; border-radius: 4px; font-size: 0.9em; }
+        .prose pre { background: #18181b; color: white; padding: 1rem; border-radius: 8px; overflow-x: auto; margin-bottom: 1rem; }
+        
+        #editor-container { display: none; }
+        .loading-shimmer { background: linear-gradient(90deg, #f4f4f5 25%, #e4e4e7 50%, #f4f4f5 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    </style>
+</head>
+<body class="h-screen flex">
+
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 flex-shrink-0 flex flex-col h-full">
+        <div class="p-6 border-bottom border-zinc-200">
+            <h1 class="text-xl font-bold tracking-tight">IdeaFlow</h1>
+            <p class="text-xs text-zinc-500 mt-1">Research & Development</p>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ALL IDEAS / PROJECTS -->
-  <div id="page-ideas" class="page">
-    <div class="pg-head">
-      <div>
-        <div class="pg-eyebrow">Database</div>
-        <div class="pg-title">All Discovered Projects</div>
-        <div class="pg-sub">Folders containing README.md or WHITE_PAPER.md across all layers.</div>
-      </div>
-    </div>
-    <div class="search-wrap">
-      <span class="s-ico">🔍</span>
-      <input type="text" id="ideas-search" placeholder="Search projects by name or folder path..." oninput="renderIdeas()">
-    </div>
-    <div id="ideas-grid" class="g3"></div>
-  </div>
-
-  <!-- LAYERS (Auto-populated dynamically via JS) -->
-  <div id="page-layer-01" class="page"></div>
-  <div id="page-layer-02" class="page"></div>
-  <div id="page-layer-03" class="page"></div>
-  <div id="page-layer-04" class="page"></div>
-  <div id="page-layer-05" class="page"></div>
-  <div id="page-layer-06" class="page"></div>
-  <div id="page-layer-07" class="page"></div>
-  <div id="page-layer-08" class="page"></div>
-
-  <!-- IDEA / PROJECT DETAIL -->
-  <div id="page-idea" class="page">
-    <button class="back-link" onclick="navBack()">← Back</button>
-    <div id="id-head" style="margin-bottom:24px"></div>
-    <div style="display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start">
-      <div>
-        <div class="card card-pad" style="background:#fff">
-           <div id="id-content" class="md-content"><div class="spinner"><span class="spin">↻</span> Loading document...</div></div>
+        
+        <div class="px-4 mb-4">
+            <button onclick="createNewItem()" class="w-full btn-primary text-sm flex items-center justify-center gap-2">
+                <span>+</span> Новая идея
+            </button>
         </div>
-      </div>
-      <div>
-        <div class="card card-pad" style="margin-bottom:16px">
-          <div class="sh">Project Location</div>
-          <div id="id-meta" style="font-family:var(--mono);font-size:10px;color:var(--ink2);word-break:break-all;"></div>
+
+        <nav id="file-list" class="flex-1 overflow-y-auto px-2 space-y-1">
+            <!-- Список файлов будет тут -->
+            <div class="p-4 text-center text-zinc-400 text-sm">Загрузка...</div>
+        </nav>
+
+        <div class="p-4 border-t border-zinc-200">
+            <button onclick="toggleSettings()" class="text-xs text-zinc-500 hover:text-black flex items-center gap-2">
+                ⚙️ Настройки GitHub
+            </button>
         </div>
-        <div class="card card-pad">
-          <div class="sh">Attachments & Assets</div>
-          <div style="font-size:10.5px;color:var(--ink3);margin-bottom:12px;line-height:1.4">
-            Files discovered in this project's folder or <code>assets/</code> subfolders.
-          </div>
-          <div id="id-files"></div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden bg-white">
+        <!-- Toolbar -->
+        <header id="main-toolbar" class="h-16 border-b border-zinc-200 flex items-center justify-between px-8 bg-white z-10">
+            <div id="active-file-path" class="text-sm font-medium text-zinc-500 italic">Выберите проект</div>
+            <div class="flex items-center gap-3">
+                <button id="edit-btn" onclick="startEditing()" class="hidden btn-secondary text-sm">Редактировать</button>
+                <button id="delete-btn" onclick="deleteCurrentFile()" class="hidden text-red-500 text-sm hover:underline px-2">Удалить</button>
+            </div>
+        </header>
+
+        <!-- View Mode -->
+        <div id="view-container" class="flex-1 overflow-y-auto p-8 lg:p-16 max-w-4xl mx-auto w-full">
+            <div id="welcome-screen" class="text-center mt-20">
+                <div class="text-4xl mb-4">🚀</div>
+                <h2 class="text-2xl font-semibold">Добро пожаловать</h2>
+                <p class="text-zinc-500 mt-2">Выберите файл слева или создайте новый, чтобы начать работу.</p>
+            </div>
+            <article id="content-render" class="prose max-w-none"></article>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- SETTINGS -->
-  <div id="page-settings" class="page">
-    <div class="pg-head">
-      <div>
-        <div class="pg-eyebrow">System</div>
-        <div class="pg-title">Settings & Access</div>
-        <div class="pg-sub">Manage GitHub token for higher rate limits if needed.</div>
-      </div>
-    </div>
-    <div style="max-width:600px">
-      <div class="card card-pad" style="margin-bottom:20px">
-        <div class="sh">GitHub Connection (Optional)</div>
-        <div style="font-size:12px;color:var(--ink2);margin-bottom:12px;line-height:1.6">
-          The dashboard uses the open GitHub API to scan the repository. An unauthenticated IP can make 60 requests per hour. If you hit this limit, generate a <b>Personal Access Token (classic)</b> on GitHub (no specific scopes needed for public repos) and paste it here.
+        <!-- Editor Mode -->
+        <div id="editor-container" class="flex-1 flex flex-col">
+            <div class="flex-1 flex h-full">
+                <textarea id="markdown-input" class="w-1/2 h-full p-8 outline-none border-r border-zinc-200 font-mono text-sm leading-relaxed" placeholder="Начните писать..."></textarea>
+                <div id="preview-output" class="w-1/2 h-full p-8 overflow-y-auto prose max-w-none"></div>
+            </div>
+            <footer class="h-16 border-t border-zinc-200 flex items-center justify-end px-8 gap-4 bg-zinc-50">
+                <button onclick="cancelEditing()" class="btn-secondary text-sm">Отмена</button>
+                <button onclick="saveChanges()" id="save-btn" class="btn-primary text-sm">Сохранить в GitHub</button>
+            </footer>
         </div>
-        <div style="margin-bottom:18px">
-          <input type="password" id="set-token" style="width:100%;background:var(--surface2);border:1px solid var(--brd);border-radius:var(--r2);padding:9px 13px;" placeholder="ghp_xxxxxxxxxxxx">
+    </main>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-xl w-full max-w-md shadow-2xl">
+            <h3 class="text-xl font-bold mb-6">Настройки репозитория</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-zinc-500 mb-1">GitHub Personal Access Token</label>
+                    <input type="password" id="gh-token" class="w-full p-3 border border-zinc-300 rounded-lg text-sm" placeholder="ghp_xxxxxxxxxxxx">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-zinc-500 mb-1">Репозиторий (user/repo)</label>
+                    <input type="text" id="gh-repo" class="w-full p-3 border border-zinc-300 rounded-lg text-sm" placeholder="my-name/my-ideas">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-zinc-500 mb-1">Ветка</label>
+                        <input type="text" id="gh-branch" class="w-full p-3 border border-zinc-300 rounded-lg text-sm" value="main">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-zinc-500 mb-1">Папка проектов</label>
+                        <input type="text" id="gh-path" class="w-full p-3 border border-zinc-300 rounded-lg text-sm" value="projects">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8 flex gap-3">
+                <button onclick="saveSettings()" class="flex-1 btn-primary">Сохранить</button>
+                <button onclick="toggleSettings()" class="flex-1 btn-secondary">Закрыть</button>
+            </div>
         </div>
-        <button class="btn btn-primary" onclick="saveToken()">Save Token Locally</button>
-      </div>
-      <div class="card card-pad">
-        <div class="sh">Danger Zone</div>
-        <button class="btn btn-danger" onclick="clearCache()">Clear Local Cache</button>
-      </div>
     </div>
-  </div>
-</div>
-</div>
 
-<div id="toast-container"></div>
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-8 right-8 translate-y-20 opacity-0 transition-all duration-300 bg-zinc-900 text-white px-6 py-3 rounded-lg shadow-xl text-sm z-[100]"></div>
 
-<script>
-'use strict';
+    <script>
+        // --- State Management ---
+        let state = {
+            config: {
+                token: localStorage.getItem('gh_token') || '',
+                repo: localStorage.getItem('gh_repo') || '',
+                branch: localStorage.getItem('gh_branch') || 'main',
+                folder: localStorage.getItem('gh_path') || 'projects'
+            },
+            files: [],
+            currentFile: null, // { path, sha, content }
+            isEditing: false
+        };
 
-// ════════════════════════════════════════════
-// CONFIGURATION
-// ════════════════════════════════════════════
-const GH_OWNER = 'AlexSheff';
-const GH_REPO = 'AlexSheff/1149';
-const GH_BRANCH = 'main';
+        // --- Initialization ---
+        window.onload = () => {
+            if (!state.config.token || !state.config.repo) {
+                toggleSettings();
+            } else {
+                refreshFileList();
+            }
+            
+            // Sync editor preview
+            const input = document.getElementById('markdown-input');
+            const output = document.getElementById('preview-output');
+            input.addEventListener('input', () => {
+                output.innerHTML = marked.parse(input.value);
+            });
+        };
 
-const LAYERS = {
-  '01_Ethical_OS': {num:'01',label:'Ethical OS', color:'#7C3AED',desc:'Core rules and ethical protocols'},
-  '02_Social_Protocol': {num:'02',label:'Social Protocol', color:'#1A5FB4',desc:'Global interface for human interaction'},
-  '03_Meta_Ecosystems': {num:'03',label:'Meta Ecosystems', color:'#059669',desc:'Primary environments'},
-  '04_Technical_Nodes': {num:'04',label:'Technical Nodes', color:'#2563EB',desc:'Tools for digital sovereignty, AI, crypto'},
-  '05_Reality_Hardware':{num:'05',label:'Reality Hardware',color:'#D97706',desc:'Physical and economic interfaces'},
-  '06_Social_Impact': {num:'06',label:'Social Impact', color:'#DB2777',desc:'Communities and cultural filters'},
-  '07_Research_Lab': {num:'07',label:'Research Lab', color:'#4F46E5',desc:'Future hypotheses, speculative research'},
-  '08_Archive': {num:'08',label:'Archive', color:'#6B7280',desc:'Personal logbook and historical record'},
-};
-const LAYER_KEYS = Object.keys(LAYERS);
+        // --- UI Logic ---
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.backgroundColor = isError ? '#ef4444' : '#18181b';
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
+        }
 
-// Global State
-let repoTree =[];      // 100% of files in repo
-let discoveredIdeas =[]; // Folders containing README.md or WHITE_PAPER.md
-let currentPage = 'dashboard';
-let prevPage = 'dashboard';
+        function toggleSettings() {
+            const modal = document.getElementById('settings-modal');
+            document.getElementById('gh-token').value = state.config.token;
+            document.getElementById('gh-repo').value = state.config.repo;
+            document.getElementById('gh-branch').value = state.config.branch;
+            document.getElementById('gh-path').value = state.config.folder;
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
 
-// Utils
-const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const fmtSize = bytes => {
-  if (!bytes) return '0 B';
-  const k = 1024, sizes =['B', 'KB', 'MB'];
-  const i = Math.floor(Math.log(bytes)/Math.log(k));
-  return parseFloat((bytes/Math.pow(k,i)).toFixed(1))+' '+sizes[i];
-};
-const btoaSafe = str => btoa(encodeURIComponent(str)).replace(/[^a-zA-Z0-9]/g, '').slice(0, 12);
+        function saveSettings() {
+            const t = document.getElementById('gh-token').value.trim();
+            const r = document.getElementById('gh-repo').value.trim();
+            const b = document.getElementById('gh-branch').value.trim();
+            const p = document.getElementById('gh-path').value.trim().replace(/^\/+|\/+$/g, '');
 
-// UI Sync & Toasts
-function setSyncUI(state, msg) {
-  const el = document.getElementById('sync-lbl');
-  if (!el) return;
-  el.textContent = msg || state;
-  const C = {idle:'rgba(255,255,255,.3)', loading:'#93C5FD', ok:'#4ADE80', error:'#FCA5A5'};
-  el.style.color = C[state] || 'rgba(255,255,255,.3)';
-}
-function toast(msg, type='info') {
-  const c = document.getElementById('toast-container');
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.innerHTML = msg;
-  c.appendChild(t);
-  setTimeout(() => { t.style.animation = 'slideOut 0.3s ease forwards'; setTimeout(()=>t.remove(),300); }, 3000);
-}
+            localStorage.setItem('gh_token', t);
+            localStorage.setItem('gh_repo', r);
+            localStorage.setItem('gh_branch', b);
+            localStorage.setItem('gh_path', p);
 
-// Token Management
-const getToken = () => localStorage.getItem('rrl_token') || '';
-function saveToken() {
-  const t = document.getElementById('set-token').value.trim();
-  localStorage.setItem('rrl_token', t);
-  toast('Token saved', 'success');
-  forceRescan();
-}
-function clearCache() {
-  localStorage.removeItem('rrl_tree_cache');
-  localStorage.removeItem('rrl_token');
-  window.location.reload();
-}
+            state.config = { token: t, repo: r, branch: b, folder: p };
+            toggleSettings();
+            refreshFileList();
+            showToast("Настройки сохранены");
+        }
 
-// ════════════════════════════════════════════
-// GITHUB API: THE "ONE REQUEST" TREE SCANNER
-// ════════════════════════════════════════════
-function getFetchOpts() {
-  const h = {'Accept': 'application/vnd.github.v3+json'};
-  const t = getToken();
-  if (t) h['Authorization'] = `token ${t}`;
-  return {headers: h};
-}
+        // --- GitHub API Calls ---
+        async function ghFetch(url, options = {}) {
+            const headers = {
+                'Authorization': `token ${state.config.token}`,
+                'Accept': 'application/vnd.github.v3+json',
+                ...options.headers
+            };
+            const response = await fetch(`https://api.github.com/repos/${state.config.repo}${url}`, { ...options, headers });
+            
+            if (response.status === 401) {
+                showToast("Ошибка авторизации. Проверьте токен.", true);
+                throw new Error("Unauthorized");
+            }
+            return response;
+        }
 
-// Скачиваем сырой файл минуя лимиты GitHub API (используем raw.githubusercontent.com)
-async function fetchRawMarkdown(path) {
-  try {
-    const r = await fetch(`https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${path}`);
-    if (!r.ok) return null;
-    return await r.text();
-  } catch(e) { return null; }
-}
+        async function refreshFileList() {
+            const listEl = document.getElementById('file-list');
+            try {
+                const res = await ghFetch(`/contents/${state.config.folder}?ref=${state.config.branch}`);
+                if (!res.ok) throw new Error("Folder not found");
+                
+                const items = await res.json();
+                state.files = items.filter(f => f.type === 'file' && f.name.endsWith('.md'));
+                
+                listEl.innerHTML = state.files.map(f => `
+                    <button onclick="loadFile('${f.path}')" class="w-full text-left px-3 py-2 rounded-md text-sm hover:bg-zinc-200 transition-colors flex items-center gap-2 overflow-hidden">
+                        <span class="opacity-40">📄</span>
+                        <span class="truncate">${f.name.replace('.md', '')}</span>
+                    </button>
+                `).join('');
+                
+                if (state.files.length === 0) {
+                    listEl.innerHTML = `<div class="p-4 text-xs text-zinc-400">В папке '${state.config.folder}' нет .md файлов</div>`;
+                }
+            } catch (e) {
+                listEl.innerHTML = `<div class="p-4 text-xs text-red-400">Ошибка: ${e.message}</div>`;
+            }
+        }
 
-async function fetchRepoTree() {
-  setSyncUI('loading', 'Scanning Tree API...');
-  
-  // 1. Попробуем кэш (живет 5 минут)
-  try {
-    const cached = JSON.parse(localStorage.getItem('rrl_tree_cache'));
-    if (cached && cached.time > Date.now() - 300000 && cached.tree) {
-      setSyncUI('ok', 'Loaded from Cache');
-      return cached.tree;
-    }
-  } catch(e) {}
+        async function loadFile(path) {
+            showToast("Загрузка...");
+            try {
+                const res = await ghFetch(`/contents/${path}?ref=${state.config.branch}`);
+                const data = await res.json();
+                
+                const content = decodeURIComponent(escape(atob(data.content)));
+                state.currentFile = {
+                    path: data.path,
+                    sha: data.sha,
+                    content: content,
+                    name: data.name
+                };
 
-  // 2. Делаем 1 запрос, чтобы получить ВЕСЬ репозиторий со всеми подпапками
-  try {
-    const r = await fetch(`https://api.github.com/repos/${GH_REPO}/git/trees/${GH_BRANCH}?recursive=1`, getFetchOpts());
-    if (r.status === 403) throw new Error("GitHub API Limit Exceeded. Add Token in Settings.");
-    if (!r.ok) throw new Error("Failed to read repository tree.");
-    
-    const data = await r.json();
-    const blobs = data.tree.filter(t => t.type === 'blob'); // только файлы
-    
-    localStorage.setItem('rrl_tree_cache', JSON.stringify({time: Date.now(), tree: blobs}));
-    setSyncUI('ok', 'Repository Synced');
-    return blobs;
-  } catch(e) {
-    setSyncUI('error', 'API Rate Limit');
-    toast(e.message, 'error');
-    // Вернем хоть старый кэш если есть
-    try { return JSON.parse(localStorage.getItem('rrl_tree_cache')).tree || []; } catch(err) { return[]; }
-  }
-}
+                displayFile();
+            } catch (e) {
+                showToast("Не удалось загрузить файл", true);
+            }
+        }
 
-function forceRescan() {
-  localStorage.removeItem('rrl_tree_cache');
-  initEngine();
-}
+        function displayFile() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('content-render').innerHTML = marked.parse(state.currentFile.content);
+            document.getElementById('active-file-path').textContent = state.currentFile.path;
+            document.getElementById('edit-btn').classList.remove('hidden');
+            document.getElementById('delete-btn').classList.remove('hidden');
+            
+            // Switch modes
+            document.getElementById('view-container').style.display = 'block';
+            document.getElementById('editor-container').style.display = 'none';
+            document.getElementById('main-toolbar').style.display = 'flex';
+        }
 
-// ════════════════════════════════════════════
-// ENGINE: BUILDING THE DATABASE FROM TREE
-// ════════════════════════════════════════════
-function buildDatabase() {
-  discoveredIdeas =[];
-  
-  // Ищем все markdown файлы
-  const mdFiles = repoTree.filter(f => f.path.toLowerCase().endsWith('.md'));
-  
-  mdFiles.forEach(f => {
-    const parts = f.path.split('/');
-    if (parts.length < 2) return; // Root README (не проект)
-    
-    const layerKey = parts[0];
-    if (!LAYERS[layerKey]) return; // Не в слое архитектуры
-    
-    const isLayerRootReadme = (parts.length === 2 && f.path.toLowerCase().endsWith('readme.md'));
-    if (isLayerRootReadme) return; // README самого слоя обрабатывается отдельно
-    
-    const isProjectReadme = f.path.toLowerCase().endsWith('readme.md') || f.path.toLowerCase().endsWith('white_paper.md');
-    
-    if (isProjectReadme) {
-      // Имя папки становится именем проекта
-      const folderName = parts[parts.length - 2].replace(/_/g, ' ');
-      const folderPath = parts.slice(0, -1).join('/');
-      
-      discoveredIdeas.push({
-        id: btoaSafe(folderPath),
-        title: folderName,
-        layer: layerKey,
-        path: f.path,
-        folder: folderPath,
-        size: f.size
-      });
-    }
-  });
+        // --- Editing Logic ---
+        function startEditing() {
+            state.isEditing = true;
+            document.getElementById('view-container').style.display = 'none';
+            document.getElementById('editor-container').style.display = 'flex';
+            document.getElementById('edit-btn').classList.add('hidden');
+            
+            const input = document.getElementById('markdown-input');
+            input.value = state.currentFile ? state.currentFile.content : "# Название\n\nОписание идеи...";
+            document.getElementById('preview-output').innerHTML = marked.parse(input.value);
+        }
 
-  // Обновляем бейджи в меню
-  document.getElementById('nb-ideas').textContent = discoveredIdeas.length;
-  LAYER_KEYS.forEach(lk => {
-    const L = LAYERS[lk];
-    const n = discoveredIdeas.filter(i=>i.layer===lk).length;
-    const nb = document.getElementById(`nb-${L.num}`);
-    if (nb) nb.textContent = n;
-  });
-}
+        function cancelEditing() {
+            state.isEditing = false;
+            if (state.currentFile) {
+                displayFile();
+            } else {
+                document.getElementById('editor-container').style.display = 'none';
+                document.getElementById('welcome-screen').style.display = 'block';
+                document.getElementById('main-toolbar').style.display = 'flex';
+                document.getElementById('active-file-path').textContent = "Выберите проект";
+            }
+        }
 
-// ════════════════════════════════════════════
-// MARKDOWN RENDERER (С ПУТЯМИ ДЛЯ КАРТИНОК)
-// ════════════════════════════════════════════
-function md2html(md, basePath = '') {
-  if (!md) return '';
-  const rawBase = `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/`;
-  
-  return md
-    // Замена локальных путей картинок на сырые ссылки гитхаба
-    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, path) => {
-      if (path.startsWith('http')) return match;
-      const cleanPath = path.replace(/^\.\//, ''); // убираем ./
-      const fullPath = basePath ? `${basePath}/${cleanPath}` : cleanPath;
-      return `<img alt="${alt}" src="${rawBase}${fullPath}">`;
-    })
-    // Базовый маркдаун
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
-    .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
-    .replace(/\*(.*)\*/gim, '<em>$1</em>')
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "<a href='$2' target='_blank'>$1</a>")
-    .replace(/\n$/gim, '<br>')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-}
+        function createNewItem() {
+            state.currentFile = null;
+            document.getElementById('active-file-path').textContent = "Новый черновик";
+            startEditing();
+        }
 
-// ════════════════════════════════════════════
-// ROUTING
-// ════════════════════════════════════════════
-function nav(page, id = null) {
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  
-  const pageEl = document.getElementById(`page-${page}`);
-  if (pageEl) pageEl.classList.add('active');
-  
-  const navEl = document.querySelector(`.nav-item[data-page="${page}"]`);
-  if (navEl) navEl.classList.add('active');
+        async function saveChanges() {
+            const btn = document.getElementById('save-btn');
+            const newContent = document.getElementById('markdown-input').value;
+            const titleMatch = newContent.match(/^#\s+(.+)/m);
+            const fileName = titleMatch ? titleMatch[1].trim().toLowerCase().replace(/[^a-z0-9а-я]+/g, '-') + '.md' : `idea-${Date.now()}.md`;
+            
+            const path = state.currentFile ? state.currentFile.path : `${state.config.folder}/${fileName}`;
+            
+            btn.disabled = true;
+            btn.textContent = "Сохранение...";
 
-  prevPage = currentPage;
-  currentPage = page;
-  
-  if (id) window.location.hash = `${page}/${id}`;
-  else window.location.hash = page;
+            try {
+                const body = {
+                    message: `Update ${path} via IdeaFlow`,
+                    content: btoa(unescape(encodeURIComponent(newContent))),
+                    branch: state.config.branch
+                };
+                if (state.currentFile) body.sha = state.currentFile.sha;
 
-  if (page === 'dashboard') renderDashboard();
-  else if (page === 'ideas') renderIdeas();
-  else if (page.startsWith('layer-')) renderLayer(page.replace('layer-',''));
-  else if (page === 'idea') renderIdeaDetail(id);
-}
+                const res = await ghFetch(`/contents/${path}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(body)
+                });
 
-function navBack() { nav(prevPage === 'dashboard' || prevPage.startsWith('layer-') ? prevPage : 'ideas'); }
+                if (res.ok) {
+                    showToast("Успешно сохранено!");
+                    await refreshFileList();
+                    await loadFile(path);
+                } else {
+                    const err = await res.json();
+                    throw new Error(err.message);
+                }
+            } catch (e) {
+                showToast("Ошибка сохранения: " + e.message, true);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Сохранить в GitHub";
+            }
+        }
 
-function handleHash() {
-  const h = window.location.hash.slice(1).split('/');
-  if (h[0]) nav(h[0], h[1]); else nav('dashboard');
-}
+        async function deleteCurrentFile() {
+            if (!state.currentFile || !confirm(`Удалить файл ${state.currentFile.name}?`)) return;
 
-// ════════════════════════════════════════════
-// RENDER: DASHBOARD
-// ════════════════════════════════════════════
-async function renderDashboard() {
-  const now = new Date();
-  document.getElementById('sb-date').textContent = now.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
+            try {
+                const res = await ghFetch(`/contents/${state.currentFile.path}`, {
+                    method: 'DELETE',
+                    body: JSON.stringify({
+                        message: `Delete ${state.currentFile.path}`,
+                        sha: state.currentFile.sha,
+                        branch: state.config.branch
+                    })
+                });
 
-  // Рендер корневого README проекта (AlexSheff/1149/README.md)
-  const rmBox = document.getElementById('dash-readme-box');
-  if (rmBox.innerHTML.includes('Fetching')) {
-    const rawMd = await fetchRawMarkdown('README.md');
-    rmBox.innerHTML = rawMd ? md2html(rawMd) : '<div style="color:var(--ink3)">Root README.md not found in repository.</div>';
-  }
-
-  // Рендер слоев
-  document.getElementById('dash-layers').innerHTML = LAYER_KEYS.map(lk => {
-    const L = LAYERS[lk];
-    const count = discoveredIdeas.filter(i=>i.layer===lk).length;
-    return `<div class="mini-row" onclick="nav('layer-${L.num}')">
-      <div style="width:30px;height:30px;border-radius:var(--r2);background:${L.color}14;border:1.5px solid ${L.color}40;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono);font-size:9px;font-weight:600;color:${L.color}">${L.num}</div>
-      <div class="mini-body"><div class="mini-t">${L.label}</div><div class="mini-s">${count} projects</div></div>
-    </div>`;
-  }).join('');
-
-  // Последние проекты
-  document.getElementById('dash-proj-total').textContent = `(${discoveredIdeas.length})`;
-  document.getElementById('dash-recent-projects').innerHTML = discoveredIdeas.slice(0, 10).map(i => {
-    const L = LAYERS[i.layer];
-    return `<div class="mini-row" onclick="nav('idea','${i.id}')">
-      <div class="mini-strip" style="background:${L.color}"></div>
-      <div class="mini-body"><div class="mini-t">${esc(i.title)}</div><div class="mini-s" style="font-family:var(--mono);font-size:8px">${esc(i.folder)}</div></div>
-    </div>`;
-  }).join('');
-}
-
-// ════════════════════════════════════════════
-// RENDER: ALL IDEAS / PROJECTS
-// ════════════════════════════════════════════
-function renderIdeas() {
-  const q = (document.getElementById('ideas-search')?.value||'').toLowerCase();
-  
-  let arr = discoveredIdeas;
-  if (q) {
-    arr = arr.filter(i => i.title.toLowerCase().includes(q) || i.folder.toLowerCase().includes(q));
-  }
-
-  document.getElementById('ideas-grid').innerHTML = arr.length 
-    ? arr.map(i => {
-        const L = LAYERS[i.layer];
-        return `<div class="idea-card" style="--layer-color:${L.color}" onclick="nav('idea','${i.id}')">
-          <div class="ic-layer" style="color:${L.color}">${L.label}</div>
-          <div class="ic-title" style="margin-bottom:12px">${esc(i.title)}</div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--ink3);word-break:break-all;line-height:1.4">${esc(i.path)}</div>
-        </div>`;
-      }).join('') 
-    : `<div class="empty-state" style="grid-column:1/-1"><div class="empty-ico">◈</div><div class="empty-title">No matching projects found</div></div>`;
-}
-
-// ════════════════════════════════════════════
-// RENDER: LAYER PAGE (Shows Layer README!)
-// ════════════════════════════════════════════
-async function renderLayer(num) {
-  const lk = LAYER_KEYS.find(k => LAYERS[k].num === num);
-  if (!lk) return;
-  const L = LAYERS[lk];
-  const projs = discoveredIdeas.filter(i => i.layer === lk);
-  
-  const el = document.getElementById(`page-layer-${num}`);
-  
-  // Skeleton
-  el.innerHTML = `
-    <div class="pg-head">
-      <div>
-        <div class="pg-eyebrow" style="color:${L.color}">${L.num} · Architecture Layer</div>
-        <div class="pg-title">${L.label}</div>
-        <div class="pg-sub">${L.desc}</div>
-      </div>
-    </div>
-    <div class="sh">Layer Documentation</div>
-    <div class="layer-readme-box" id="lr-readme-${num}">
-       <div class="spinner"><span class="spin">↻</span> Loading ${lk}/README.md...</div>
-    </div>
-    <div class="sh" style="margin-top:32px">Sub-Projects (${projs.length})</div>
-    <div class="g3">
-      ${projs.length ? projs.map(i => `
-        <div class="idea-card" style="--layer-color:${L.color}" onclick="nav('idea','${i.id}')">
-          <div class="ic-title">${esc(i.title)}</div>
-          <div style="font-family:var(--mono);font-size:8px;color:var(--ink3);margin-top:auto">${esc(i.folder)}</div>
-        </div>
-      `).join('') : '<div style="font-size:11px;color:var(--ink3)">No sub-projects discovered in this layer.</div>'}
-    </div>
-  `;
-
-  // Fetch the specific layer README
-  const rawMd = await fetchRawMarkdown(`${lk}/README.md`);
-  const rEl = document.getElementById(`lr-readme-${num}`);
-  if (rawMd) {
-    rEl.innerHTML = `<div class="md-content">${md2html(rawMd, lk)}</div>`;
-  } else {
-    rEl.innerHTML = `<div style="font-size:12px;color:var(--ink3);text-align:center">No root README.md found in folder <code>${lk}/</code></div>`;
-  }
-}
-
-// ════════════════════════════════════════════
-// RENDER: IDEA DETAIL (Shows README + Attachments)
-// ════════════════════════════════════════════
-async function renderIdeaDetail(id) {
-  const idea = discoveredIdeas.find(i => i.id === id);
-  if (!idea) { nav('dashboard'); return; }
-  
-  const L = LAYERS[idea.layer];
-  
-  document.getElementById('id-head').innerHTML = `
-    <div class="pg-eyebrow" style="color:${L.color}">${L.label} · Sub-Project</div>
-    <div class="pg-title">${esc(idea.title)}</div>
-  `;
-  document.getElementById('id-meta').innerHTML = `<code>${idea.folder}/</code>`;
-  
-  const contentEl = document.getElementById('id-content');
-  contentEl.innerHTML = `<div class="spinner"><span class="spin">↻</span> Loading markdown...</div>`;
-  
-  // Render Attachments (Any non-md file inside the idea's folder!)
-  const attachFiles = repoTree.filter(f => f.path.startsWith(idea.folder + '/') && !f.path.toLowerCase().endsWith('.md'));
-  const attachEl = document.getElementById('id-files');
-  
-  if (attachFiles.length === 0) {
-    attachEl.innerHTML = '<div style="font-size:11px;color:var(--ink4)">No files found in directory.</div>';
-  } else {
-    attachEl.innerHTML = attachFiles.map(f => {
-      const name = f.path.split('/').pop();
-      const rawUrl = `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${f.path}`;
-      return `
-        <div class="file-item">
-          <div class="file-ico">📄</div>
-          <div class="file-name" title="${esc(f.path)}">${esc(name)}</div>
-          <a href="${rawUrl}" target="_blank" class="file-dl">View</a>
-        </div>
-      `;
-    }).join('');
-  }
-
-  // Fetch actual Markdown Content
-  const rawMd = await fetchRawMarkdown(idea.path);
-  if (rawMd) {
-    // Вырезаем yaml front-matter если он есть, чтобы не мусорить на экране
-    const cleanMd = rawMd.replace(/^---[\s\S]+?---\n/, '');
-    contentEl.innerHTML = md2html(cleanMd, idea.folder);
-  } else {
-    contentEl.innerHTML = '<div style="color:var(--red)">Failed to load document content.</div>';
-  }
-}
-
-// ════════════════════════════════════════════
-// INIT ENGINE
-// ════════════════════════════════════════════
-async function initEngine() {
-  repoTree = await fetchRepoTree();
-  if (repoTree.length) {
-    buildDatabase();
-  }
-  
-  const t = getToken();
-  if (t) document.getElementById('set-token').value = t;
-
-  handleHash();
-}
-
-// Старт
-window.addEventListener('load', initEngine);
-
-// Привязка слушателей меню
-document.querySelectorAll('.nav-item[data-page]').forEach(el => {
-  el.addEventListener('click', () => nav(el.dataset.page));
-});
-
-</script>
+                if (res.ok) {
+                    showToast("Файл удален");
+                    state.currentFile = null;
+                    refreshFileList();
+                    cancelEditing();
+                }
+            } catch (e) {
+                showToast("Ошибка удаления", true);
+            }
+        }
+    </script>
 </body>
 </html>
