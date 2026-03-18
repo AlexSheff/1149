@@ -20,7 +20,7 @@ tagline: "Interactive cinema as a collective intelligence trainer — film as a 
 
 ---
 
-# UUCP Film Festival — White Paper
+# UU Interactive — White Paper
 
 > *Interactive cinema as a collective intelligence trainer — film as a tool for community consciousness expansion.*
 
@@ -28,7 +28,7 @@ tagline: "Interactive cinema as a collective intelligence trainer — film as a 
 
 ## 1. Beyond Entertainment
 
-The UUCP Film Festival is not a film screening event. It is a **collective intelligence training program** that uses cinema as the medium.
+The UU Interactive is not a film screening event. It is a **collective intelligence training program** that uses cinema as the medium.
 
 Film creates shared experience. Shared experience creates shared vocabulary. Shared vocabulary enables collective decision-making that is otherwise impossible across diverse groups.
 
