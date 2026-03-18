@@ -1,6 +1,6 @@
 {
-  "version": 4,
-  "updated": "2026-03-18T07:56:14.743Z",
+  "version": 5,
+  "updated": "2026-03-18T08:27:02.316Z",
   "ideas": [
     {
       "id": "3003",
@@ -461,6 +461,33 @@
       "files": [],
       "_ghPath": "07_Research_Lab/_ORBITFORUM/WHITE_PAPER.md",
       "_wpSha": "a6bebb28fb292b77d9ed421123f7e46057cb34c4"
+    },
+    {
+      "id": "8001",
+      "title": "Data Wallet",
+      "layer": "08_Archive",
+      "doctype": "Personal Archive",
+      "status": "active",
+      "priority": "medium",
+      "progress": 0,
+      "tagline": "",
+      "tags": [
+        "archive",
+        "personal",
+        "history",
+        "ideas",
+        "logbook",
+        "memory"
+      ],
+      "related": [],
+      "is1149": true,
+      "whitepaper": "# Data Wallet\n\n> *Personal archive of verified ideas, decisions, and intellectual history — the founder's logbook.*\n\n---\n\n## Purpose\n\nThe Data Wallet is the Archive layer's primary record — the logbook that captures what was tried, what was learned, what was abandoned, and why.\n\nUnlike the active layers, the Data Wallet does not aspire to be completed. It records reality as it unfolds.\n\n---\n\n## Archival Principles\n\n**The Logbook Principle:** A ship's logbook is not edited retroactively. Mistakes are recorded alongside successes. The purpose is an accurate record that enables learning, not a curated narrative.\n\n**What gets archived:**\n- Ideas that were superseded (with a note on what replaced them and why)\n- Decisions with their reasoning at the time\n- Experiments that failed (with failure analysis)\n- Connections that formed and dissolved\n- The running account of the Philippines / Dumaguete chapter\n\n---\n\n## Current Index\n\n- Philippines relocation log (2024–present)\n- City Quest development history\n- UUCP Film Festival founding documents (Seasons 1–3)\n- Neuromicon conceptual evolution record\n- Cryptography research notes\n- Key decisions and reasoning log\n\n---\n\n*Personal Archive · Reality Refactor Lab · 1149*",
+      "techspec": "",
+      "solidarity": "",
+      "updated": "2026-03-16",
+      "files": [],
+      "_ghPath": "08_Archive/Data-Wallet/README.md",
+      "_wpSha": "e8cc174f9b58a60d23d9084b36ff2411e86d51ba"
     }
   ]
 }
