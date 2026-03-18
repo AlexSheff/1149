@@ -10,868 +10,958 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --bg:#0d1117;--bg2:#161b22;--bg3:#1c2128;--bg4:#21262d;
-  --border:#30363d;--border2:#484f58;
-  --text:#e6edf3;--text2:#b1bac4;--text3:#8b949e;
+  --br:#30363d;--br2:#484f58;
+  --tx:#e6edf3;--tx2:#b1bac4;--tx3:#8b949e;
   --blue:#58a6ff;--blue2:#1f6feb;--blue3:#388bfd;
-  --green:#3fb950;--violet:#bc8cff;--orange:#f0883e;
-  --red:#ff7b72;--yellow:#d29922;
+  --green:#3fb950;--vi:#bc8cff;--or:#f0883e;--red:#ff7b72;
 }
-html{scroll-behavior:smooth;height:100%}
-body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+html,body{height:100%}
+body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;display:flex;flex-direction:column}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg)}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+::-webkit-scrollbar-thumb{background:var(--br2);border-radius:3px}
 a{color:var(--blue);text-decoration:none}
 a:hover{text-decoration:underline}
 button{font-family:inherit;cursor:pointer}
 
 /* ── NAV ── */
 #nav{
-  position:sticky;top:0;z-index:200;
-  background:rgba(13,17,23,.97);backdrop-filter:blur(16px);
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:.75rem;
-  padding:.6rem 1rem;
+  display:flex;align-items:center;gap:.6rem;padding:.55rem 1rem;
+  background:rgba(13,17,23,.97);border-bottom:1px solid var(--br);
+  position:sticky;top:0;z-index:200;backdrop-filter:blur(16px);flex-shrink:0;
 }
-.nav-logo{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:.95rem;color:var(--text);text-decoration:none;white-space:nowrap;flex-shrink:0}
-.nav-logo svg{color:var(--blue)}
-.nav-pill{background:var(--blue2);color:#fff;font-size:.65rem;font-weight:700;padding:.12rem .45rem;border-radius:20px;letter-spacing:.04em}
-.nav-search{
-  flex:1;max-width:340px;
-  display:flex;align-items:center;gap:.5rem;
-  background:var(--bg3);border:1px solid var(--border2);
-  border-radius:6px;padding:.35rem .75rem;
-}
-.nav-search input{background:transparent;border:none;color:var(--text);font-size:.85rem;width:100%;font-family:inherit}
-.nav-search input::placeholder{color:var(--text3)}
+.logo{display:flex;align-items:center;gap:.5rem;font-weight:700;font-size:.95rem;color:var(--tx);text-decoration:none;white-space:nowrap}
+.logo-pill{background:var(--blue2);color:#fff;font-size:.62rem;font-weight:700;padding:.1rem .42rem;border-radius:20px;letter-spacing:.04em}
+.nav-search-wrap{flex:1;max-width:320px;position:relative}
+.nav-search{display:flex;align-items:center;gap:.4rem;background:var(--bg3);border:1px solid var(--br2);border-radius:6px;padding:.32rem .7rem}
+.nav-search input{background:transparent;border:none;color:var(--tx);font-size:.84rem;width:100%;font-family:inherit}
+.nav-search input::placeholder{color:var(--tx3)}
 .nav-search input:focus{outline:none}
-.nav-search-icon{color:var(--text3);font-size:.9rem;flex-shrink:0}
-.nav-tabs{display:flex;gap:.15rem;margin-left:.25rem}
-.nav-tab{
-  display:flex;align-items:center;gap:.35rem;
-  padding:.35rem .7rem;border-radius:6px;
-  font-size:.82rem;font-weight:500;color:var(--text2);
-  border:none;background:transparent;transition:all .15s;
-}
-.nav-tab:hover{background:var(--bg3);color:var(--text)}
-.nav-tab.active{background:rgba(31,111,235,.18);color:var(--blue)}
-.nav-right{display:flex;align-items:center;gap:.4rem;margin-left:auto;flex-shrink:0}
-.btn{
-  display:inline-flex;align-items:center;gap:.35rem;
-  padding:.38rem .8rem;border-radius:6px;
-  font-size:.8rem;font-weight:600;border:1px solid;
-  cursor:pointer;text-decoration:none;transition:all .15s;white-space:nowrap;
-}
-.btn-primary{background:var(--blue2);border-color:var(--blue2);color:#fff}
-.btn-primary:hover{background:var(--blue3);border-color:var(--blue3);text-decoration:none}
-.btn-ghost{background:transparent;border-color:var(--border2);color:var(--text2)}
-.btn-ghost:hover{background:var(--bg3);color:var(--text);text-decoration:none}
-.btn-sm{padding:.28rem .6rem;font-size:.75rem}
+.nav-search-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bg2);border:1px solid var(--br2);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:400;max-height:280px;overflow-y:auto;display:none}
+.nsd-item{padding:.5rem .85rem;cursor:pointer;font-size:.82rem;color:var(--tx2);border-bottom:1px solid var(--br);display:flex;align-items:center;gap:.45rem}
+.nsd-item:last-child{border-bottom:none}
+.nsd-item:hover{background:var(--bg3);color:var(--tx)}
+.nsd-type{font-size:.65rem;background:var(--bg4);color:var(--tx3);padding:.06rem .35rem;border-radius:4px;flex-shrink:0}
+.nav-tabs{display:flex;gap:.1rem}
+.ntab{padding:.33rem .65rem;border-radius:6px;font-size:.82rem;font-weight:500;color:var(--tx2);border:none;background:transparent;transition:all .14s;cursor:pointer;display:flex;align-items:center;gap:.3rem}
+.ntab:hover{background:var(--bg3);color:var(--tx)}
+.ntab.on{background:rgba(31,111,235,.18);color:var(--blue)}
+.nav-r{display:flex;gap:.35rem;margin-left:auto;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .75rem;border-radius:6px;font-size:.79rem;font-weight:600;border:1px solid;cursor:pointer;text-decoration:none;transition:all .14s;white-space:nowrap;font-family:inherit}
+.btn:hover{text-decoration:none}
+.pri{background:var(--blue2);border-color:var(--blue2);color:#fff}
+.pri:hover{background:var(--blue3);border-color:var(--blue3)}
+.ghost{background:transparent;border-color:var(--br2);color:var(--tx2)}
+.ghost:hover{background:var(--bg3);color:var(--tx)}
+.sm{padding:.26rem .58rem;font-size:.75rem}
+.danger{background:rgba(255,123,114,.08);border-color:rgba(255,123,114,.3);color:var(--red)}
+.danger:hover{background:rgba(255,123,114,.15)}
 
-/* ── LAYOUT ── */
-#layout{display:flex;height:calc(100vh - 49px)}
-#sidebar{
-  width:248px;flex-shrink:0;
-  background:var(--bg2);border-right:1px solid var(--border);
-  overflow-y:auto;display:flex;flex-direction:column;
-}
-#content{flex:1;overflow-y:auto;padding:1.25rem 1.5rem}
+/* ── BODY ── */
+#body{display:flex;flex:1;overflow:hidden}
 
 /* ── SIDEBAR ── */
-.sb-section{padding:.75rem 0}
-.sb-label{
-  font-size:.67rem;font-weight:700;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--text3);
-  padding:.25rem .85rem .5rem;
-}
-.sb-item{
-  display:flex;align-items:center;gap:.5rem;
-  padding:.38rem .85rem;cursor:pointer;
-  font-size:.84rem;color:var(--text2);
-  border:none;background:transparent;width:100%;
-  text-align:left;transition:all .12s;text-decoration:none;
-  border-left:2px solid transparent;
-}
-.sb-item:hover{background:var(--bg3);color:var(--text);text-decoration:none}
-.sb-item.active{background:rgba(31,111,235,.12);color:var(--blue);font-weight:600;border-left-color:var(--blue2)}
-.sb-icon{font-size:.82rem;flex-shrink:0;opacity:.7}
-.sb-item.active .sb-icon{opacity:1}
-.sb-badge{
-  margin-left:auto;font-family:'JetBrains Mono',monospace;
-  font-size:.65rem;color:var(--text3);
-  background:var(--bg4);padding:.08rem .38rem;border-radius:10px;
-  flex-shrink:0;
-}
-.sb-div{height:1px;background:var(--border);margin:.25rem 0}
-.sb-folder{
-  display:flex;align-items:center;gap:.5rem;
-  padding:.38rem .85rem;font-size:.84rem;color:var(--text2);
-  transition:all .12s;
-}
-.sb-folder a{color:inherit;text-decoration:none;display:flex;align-items:center;gap:.5rem;flex:1}
-.sb-folder:hover{background:var(--bg3);color:var(--text)}
+#sb{width:252px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--br);overflow-y:auto;display:flex;flex-direction:column}
+.sb-sec{padding:.6rem 0}
+.sb-hd{font-size:.65rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);padding:.2rem .85rem .45rem}
+.sb-div{height:1px;background:var(--br);margin:.2rem 0}
+.si{display:flex;align-items:center;gap:.45rem;padding:.36rem .85rem;cursor:pointer;font-size:.84rem;color:var(--tx2);border:none;background:transparent;width:100%;text-align:left;transition:all .12s;text-decoration:none;border-left:2px solid transparent}
+.si:hover{background:var(--bg3);color:var(--tx);text-decoration:none}
+.si.on{background:rgba(31,111,235,.1);color:var(--blue);font-weight:600;border-left-color:var(--blue2)}
+.si-ic{font-size:.8rem;flex-shrink:0;opacity:.65}
+.si.on .si-ic{opacity:1}
+.si-bd{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:.63rem;color:var(--tx3);background:var(--bg4);padding:.06rem .35rem;border-radius:10px;flex-shrink:0}
+/* file tree */
+.tree-item{display:flex;align-items:center;gap:.4rem;padding:.3rem .85rem;cursor:pointer;font-size:.82rem;color:var(--tx2);border:none;background:transparent;width:100%;text-align:left;transition:all .12s;border-left:2px solid transparent}
+.tree-item:hover{background:var(--bg3);color:var(--tx)}
+.tree-item.on{background:rgba(31,111,235,.1);color:var(--blue);border-left-color:var(--blue2)}
+.tree-indent{padding-left:1.4rem}
+.tree-folder{color:var(--or);flex-shrink:0;font-size:.8rem}
+.tree-file{color:var(--vi);flex-shrink:0;font-size:.8rem}
+.tree-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ── MAIN ── */
+#main{flex:1;overflow-y:auto;display:flex;flex-direction:column}
 
 /* ── VIEWS ── */
-.view{display:none}.view.active{display:block}
+.view{display:none;padding:1.25rem 1.5rem;flex:1}
+.view.on{display:flex;flex-direction:column}
 
-/* ── BREADCRUMB ── */
-.breadcrumb{display:flex;align-items:center;gap:.35rem;margin-bottom:1.25rem;flex-wrap:wrap}
-.breadcrumb span{font-size:.82rem;color:var(--text3)}
-.breadcrumb a,.breadcrumb button{font-size:.82rem;color:var(--blue);background:none;border:none;cursor:pointer;padding:0}
-.breadcrumb a:hover,.breadcrumb button:hover{text-decoration:underline}
-.bc-sep{color:var(--border2)}
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap}
+.bc{display:flex;align-items:center;gap:.3rem;font-size:.82rem;color:var(--tx3);flex-wrap:wrap;flex:1}
+.bc a,.bc button{color:var(--blue);background:none;border:none;cursor:pointer;font-size:.82rem;padding:0;font-family:inherit}
+.bc a:hover,.bc button:hover{text-decoration:underline}
+.bc-sep{color:var(--br2)}
+.tbar-actions{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
 
-/* ── DOC HEADER ── */
-.doc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
-.doc-title{font-size:1.2rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:.5rem}
-.doc-actions{display:flex;gap:.4rem;flex-wrap:wrap;align-items:center}
-.file-tag{font-size:.7rem;font-family:'JetBrains Mono',monospace;background:rgba(188,140,255,.1);color:var(--violet);border:1px solid rgba(188,140,255,.25);padding:.1rem .4rem;border-radius:4px}
+/* ── PANELS ── */
+.panel{background:var(--bg2);border:1px solid var(--br);border-radius:8px}
 
-/* ── MD TABS ── */
-.md-tabs{display:flex;gap:.15rem;border-bottom:1px solid var(--border);margin-bottom:1.25rem;overflow-x:auto;padding-bottom:0}
-.md-tabs::-webkit-scrollbar{height:3px}
-.md-tab{
-  padding:.45rem .8rem;font-size:.81rem;font-weight:500;
-  cursor:pointer;border:none;background:transparent;
-  color:var(--text2);border-bottom:2px solid transparent;
-  margin-bottom:-1px;transition:color .12s;white-space:nowrap;flex-shrink:0;
-}
-.md-tab:hover{color:var(--text)}
-.md-tab.active{color:var(--blue);border-bottom-color:var(--blue2)}
+/* ── FILE VIEWER / EDITOR ── */
+#viewer-wrap{flex:1;display:flex;flex-direction:column;gap:.85rem}
+.viewer-header{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}
+.vh-left{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.file-chip{font-size:.72rem;font-family:'JetBrains Mono',monospace;background:rgba(188,140,255,.1);color:var(--vi);border:1px solid rgba(188,140,255,.25);padding:.1rem .4rem;border-radius:4px}
+.viewer-title{font-size:1.1rem;font-weight:700;color:var(--tx)}
+.mode-tabs{display:flex;background:var(--bg3);border:1px solid var(--br);border-radius:6px;padding:2px;gap:2px}
+.mode-tab{padding:.25rem .65rem;border-radius:4px;font-size:.76rem;font-weight:500;border:none;background:transparent;color:var(--tx2);cursor:pointer;transition:all .12s}
+.mode-tab.on{background:var(--bg2);color:var(--tx);box-shadow:0 1px 3px rgba(0,0,0,.3)}
 
-/* ── MARKDOWN ── */
-.md-wrap{max-width:820px}
-.md-body{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:8px;padding:1.75rem 2rem;
-}
-.md-body h1,.md-body h2,.md-body h3,.md-body h4{color:var(--text);font-weight:600;margin:1.3em 0 .55em;line-height:1.3}
-.md-body h1{font-size:1.55rem;padding-bottom:.4em;border-bottom:1px solid var(--border)}
-.md-body h2{font-size:1.2rem;padding-bottom:.3em;border-bottom:1px solid var(--border)}
+/* markdown */
+.md-body{padding:1.75rem 2rem}
+.md-body h1,.md-body h2,.md-body h3,.md-body h4{color:var(--tx);font-weight:600;margin:1.2em 0 .5em;line-height:1.3}
+.md-body h1{font-size:1.55rem;padding-bottom:.4em;border-bottom:1px solid var(--br)}
+.md-body h2{font-size:1.2rem;padding-bottom:.25em;border-bottom:1px solid var(--br)}
 .md-body h3{font-size:1.05rem}
-.md-body h4{font-size:.95rem;color:var(--text2)}
-.md-body p{margin:.65em 0;line-height:1.78;color:var(--text)}
+.md-body h4{font-size:.95rem;color:var(--tx2)}
+.md-body p{margin:.6em 0;line-height:1.78;color:var(--tx)}
 .md-body a{color:var(--blue)}
 .md-body a:hover{text-decoration:underline}
 .md-body ul,.md-body ol{padding-left:1.6em;margin:.5em 0}
-.md-body li{margin:.28em 0;color:var(--text)}
-.md-body code{font-family:'JetBrains Mono',monospace;font-size:.84em;background:var(--bg3);border:1px solid var(--border);padding:.12em .38em;border-radius:4px;color:var(--orange)}
-.md-body pre{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:1.1rem;overflow-x:auto;margin:.9em 0}
-.md-body pre code{background:transparent;border:none;padding:0;color:var(--text);font-size:.875em}
-.md-body blockquote{border-left:3px solid var(--blue2);padding:.45em 1em;margin:.75em 0;background:rgba(31,111,235,.07);border-radius:0 4px 4px 0;color:var(--text2)}
-.md-body table{width:100%;border-collapse:collapse;margin:.9em 0;font-size:.9rem}
-.md-body th,.md-body td{padding:.45rem .85rem;border:1px solid var(--border);text-align:left;color:var(--text)}
+.md-body li{margin:.25em 0;color:var(--tx)}
+.md-body code{font-family:'JetBrains Mono',monospace;font-size:.84em;background:var(--bg3);border:1px solid var(--br);padding:.1em .36em;border-radius:4px;color:var(--or)}
+.md-body pre{background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:1.1rem;overflow-x:auto;margin:.85em 0}
+.md-body pre code{background:transparent;border:none;padding:0;color:var(--tx);font-size:.875em}
+.md-body blockquote{border-left:3px solid var(--blue2);padding:.4em .9em;margin:.7em 0;background:rgba(31,111,235,.07);border-radius:0 4px 4px 0;color:var(--tx2)}
+.md-body table{width:100%;border-collapse:collapse;margin:.85em 0;font-size:.9rem}
+.md-body th,.md-body td{padding:.42rem .8rem;border:1px solid var(--br);text-align:left;color:var(--tx)}
 .md-body th{background:var(--bg3);font-weight:600}
-.md-body tr:nth-child(even){background:rgba(255,255,255,.02)}
+.md-body tr:nth-child(even){background:rgba(255,255,255,.018)}
 .md-body img{max-width:100%;border-radius:6px}
-.md-body hr{border:none;border-top:1px solid var(--border);margin:1.4em 0}
-.md-body strong{color:var(--text);font-weight:600}
-.md-body em{color:var(--text2)}
+.md-body hr{border:none;border-top:1px solid var(--br);margin:1.3em 0}
+.md-body strong{color:var(--tx);font-weight:600}
+.md-body em{color:var(--tx2)}
+.md-body del{color:var(--tx3)}
 
-/* ── TOC ── */
-.toc-box{
-  background:var(--bg2);border:1px solid var(--border);
-  border-radius:8px;padding:1rem 1.25rem;
-  margin-bottom:1rem;font-size:.83rem;
-  max-width:820px;
-}
-.toc-title{font-weight:600;color:var(--text2);margin-bottom:.6rem;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em}
-.toc-list{list-style:none;padding:0}
-.toc-list li{margin:.2em 0}
-.toc-list a{color:var(--blue);text-decoration:none;font-size:.83rem}
+/* TOC */
+.toc-box{background:var(--bg3);border:1px solid var(--br);border-radius:6px;padding:.85rem 1.1rem;margin-bottom:.85rem}
+.toc-title{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3);margin-bottom:.5rem}
+.toc-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:.18rem}
+.toc-list a{font-size:.82rem;color:var(--blue)}
 .toc-list a:hover{text-decoration:underline}
-.toc-list .toc-h3{padding-left:1em;color:var(--text3);font-size:.8rem}
+.toc-h3{padding-left:1em;font-size:.78rem;color:var(--tx3)}
+
+/* editor */
+.editor-wrap{display:flex;gap:.75rem;flex:1}
+.ed-pane{flex:1;display:flex;flex-direction:column;gap:.4rem;min-width:0}
+.ed-label{font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--tx3)}
+.ed-area{flex:1;background:var(--bg);border:1px solid var(--br);border-radius:6px;color:var(--tx);font-family:'JetBrains Mono',monospace;font-size:.84rem;line-height:1.65;padding:1rem;resize:none;width:100%;min-height:400px;transition:border-color .15s}
+.ed-area:focus{outline:none;border-color:var(--blue2)}
+.ed-preview{flex:1;overflow-y:auto}
+.ed-footer{display:flex;align-items:center;justify-content:space-between;gap:.5rem;flex-wrap:wrap;padding:.5rem 0}
+.ed-note{font-size:.75rem;color:var(--tx3)}
+.commit-panel{background:var(--bg3);border:1px solid var(--br);border-radius:8px;padding:1rem;margin-top:.75rem}
+.commit-panel h4{font-size:.85rem;font-weight:600;color:var(--tx);margin-bottom:.6rem}
+.f-inp{background:var(--bg);border:1px solid var(--br);color:var(--tx);padding:.4rem .7rem;border-radius:6px;font-size:.84rem;font-family:inherit;width:100%;transition:border-color .15s}
+.f-inp:focus{outline:none;border-color:var(--blue2)}
 
 /* ── REPOS ── */
-.repos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:.85rem}
-.repo-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:1.1rem;display:flex;flex-direction:column;gap:.55rem;transition:border-color .15s}
-.repo-card:hover{border-color:var(--blue2)}
-.repo-name{font-size:.92rem;font-weight:600;color:var(--blue);text-decoration:none}
-.repo-name:hover{text-decoration:underline}
-.repo-desc{font-size:.83rem;color:var(--text2);line-height:1.55;flex:1}
-.repo-meta{display:flex;gap:.85rem;flex-wrap:wrap;font-size:.76rem;color:var(--text3);align-items:center}
-.lang-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;display:inline-block}
-.topic-tag{font-size:.7rem;background:rgba(31,111,235,.1);color:var(--blue);padding:.14rem .5rem;border-radius:20px;border:1px solid rgba(88,166,255,.18)}
-.repo-topics{display:flex;gap:.35rem;flex-wrap:wrap}
-.repo-actions{display:flex;gap:.4rem;flex-wrap:wrap}
+.rg{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:.8rem}
+.rc{background:var(--bg2);border:1px solid var(--br);border-radius:8px;padding:1rem;display:flex;flex-direction:column;gap:.5rem;transition:border-color .14s}
+.rc:hover{border-color:var(--blue2)}
+.rc-name{font-size:.9rem;font-weight:600;color:var(--blue)}
+.rc-name:hover{text-decoration:underline}
+.rc-desc{font-size:.82rem;color:var(--tx2);line-height:1.55;flex:1}
+.rc-meta{display:flex;gap:.75rem;font-size:.75rem;color:var(--tx3);flex-wrap:wrap;align-items:center}
+.ld{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.tag{font-size:.69rem;background:rgba(31,111,235,.1);color:var(--blue);padding:.12rem .45rem;border-radius:20px;border:1px solid rgba(88,166,255,.18)}
+.tags{display:flex;gap:.3rem;flex-wrap:wrap}
+.rc-acts{display:flex;gap:.35rem;flex-wrap:wrap}
 
 /* ── STATS ── */
-.stats-row{display:flex;gap:.75rem;flex-wrap:wrap;margin-bottom:1.25rem}
-.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.75rem 1.1rem;flex:1;min-width:100px}
-.stat-n{font-size:1.5rem;font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;line-height:1}
-.stat-l{font-size:.7rem;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:.2rem}
+.stats{display:flex;gap:.65rem;flex-wrap:wrap;margin-bottom:1.1rem}
+.sc{background:var(--bg2);border:1px solid var(--br);border-radius:8px;padding:.7rem 1rem;flex:1;min-width:90px}
+.sn{font-size:1.4rem;font-weight:700;color:var(--tx);line-height:1;font-variant-numeric:tabular-nums}
+.sl{font-size:.68rem;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-top:.15rem}
 
 /* ── COMMENTS ── */
-.comments-wrap{max-width:820px;margin-top:1.75rem}
-.comments-title{font-size:.95rem;font-weight:600;color:var(--text);padding-bottom:.6rem;border-bottom:1px solid var(--border);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
-.cmt-count{font-size:.72rem;background:var(--bg3);color:var(--text3);padding:.1rem .45rem;border-radius:10px}
-.comment{background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:.65rem;overflow:hidden}
-.cmt-head{background:var(--bg3);border-bottom:1px solid var(--border);padding:.5rem 1rem;display:flex;align-items:center;justify-content:space-between;font-size:.8rem}
-.cmt-author{font-weight:600;color:var(--text)}
-.cmt-time{color:var(--text3)}
-.cmt-body{padding:.9rem 1rem;font-size:.87rem;line-height:1.7;color:var(--text);white-space:pre-wrap;word-break:break-word}
-.cmt-footer{padding:.4rem .75rem;border-top:1px solid var(--border);display:flex;gap:.35rem;align-items:center}
-.cmt-btn{font-size:.75rem;color:var(--text3);background:none;border:none;padding:.18rem .45rem;border-radius:4px;transition:all .12s;cursor:pointer}
-.cmt-btn:hover{background:var(--bg3);color:var(--text)}
-.reactions{display:flex;gap:.35rem;flex-wrap:wrap;margin-left:.25rem}
-.react-btn{display:flex;align-items:center;gap:.2rem;font-size:.75rem;background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:.16rem .55rem;cursor:pointer;color:var(--text2);transition:all .12s}
-.react-btn:hover,.react-btn.on{background:rgba(88,166,255,.1);border-color:var(--blue2);color:var(--blue)}
-.reply-thread{margin:0 1rem .65rem;border-left:2px solid var(--border);padding-left:.85rem}
-.reply-item{background:var(--bg3);border-radius:6px;padding:.6rem .85rem;margin-bottom:.4rem}
-.reply-header{font-size:.76rem;color:var(--text3);margin-bottom:.25rem}
-.reply-header strong{color:var(--text2);font-weight:600}
-.reply-body{font-size:.84rem;color:var(--text);line-height:1.6;white-space:pre-wrap}
-.reply-form{margin:0 1rem .65rem;border-left:2px solid var(--blue2);padding-left:.85rem;display:none}
-.cmt-form{background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-top:.75rem}
-.cmt-form-head{background:var(--bg3);border-bottom:1px solid var(--border);padding:.45rem .9rem;font-size:.8rem;font-weight:500;color:var(--text2)}
-.cmt-form-body{padding:.75rem}
-.f-row{display:flex;gap:.5rem;margin-bottom:.6rem}
-.f-inp{background:var(--bg);border:1px solid var(--border);color:var(--text);padding:.42rem .7rem;border-radius:6px;font-size:.84rem;font-family:inherit;transition:border-color .15s;width:100%}
-.f-inp:focus{outline:none;border-color:var(--blue2)}
-textarea.f-inp{min-height:90px;resize:vertical}
-.cmt-form-foot{padding:.6rem .75rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap}
-.f-hint{font-size:.72rem;color:var(--text3)}
-.cmt-gh-links{margin-top:.75rem;display:flex;gap:.4rem;flex-wrap:wrap}
+.comments{margin-top:1.5rem}
+.cm-hd{font-size:.9rem;font-weight:600;color:var(--tx);padding-bottom:.55rem;border-bottom:1px solid var(--br);margin-bottom:.9rem;display:flex;align-items:center;gap:.4rem}
+.cmt-n{font-size:.7rem;background:var(--bg3);color:var(--tx3);padding:.08rem .4rem;border-radius:10px}
+.cmt{background:var(--bg2);border:1px solid var(--br);border-radius:8px;margin-bottom:.6rem;overflow:hidden}
+.cmt-head{background:var(--bg3);border-bottom:1px solid var(--br);padding:.45rem .9rem;display:flex;align-items:center;justify-content:space-between;font-size:.79rem}
+.cmt-author{font-weight:600;color:var(--tx)}
+.cmt-time{color:var(--tx3)}
+.cmt-body{padding:.85rem .9rem;font-size:.86rem;line-height:1.72;color:var(--tx);white-space:pre-wrap;word-break:break-word}
+.cmt-foot{padding:.38rem .65rem;border-top:1px solid var(--br);display:flex;align-items:center;gap:.3rem;flex-wrap:wrap}
+.rxs{display:flex;gap:.3rem;flex-wrap:wrap}
+.rx-btn{display:flex;align-items:center;gap:.18rem;font-size:.74rem;background:var(--bg3);border:1px solid var(--br);border-radius:20px;padding:.14rem .5rem;cursor:pointer;color:var(--tx2);transition:all .12s}
+.rx-btn:hover,.rx-btn.on{background:rgba(88,166,255,.1);border-color:var(--blue2);color:var(--blue)}
+.cb{font-size:.74rem;color:var(--tx3);background:none;border:none;padding:.15rem .4rem;border-radius:4px;cursor:pointer;transition:all .12s}
+.cb:hover{background:var(--bg3);color:var(--tx)}
+.reply-thread{margin:0 .9rem .65rem;border-left:2px solid var(--br);padding-left:.8rem}
+.ri{background:var(--bg3);border-radius:6px;padding:.55rem .8rem;margin-bottom:.35rem}
+.ri-h{font-size:.74rem;color:var(--tx3);margin-bottom:.2rem}
+.ri-h strong{color:var(--tx2);font-weight:600}
+.ri-b{font-size:.83rem;color:var(--tx);line-height:1.6;white-space:pre-wrap}
+.rf{margin:0 .9rem .65rem;padding-left:.8rem;border-left:2px solid var(--blue2);display:none}
+.cm-form{background:var(--bg2);border:1px solid var(--br);border-radius:8px;overflow:hidden;margin-top:.65rem}
+.cmf-hd{background:var(--bg3);border-bottom:1px solid var(--br);padding:.4rem .85rem;font-size:.79rem;font-weight:500;color:var(--tx2)}
+.cmf-body{padding:.7rem}
+.cmf-row{display:flex;gap:.4rem;margin-bottom:.5rem}
+textarea.f-inp{min-height:85px;resize:vertical}
+.cmf-foot{padding:.55rem .75rem;border-top:1px solid var(--br);display:flex;justify-content:space-between;align-items:center;gap:.5rem;flex-wrap:wrap}
+.f-hint{font-size:.71rem;color:var(--tx3)}
 
-/* ── GH INVITE BANNER ── */
-.gh-banner{
-  background:linear-gradient(135deg,rgba(31,111,235,.1),rgba(88,166,255,.05));
-  border:1px solid rgba(88,166,255,.2);border-radius:8px;
-  padding:.9rem 1.1rem;display:flex;align-items:center;justify-content:space-between;
-  gap:.75rem;flex-wrap:wrap;margin-bottom:1.25rem;
-}
-.gh-banner p{font-size:.84rem;color:var(--text2)}
-.gh-banner strong{color:var(--text)}
-.gh-banner-btns{display:flex;gap:.4rem;flex-wrap:wrap}
+/* ── FOLDER VIEW ── */
+.fv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.6rem}
+.fv-card{background:var(--bg2);border:1px solid var(--br);border-radius:8px;padding:.85rem;cursor:pointer;transition:border-color .14s;display:flex;align-items:center;gap:.55rem}
+.fv-card:hover{border-color:var(--blue2);background:var(--bg3)}
+.fv-icon{font-size:1.3rem;flex-shrink:0}
+.fv-name{font-size:.86rem;font-weight:500;color:var(--tx2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fv-card:hover .fv-name{color:var(--tx)}
 
-/* ── SPINNER / ERROR ── */
-.spinner{display:flex;align-items:center;justify-content:center;padding:2.5rem;color:var(--text3);gap:.6rem;font-size:.88rem}
-.spin{animation:spin 1s linear infinite}
+/* ── MISC ── */
+.spin{animation:spin 1s linear infinite;display:inline-block}
 @keyframes spin{to{transform:rotate(360deg)}}
-.err{background:rgba(255,123,114,.06);border:1px solid rgba(255,123,114,.25);border-radius:8px;padding:.9rem 1rem;color:var(--red);font-size:.85rem;margin:.75rem 0}
-.empty{text-align:center;padding:2.5rem;color:var(--text3);font-size:.88rem}
-
-/* ── COPY TOAST ── */
-#toast{
-  position:fixed;bottom:1.5rem;right:1.5rem;z-index:999;
-  background:var(--bg3);border:1px solid var(--border2);
-  color:var(--text);font-size:.82rem;padding:.6rem 1rem;border-radius:8px;
-  transform:translateY(10px);opacity:0;transition:all .25s;pointer-events:none;
-}
+.loading{display:flex;align-items:center;gap:.55rem;padding:2rem;color:var(--tx3);font-size:.88rem}
+.err{background:rgba(255,123,114,.06);border:1px solid rgba(255,123,114,.22);border-radius:8px;padding:.85rem 1rem;color:var(--red);font-size:.84rem}
+.empty{padding:2rem;color:var(--tx3);font-size:.88rem;text-align:center}
+.gh-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}
+#toast{position:fixed;bottom:1.25rem;right:1.25rem;z-index:999;background:var(--bg3);border:1px solid var(--br2);color:var(--tx);font-size:.81rem;padding:.55rem .95rem;border-radius:8px;transform:translateY(8px);opacity:0;transition:all .22s;pointer-events:none}
 #toast.show{transform:translateY(0);opacity:1}
-
-/* ── BACK TO TOP ── */
-#btt{
-  position:fixed;bottom:1.5rem;left:1.5rem;z-index:99;
-  background:var(--bg3);border:1px solid var(--border2);color:var(--text2);
-  width:36px;height:36px;border-radius:50%;font-size:1rem;
-  display:none;align-items:center;justify-content:center;cursor:pointer;
-  transition:all .15s;
-}
-#btt:hover{background:var(--bg4);color:var(--text)}
+#prog{position:fixed;top:0;left:0;height:2px;background:var(--blue2);z-index:999;transition:width .3s ease;width:0}
+#btt{position:fixed;bottom:1.25rem;left:1.25rem;z-index:99;background:var(--bg3);border:1px solid var(--br2);color:var(--tx2);width:34px;height:34px;border-radius:50%;font-size:1rem;display:none;align-items:center;justify-content:center;cursor:pointer;transition:all .14s}
+#btt:hover{background:var(--bg4);color:var(--tx)}
 #btt.show{display:flex}
-
-/* ── SEARCH RESULTS ── */
-.search-results{
-  position:absolute;top:100%;left:0;right:0;margin-top:.25rem;
-  background:var(--bg2);border:1px solid var(--border2);border-radius:8px;
-  box-shadow:0 8px 24px rgba(0,0,0,.4);z-index:300;max-height:300px;overflow-y:auto;
-}
-.sr-item{
-  padding:.55rem .9rem;cursor:pointer;font-size:.83rem;color:var(--text2);
-  border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem;
-  transition:background .12s;
-}
-.sr-item:last-child{border-bottom:none}
-.sr-item:hover{background:var(--bg3);color:var(--text)}
-.sr-type{font-size:.68rem;color:var(--text3);background:var(--bg4);padding:.08rem .4rem;border-radius:4px;flex-shrink:0}
-.search-wrap{position:relative;flex:1;max-width:340px}
-
-/* ── PROGRESS BAR ── */
-#prog{position:fixed;top:0;left:0;height:2px;background:var(--blue2);z-index:999;transition:width .3s;width:0}
-
-/* ── RESPONSIVE ── */
-@media(max-width:768px){
-  #sidebar{display:none}
-  #content{padding:.85rem}
-  .nav-search{display:none}
-  .md-body{padding:1.1rem}
-}
+@media(max-width:768px){#sb{display:none}#main .view{padding:.85rem}}
 </style>
 </head>
 <body>
-
 <div id="prog"></div>
 <div id="toast"></div>
-<button id="btt" onclick="document.getElementById('content').scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+<button id="btt" onclick="scrollTop()" title="Back to top">↑</button>
 
 <!-- NAV -->
 <nav id="nav">
-  <a class="nav-logo" href="https://github.com/AlexSheff/1149" target="_blank">
-    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-    1149
-    <span class="nav-pill">Hub</span>
+  <a class="logo" href="#" onclick="navToRoot();return false">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="var(--blue)"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+    AlexSheff / 1149
+    <span class="logo-pill">Hub</span>
   </a>
 
-  <div class="search-wrap" id="search-wrap">
+  <div class="nav-search-wrap">
     <div class="nav-search">
-      <span class="nav-search-icon">⌕</span>
-      <input type="text" id="search-input" placeholder="Search docs, files…" autocomplete="off"
-        oninput="onSearch(this.value)" onblur="setTimeout(()=>closeSearch(),200)">
+      <span style="color:var(--tx3);font-size:.9rem">⌕</span>
+      <input id="srch" placeholder="Search files & content…" autocomplete="off"
+        oninput="onSearch(this.value)" onblur="setTimeout(closeSearch,200)">
     </div>
-    <div class="search-results" id="search-results" style="display:none"></div>
+    <div class="nav-search-drop" id="sdrop"></div>
   </div>
 
   <div class="nav-tabs">
-    <button class="nav-tab active" id="tab-docs"   onclick="showView('docs')">📄 Docs</button>
-    <button class="nav-tab"        id="tab-repos"  onclick="showView('repos')">📦 Projects</button>
-    <button class="nav-tab"        id="tab-engage" onclick="showView('engage')">💬 Engage</button>
+    <button class="ntab on" id="nt-explorer" onclick="showTab('explorer')">📁 Explorer</button>
+    <button class="ntab" id="nt-repos"    onclick="showTab('repos')">📦 Projects</button>
+    <button class="ntab" id="nt-engage"   onclick="showTab('engage')">💬 Engage</button>
   </div>
 
-  <div class="nav-right">
-    <a href="https://github.com/AlexSheff/1149" target="_blank" class="btn btn-ghost btn-sm">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-      GitHub
-    </a>
-    <a href="https://github.com/AlexSheff/1149/issues/new" target="_blank" class="btn btn-primary btn-sm">+ Issue</a>
+  <div class="nav-r">
+    <a href="https://github.com/AlexSheff/1149/issues/new" target="_blank" class="btn ghost sm">+ Issue</a>
+    <a href="https://github.com/AlexSheff/1149" target="_blank" class="btn ghost sm">GitHub ↗</a>
   </div>
 </nav>
 
-<div id="layout">
+<div id="body">
 
-  <!-- SIDEBAR -->
-  <aside id="sidebar">
-    <div class="sb-section">
-      <div class="sb-label">Repository</div>
-      <a href="https://github.com/AlexSheff/1149" target="_blank" class="sb-item">
-        <span class="sb-icon">📁</span> 1149 — Main
-      </a>
-      <a href="https://github.com/AlexSheff/1149/commits/main" target="_blank" class="sb-item">
-        <span class="sb-icon">⎇</span> Commits
-        <span class="sb-badge">6</span>
-      </a>
-      <a href="https://github.com/AlexSheff/1149/issues" target="_blank" class="sb-item">
-        <span class="sb-icon">⊙</span> Issues
-        <span class="sb-badge" id="sb-issues">…</span>
-      </a>
-      <a href="https://github.com/AlexSheff/1149/discussions" target="_blank" class="sb-item">
-        <span class="sb-icon">💬</span> Discussions
-      </a>
-      <a href="https://github.com/AlexSheff/1149/pulls" target="_blank" class="sb-item">
-        <span class="sb-icon">🔀</span> Pull Requests
-      </a>
+<!-- SIDEBAR -->
+<aside id="sb">
+  <div class="sb-sec">
+    <div class="sb-hd">Repository</div>
+    <button class="si" onclick="navToRoot()"><span class="si-ic">🏠</span> Root</button>
+    <a href="https://github.com/AlexSheff/1149/commits/main" target="_blank" class="si"><span class="si-ic">⎇</span> Commits <span class="si-bd">6</span></a>
+    <a href="https://github.com/AlexSheff/1149/issues" target="_blank" class="si"><span class="si-ic">⊙</span> Issues <span class="si-bd" id="sb-iss">…</span></a>
+    <a href="https://github.com/AlexSheff/1149/discussions" target="_blank" class="si"><span class="si-ic">💬</span> Discussions</a>
+    <a href="https://github.com/AlexSheff/1149/pulls" target="_blank" class="si"><span class="si-ic">🔀</span> Pull Requests</a>
+  </div>
+  <div class="sb-div"></div>
+  <div class="sb-sec">
+    <div class="sb-hd">File Tree</div>
+    <div id="sb-tree"><div class="loading" style="padding:.65rem .85rem"><span class="spin">↻</span> Loading…</div></div>
+  </div>
+  <div class="sb-div"></div>
+  <div class="sb-sec">
+    <div class="sb-hd">Account</div>
+    <a href="https://github.com/AlexSheff" target="_blank" class="si"><span class="si-ic">👤</span> AlexSheff</a>
+    <button class="si" onclick="showTab('repos')"><span class="si-ic">📦</span> Projects <span class="si-bd" id="sb-rpct">…</span></button>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- ── EXPLORER TAB ── -->
+  <div id="tab-explorer" class="view on">
+
+    <!-- FOLDER VIEW -->
+    <div id="pane-folder" style="flex:1;display:flex;flex-direction:column;gap:.85rem">
+      <div class="toolbar">
+        <div class="bc" id="bc-folder"></div>
+        <div class="tbar-actions">
+          <a id="gh-folder-link" href="https://github.com/AlexSheff/1149" target="_blank" class="btn ghost sm">View on GitHub ↗</a>
+        </div>
+      </div>
+      <div id="folder-content"><div class="loading"><span class="spin">↻</span> Loading…</div></div>
     </div>
 
-    <div class="sb-div"></div>
-
-    <div class="sb-section">
-      <div class="sb-label">Root .md Files</div>
-      <div id="sb-md-files"><div class="spinner" style="padding:.75rem"><span class="spin">↻</span></div></div>
-    </div>
-
-    <div class="sb-div"></div>
-
-    <div class="sb-section">
-      <div class="sb-label">Folders</div>
-      <div id="sb-folders"><div class="spinner" style="padding:.75rem"><span class="spin">↻</span></div></div>
-    </div>
-
-    <div class="sb-div"></div>
-
-    <div class="sb-section">
-      <div class="sb-label">Account</div>
-      <a href="https://github.com/AlexSheff" target="_blank" class="sb-item">
-        <span class="sb-icon">👤</span> AlexSheff
-      </a>
-      <button class="sb-item" onclick="showView('repos')">
-        <span class="sb-icon">📦</span> All Projects
-        <span class="sb-badge" id="sb-repos">…</span>
-      </button>
-    </div>
-  </aside>
-
-  <!-- CONTENT -->
-  <div id="content">
-
-    <!-- ── DOCS ── -->
-    <div id="view-docs" class="view active">
-      <div id="doc-tabs-bar" class="md-tabs"></div>
-
-      <div class="breadcrumb" id="doc-breadcrumb">
-        <a href="https://github.com/AlexSheff/1149" target="_blank">AlexSheff/1149</a>
-        <span class="bc-sep">/</span>
-        <span id="bc-file">…</span>
+    <!-- FILE VIEW -->
+    <div id="pane-file" style="display:none;flex:1;flex-direction:column;gap:.85rem">
+      <div class="toolbar">
+        <div class="bc" id="bc-file"></div>
+        <div class="tbar-actions" id="file-actions"></div>
       </div>
 
-      <div class="doc-header">
-        <div class="doc-title" id="doc-title">
-          <span>📄</span><span id="doc-title-text">Loading…</span>
-          <span class="file-tag">.md</span>
-        </div>
-        <div class="doc-actions" id="doc-actions"></div>
-      </div>
-
-      <div id="toc-wrap"></div>
-      <div id="doc-body" class="md-wrap">
-        <div class="spinner"><span class="spin">↻</span> Fetching from GitHub API…</div>
-      </div>
-
-      <div class="comments-wrap" id="doc-comments"></div>
-    </div>
-
-    <!-- ── REPOS ── -->
-    <div id="view-repos" class="view">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;flex-wrap:wrap;gap:.5rem">
-        <h2 style="font-size:1.1rem;font-weight:700;color:var(--text)">📦 Open Projects — AlexSheff</h2>
-        <a href="https://github.com/AlexSheff?tab=repositories" target="_blank" class="btn btn-ghost btn-sm">All repos ↗</a>
-      </div>
-      <div class="stats-row" id="repo-stats"></div>
-      <div id="repos-list"><div class="spinner"><span class="spin">↻</span> Fetching repositories…</div></div>
-    </div>
-
-    <!-- ── ENGAGE ── -->
-    <div id="view-engage" class="view">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;flex-wrap:wrap;gap:.5rem">
-        <h2 style="font-size:1.1rem;font-weight:700;color:var(--text)">💬 Engage & Contribute</h2>
-        <a href="https://github.com/AlexSheff/1149/discussions/new" target="_blank" class="btn btn-primary btn-sm">+ New Discussion</a>
-      </div>
-
-      <div class="gh-banner">
-        <p><strong>GitHub-native collaboration</strong> is enabled — start threads, open issues, or submit PRs directly on GitHub with full markdown, reactions, and notifications.</p>
-        <div class="gh-banner-btns">
-          <a href="https://github.com/AlexSheff/1149/discussions" target="_blank" class="btn btn-primary btn-sm">Discussions ↗</a>
-          <a href="https://github.com/AlexSheff/1149/issues" target="_blank" class="btn btn-ghost btn-sm">Issues ↗</a>
-          <a href="https://github.com/AlexSheff/1149/fork" target="_blank" class="btn btn-ghost btn-sm">Fork ↗</a>
-        </div>
-      </div>
-
-      <div class="repos-grid" style="margin-bottom:1.5rem;max-width:820px">
-        <div class="repo-card">
-          <div style="font-size:1.3rem">💡</div>
-          <a href="https://github.com/AlexSheff/1149/discussions/new?category=ideas" target="_blank" class="repo-name">Propose an Idea</a>
-          <div class="repo-desc">Open a GitHub Discussion — threads stay with the repo permanently, with markdown support and notifications.</div>
-          <div><a href="https://github.com/AlexSheff/1149/discussions/new" target="_blank" class="btn btn-primary btn-sm">Start Discussion ↗</a></div>
-        </div>
-        <div class="repo-card">
-          <div style="font-size:1.3rem">🐛</div>
-          <a href="https://github.com/AlexSheff/1149/issues/new" target="_blank" class="repo-name">Report an Issue</a>
-          <div class="repo-desc">Found a broken link, wrong info, or want to flag something? GitHub Issues with labels and assignees.</div>
-          <div><a href="https://github.com/AlexSheff/1149/issues/new" target="_blank" class="btn btn-ghost btn-sm">Open Issue ↗</a></div>
-        </div>
-        <div class="repo-card">
-          <div style="font-size:1.3rem">🔀</div>
-          <a href="https://github.com/AlexSheff/1149/fork" target="_blank" class="repo-name">Contribute via PR</a>
-          <div class="repo-desc">Fork the repo, add research or fix docs, then open a Pull Request. All contributions welcome.</div>
-          <div><a href="https://github.com/AlexSheff/1149/fork" target="_blank" class="btn btn-ghost btn-sm">Fork Repo ↗</a></div>
-        </div>
-        <div class="repo-card">
-          <div style="font-size:1.3rem">⭐</div>
-          <a href="https://github.com/AlexSheff/1149" target="_blank" class="repo-name">Watch & Star</a>
-          <div class="repo-desc">Star to bookmark, Watch to get notified of every new commit, issue, and discussion.</div>
-          <div><a href="https://github.com/AlexSheff/1149" target="_blank" class="btn btn-ghost btn-sm">Go to Repo ↗</a></div>
-        </div>
-      </div>
-
-      <!-- Local notes -->
-      <div style="max-width:820px">
-        <div class="comments-title">
-          📝 Local Notes
-          <span class="cmt-count" id="engage-count">0</span>
-          <span style="font-size:.72rem;color:var(--text3);font-weight:400;margin-left:.25rem">— saved in your browser</span>
-        </div>
-        <div id="engage-comments"></div>
-        <div class="cmt-form">
-          <div class="cmt-form-head">Write a note</div>
-          <div class="cmt-form-body">
-            <div class="f-row">
-              <input class="f-inp" id="en-name" placeholder="Your name" style="max-width:200px">
+      <div id="viewer-wrap">
+        <div class="viewer-header">
+          <div class="vh-left">
+            <span class="file-chip" id="f-chip">.md</span>
+            <span class="viewer-title" id="f-title">…</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.5rem">
+            <div class="mode-tabs">
+              <button class="mode-tab on" id="mt-preview" onclick="setMode('preview')">Preview</button>
+              <button class="mode-tab"    id="mt-edit"    onclick="setMode('edit')">Edit</button>
+              <button class="mode-tab"    id="mt-raw"     onclick="setMode('raw')">Raw</button>
             </div>
-            <textarea class="f-inp" id="en-body" placeholder="Share a thought, idea, or question…" style="width:100%"></textarea>
-          </div>
-          <div class="cmt-form-foot">
-            <span class="f-hint">For permanent threads use → <a href="https://github.com/AlexSheff/1149/discussions" target="_blank">GitHub Discussions ↗</a></span>
-            <button class="btn btn-primary btn-sm" onclick="addComment('engage','en-name','en-body')">Post Note</button>
           </div>
         </div>
+
+        <!-- PREVIEW MODE -->
+        <div id="mode-preview" class="panel" style="flex:1">
+          <div id="toc-box"></div>
+          <div class="md-body" id="md-content"></div>
+        </div>
+
+        <!-- EDIT MODE -->
+        <div id="mode-edit" style="display:none;flex:1;flex-direction:column;gap:.75rem">
+          <div class="editor-wrap" style="flex:1">
+            <div class="ed-pane" style="flex:1.1">
+              <div class="ed-label">✏ Editor (Markdown)</div>
+              <textarea class="ed-area" id="ed-area" oninput="livePreview()" spellcheck="false"></textarea>
+            </div>
+            <div class="ed-pane" style="flex:.9">
+              <div class="ed-label">👁 Live Preview</div>
+              <div class="panel ed-preview"><div class="md-body" id="ed-preview"></div></div>
+            </div>
+          </div>
+          <div class="ed-footer">
+            <span class="ed-note" id="ed-note"></span>
+            <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+              <button class="btn ghost sm" onclick="resetEditor()">↺ Reset</button>
+              <button class="btn pri sm"   onclick="showCommitPanel()">💾 Prepare Commit…</button>
+            </div>
+          </div>
+          <div id="commit-panel" class="commit-panel" style="display:none">
+            <h4>📤 Commit Changes</h4>
+            <p style="font-size:.82rem;color:var(--tx2);margin-bottom:.75rem">
+              Paste the content below into the GitHub editor to save your changes directly to the repository.
+            </p>
+            <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+              <button class="btn pri sm" onclick="copyEditorContent()">📋 Copy edited content</button>
+              <a id="gh-edit-link" href="#" target="_blank" class="btn ghost sm">Open in GitHub editor ↗</a>
+            </div>
+            <div style="margin-top:.65rem;font-size:.77rem;color:var(--tx3)">
+              Or: clone the repo, edit locally, and push via git.
+              <code style="font-size:.77rem;background:var(--bg4);padding:.1rem .4rem;border-radius:4px;color:var(--or)">git commit -am "update"</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- RAW MODE -->
+        <div id="mode-raw" class="panel" style="display:none">
+          <pre style="padding:1.25rem;overflow-x:auto;font-family:'JetBrains Mono',monospace;font-size:.84rem;line-height:1.65;color:var(--tx)"><code id="raw-content"></code></pre>
+        </div>
+      </div>
+
+      <!-- COMMENTS -->
+      <div id="file-comments"></div>
+    </div>
+
+  </div>
+
+  <!-- ── REPOS TAB ── -->
+  <div id="tab-repos" class="view" style="gap:.85rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+      <h2 style="font-size:1.05rem;font-weight:700;color:var(--tx)">📦 Open Projects — AlexSheff</h2>
+      <a href="https://github.com/AlexSheff?tab=repositories" target="_blank" class="btn ghost sm">All on GitHub ↗</a>
+    </div>
+    <div class="stats" id="rp-stats"></div>
+    <div id="rp-list"><div class="loading"><span class="spin">↻</span> Fetching…</div></div>
+  </div>
+
+  <!-- ── ENGAGE TAB ── -->
+  <div id="tab-engage" class="view" style="gap:.85rem">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
+      <h2 style="font-size:1.05rem;font-weight:700;color:var(--tx)">💬 Engage & Contribute</h2>
+      <a href="https://github.com/AlexSheff/1149/discussions/new" target="_blank" class="btn pri sm">+ New Discussion</a>
+    </div>
+
+    <div class="rg" style="max-width:840px">
+      <div class="rc">
+        <div style="font-size:1.2rem">💡</div>
+        <div class="rc-name">Propose Idea</div>
+        <div class="rc-desc">Open a GitHub Discussion — permanent, with markdown, reactions, and email notifications.</div>
+        <div class="rc-acts"><a href="https://github.com/AlexSheff/1149/discussions/new" target="_blank" class="btn pri sm">Start Discussion ↗</a></div>
+      </div>
+      <div class="rc">
+        <div style="font-size:1.2rem">🐛</div>
+        <div class="rc-name">Report Issue</div>
+        <div class="rc-desc">Broken link, wrong info, or feature request — GitHub Issues with labels and assignees.</div>
+        <div class="rc-acts"><a href="https://github.com/AlexSheff/1149/issues/new" target="_blank" class="btn ghost sm">Open Issue ↗</a></div>
+      </div>
+      <div class="rc">
+        <div style="font-size:1.2rem">🔀</div>
+        <div class="rc-name">Contribute via PR</div>
+        <div class="rc-desc">Fork, edit files using the Editor tab above, copy content, then open a Pull Request.</div>
+        <div class="rc-acts"><a href="https://github.com/AlexSheff/1149/fork" target="_blank" class="btn ghost sm">Fork Repo ↗</a></div>
+      </div>
+      <div class="rc">
+        <div style="font-size:1.2rem">⭐</div>
+        <div class="rc-name">Watch & Star</div>
+        <div class="rc-desc">Star to bookmark, Watch to get notified of every commit, issue, and discussion.</div>
+        <div class="rc-acts"><a href="https://github.com/AlexSheff/1149" target="_blank" class="btn ghost sm">Open Repo ↗</a></div>
       </div>
     </div>
 
-  </div><!-- /content -->
-</div><!-- /layout -->
+    <!-- local notes -->
+    <div style="max-width:840px">
+      <div class="cm-hd" style="margin-top:.5rem">
+        📝 Local Notes
+        <span class="cmt-n" id="eng-cnt">0</span>
+        <span style="font-size:.71rem;color:var(--tx3);font-weight:400;margin-left:.2rem">— saved in browser</span>
+      </div>
+      <div id="eng-cmts"></div>
+      <div class="cm-form">
+        <div class="cmf-hd">Write a note</div>
+        <div class="cmf-body">
+          <div class="cmf-row"><input class="f-inp" id="en-nm" placeholder="Your name" style="max-width:200px"></div>
+          <textarea class="f-inp" id="en-bd" placeholder="Share an idea, question, or thought…" style="width:100%"></textarea>
+        </div>
+        <div class="cmf-foot">
+          <span class="f-hint">For permanent threads → <a href="https://github.com/AlexSheff/1149/discussions" target="_blank">GitHub Discussions ↗</a></span>
+          <button class="btn pri sm" onclick="addCmt('engage','en-nm','en-bd')">Post Note</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /body -->
 
 <script>
-// ── CONFIG ──────────────────────────────────────────────────
-const OWNER = 'AlexSheff', REPO = '1149';
-const BASE  = `https://api.github.com/repos/${OWNER}/${REPO}`;
-const GH    = `https://github.com/${OWNER}/${REPO}`;
+'use strict';
+// ── CONFIG ─────────────────────────────────────────────────
+const OWNER='AlexSheff', REPO='1149';
+const API=`https://api.github.com/repos/${OWNER}/${REPO}`;
+const GH=`https://github.com/${OWNER}/${REPO}`;
 
-// ── UTF-8 safe base64 decode ─────────────────────────────────
-function b64toUtf8(b64) {
-  const bin = atob(b64.replace(/\n/g,''));
+// ── UTF-8 SAFE BASE64 DECODE ────────────────────────────────
+// Fixes the "â→" encoding artifact: atob() is Latin-1, we need TextDecoder for UTF-8
+function b64utf8(b64){
+  const bin = atob(b64.replace(/[\r\n]/g,''));
   const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
   return new TextDecoder('utf-8').decode(bytes);
 }
 
-// ── PROGRESS ────────────────────────────────────────────────
-const prog = document.getElementById('prog');
-let progW = 0;
-function startProg() { progW = 20; prog.style.width = progW+'%' }
-function endProg()   { prog.style.width = '100%'; setTimeout(()=>{ prog.style.width='0'; progW=0 }, 400) }
+// ── STATE ───────────────────────────────────────────────────
+let state={
+  path:[],          // current folder path segments
+  currentFile:null, // {name, path, ghUrl, content}
+  tree:{},          // path -> contents cache
+  mode:'preview',
+  allText:{},       // filename->raw text for search
+  reposLoaded:false
+};
 
-// ── TOAST ───────────────────────────────────────────────────
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2000);
+// ── PROGRESS / TOAST ────────────────────────────────────────
+const prog=document.getElementById('prog');
+let pW=0;
+function pStart(){pW=25;prog.style.width=pW+'%'}
+function pEnd(){prog.style.width='100%';setTimeout(()=>{prog.style.width='0'},400)}
+
+function toast(msg,dur=2000){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
 }
 
 // ── GH FETCH ────────────────────────────────────────────────
-async function ghFetch(url) {
-  const r = await fetch(url, { headers:{ Accept:'application/vnd.github.v3+json' } });
-  if (!r.ok) throw new Error(`GitHub ${r.status}`);
+async function gFetch(url){
+  const r=await fetch(url,{headers:{Accept:'application/vnd.github.v3+json'}});
+  if(!r.ok) throw new Error('GitHub '+r.status+' '+r.statusText);
   return r.json();
 }
 
-// ── STATE ───────────────────────────────────────────────────
-let mdFiles = [], allText = {};
-
-// ── SHOW VIEW ───────────────────────────────────────────────
-function showView(name) {
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById(`view-${name}`).classList.add('active');
-  ['docs','repos','engage'].forEach(n=>{
-    document.getElementById(`tab-${n}`).classList.toggle('active', n===name);
+// ── TAB SWITCH ──────────────────────────────────────────────
+function showTab(name){
+  document.querySelectorAll('.view').forEach(v=>{v.classList.remove('on')});
+  document.getElementById('tab-'+name).classList.add('on');
+  ['explorer','repos','engage'].forEach(n=>{
+    document.getElementById('nt-'+n).classList.toggle('on',n===name);
   });
-  if (name==='repos' && !document.querySelector('.repo-card')) loadRepos();
-  if (name==='engage') renderComments('engage','engage-comments');
+  if(name==='repos'&&!state.reposLoaded) loadRepos();
+  if(name==='engage') renderCmts('engage','eng-cmts');
+}
+
+// ── SCROLL TOP ──────────────────────────────────────────────
+function scrollTop(){document.getElementById('main').scrollTo({top:0,behavior:'smooth'})}
+document.getElementById('main').addEventListener('scroll',function(){
+  document.getElementById('btt').classList.toggle('show',this.scrollTop>250);
+});
+
+// ── ESC HTML ────────────────────────────────────────────────
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ── COPY ────────────────────────────────────────────────────
+function copy(txt,msg='Copied!'){
+  navigator.clipboard.writeText(txt).then(()=>toast(msg)).catch(()=>toast(txt.slice(0,60)+'…'));
+}
+
+// ── BREADCRUMB ──────────────────────────────────────────────
+function buildBc(parts,isFolderView=true){
+  let bc=`<button onclick="navToRoot()">root</button>`;
+  let cumPath=[];
+  parts.forEach((p,i)=>{
+    cumPath.push(p);
+    const cp=[...cumPath];
+    if(i<parts.length-1||isFolderView){
+      bc+=`<span class="bc-sep">/</span><button onclick="navToPath(${JSON.stringify(cp)})">${esc(p)}</button>`;
+    } else {
+      bc+=`<span class="bc-sep">/</span><span style="color:var(--tx2)">${esc(p)}</span>`;
+    }
+  });
+  return bc;
+}
+
+// ── NAV TO ROOT ─────────────────────────────────────────────
+function navToRoot(){state.path=[];loadFolder([])}
+
+// ── NAV TO PATH ─────────────────────────────────────────────
+function navToPath(segs){state.path=segs;loadFolder(segs)}
+
+// ── LOAD FOLDER ─────────────────────────────────────────────
+async function loadFolder(segs){
+  pStart();
+  showExplorerPane('folder');
+  const pathStr=segs.join('/');
+  const label=segs.length?segs[segs.length-1]:'AlexSheff/1149';
+  document.getElementById('bc-folder').innerHTML=buildBc(segs,true);
+
+  const ghLink=segs.length
+    ? `${GH}/tree/main/${pathStr}`
+    : GH;
+  document.getElementById('gh-folder-link').href=ghLink;
+
+  // update sidebar active
+  updateSbTree(pathStr);
+
+  const el=document.getElementById('folder-content');
+  el.innerHTML='<div class="loading"><span class="spin">↻</span> Loading…</div>';
+
+  try{
+    const url=segs.length ? `${API}/contents/${pathStr}` : `${API}/contents`;
+    const items = state.tree[pathStr] || await gFetch(url);
+    state.tree[pathStr]=items;
+
+    const folders=items.filter(i=>i.type==='dir').sort((a,b)=>a.name.localeCompare(b.name));
+    const files  =items.filter(i=>i.type==='file').sort((a,b)=>a.name.localeCompare(b.name));
+    const all=[...folders,...files];
+
+    if(!all.length){el.innerHTML='<div class="empty">Empty directory</div>';pEnd();return;}
+
+    el.innerHTML=`<div class="fv-grid">${all.map(item=>{
+      if(item.type==='dir'){
+        const ns=[...segs,item.name];
+        return `<div class="fv-card" onclick="navToPath(${JSON.stringify(ns)})">
+          <span class="fv-icon">📂</span>
+          <span class="fv-name">${esc(item.name)}</span>
+        </div>`;
+      } else {
+        const ns=[...segs,item.name];
+        const icon=item.name.endsWith('.md')?'📄':item.name.endsWith('.json')?'📊':item.name.endsWith('.js')||item.name.endsWith('.ts')?'⚙':item.name.endsWith('.png')||item.name.endsWith('.jpg')||item.name.endsWith('.svg')?'🖼':'📎';
+        return `<div class="fv-card" onclick="loadFile(${JSON.stringify(ns)})">
+          <span class="fv-icon">${icon}</span>
+          <span class="fv-name">${esc(item.name)}</span>
+        </div>`;
+      }
+    }).join('')}</div>`;
+  } catch(e){
+    el.innerHTML=`<div class="err">⚠ ${esc(e.message)}</div>`;
+  }
+  pEnd();
+}
+
+// ── LOAD FILE ───────────────────────────────────────────────
+async function loadFile(segs){
+  pStart();
+  showExplorerPane('file');
+  const pathStr=segs.join('/');
+  const name=segs[segs.length-1];
+
+  document.getElementById('bc-file').innerHTML=buildBc(segs,false);
+  document.getElementById('f-title').textContent=name;
+  const ext=name.includes('.')? '.'+name.split('.').pop() : '';
+  document.getElementById('f-chip').textContent=ext||'file';
+
+  // action buttons
+  document.getElementById('file-actions').innerHTML=`
+    <button class="btn ghost sm" onclick="copy('${GH}/blob/main/${pathStr}','Link copied!')">🔗 Copy Link</button>
+    <a href="${GH}/blob/main/${pathStr}" target="_blank" class="btn ghost sm">GitHub ↗</a>
+    <a href="${GH}/commits/main/${pathStr}" target="_blank" class="btn ghost sm">⌘ History</a>
+  `;
+
+  // edit link
+  document.getElementById('gh-edit-link').href=`${GH}/edit/main/${pathStr}`;
+
+  document.getElementById('md-content').innerHTML='<div class="loading"><span class="spin">↻</span> Loading…</div>';
+  document.getElementById('toc-box').innerHTML='';
+  document.getElementById('file-comments').innerHTML='';
+  setMode('preview');
+
+  try{
+    const data=await gFetch(`${API}/contents/${pathStr}`);
+    const text=b64utf8(data.content);
+    state.currentFile={name,path:pathStr,ghUrl:`${GH}/blob/main/${pathStr}`,content:text,sha:data.sha};
+    state.allText[name]=text;
+
+    // render
+    renderMd(text);
+    buildToc(text);
+    document.getElementById('ed-area').value=text;
+    document.getElementById('raw-content').textContent=text;
+    updateEdNote();
+
+    // comments
+    renderCmts('file:'+pathStr,'file-comments');
+  } catch(e){
+    document.getElementById('md-content').innerHTML=`
+      <div class="err" style="margin:1.5rem">⚠ ${esc(e.message)}</div>
+      <div style="padding:1rem">
+        <a href="${GH}/blob/main/${pathStr}" target="_blank" class="btn pri sm">View on GitHub ↗</a>
+      </div>`;
+  }
+  pEnd();
+}
+
+// ── SHOW EXPLORER PANE ──────────────────────────────────────
+function showExplorerPane(which){
+  document.getElementById('pane-folder').style.display = which==='folder' ? 'flex' : 'none';
+  document.getElementById('pane-file').style.display   = which==='file'   ? 'flex' : 'none';
+}
+
+// ── RENDER MARKDOWN ─────────────────────────────────────────
+function renderMd(text){
+  marked.use({mangle:false,headerIds:true});
+  document.getElementById('md-content').innerHTML=marked.parse(text);
+}
+
+// ── BUILD TOC ───────────────────────────────────────────────
+function buildToc(text){
+  const hdgs=[];
+  text.split('\n').forEach(line=>{
+    const m2=line.match(/^## (.+)/);
+    const m3=line.match(/^### (.+)/);
+    if(m2) hdgs.push({l:2,t:m2[1]});
+    else if(m3) hdgs.push({l:3,t:m3[1]});
+  });
+  if(hdgs.length<3){document.getElementById('toc-box').innerHTML='';return;}
+  document.getElementById('toc-box').innerHTML=`
+    <div class="toc-box">
+      <div class="toc-title">📋 Contents</div>
+      <ul class="toc-list">${hdgs.map(h=>{
+        const id=h.t.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+        return `<li class="${h.l===3?'toc-h3':''}"><a href="#${id}">${esc(h.t)}</a></li>`;
+      }).join('')}</ul>
+    </div>`;
+}
+
+// ── MODE SWITCH ─────────────────────────────────────────────
+function setMode(m){
+  state.mode=m;
+  ['preview','edit','raw'].forEach(x=>{
+    document.getElementById('mode-'+x).style.display=x===m?'flex':'none';
+    document.getElementById('mt-'+x).classList.toggle('on',x===m);
+  });
+  document.getElementById('mode-preview').style.flexDirection='column';
+}
+
+// ── LIVE PREVIEW ────────────────────────────────────────────
+function livePreview(){
+  const txt=document.getElementById('ed-area').value;
+  marked.use({mangle:false,headerIds:true});
+  document.getElementById('ed-preview').innerHTML=marked.parse(txt);
+  updateEdNote();
+}
+
+function updateEdNote(){
+  const orig=(state.currentFile&&state.currentFile.content)||'';
+  const cur=document.getElementById('ed-area').value;
+  const changed=orig!==cur;
+  document.getElementById('ed-note').textContent=changed?'⚠ Unsaved changes':'No changes';
+  document.getElementById('ed-note').style.color=changed?'var(--or)':'var(--tx3)';
+}
+
+function resetEditor(){
+  if(!state.currentFile) return;
+  document.getElementById('ed-area').value=state.currentFile.content;
+  livePreview();
+  document.getElementById('commit-panel').style.display='none';
+}
+
+function showCommitPanel(){
+  document.getElementById('commit-panel').style.display='block';
+  document.getElementById('commit-panel').scrollIntoView({behavior:'smooth'});
+}
+
+function copyEditorContent(){
+  copy(document.getElementById('ed-area').value,'Content copied! Paste it in the GitHub editor.');
+}
+
+// ── BUILD SIDEBAR TREE ──────────────────────────────────────
+async function buildSbTree(){
+  const el=document.getElementById('sb-tree');
+  try{
+    const items=state.tree['']||await gFetch(`${API}/contents`);
+    state.tree['']=items;
+    const fds=items.filter(i=>i.type==='dir').sort((a,b)=>a.name.localeCompare(b.name));
+    const mds=items.filter(i=>i.type==='file'&&i.name.endsWith('.md')).sort((a,b)=>a.name.localeCompare(b.name));
+    const others=items.filter(i=>i.type==='file'&&!i.name.endsWith('.md')).sort((a,b)=>a.name.localeCompare(b.name));
+
+    el.innerHTML=[
+      ...mds.map(f=>`<button class="tree-item" id="ti-${f.name}" onclick="loadFile(['${f.name}'])">
+        <span class="tree-file">📄</span><span class="tree-name">${esc(f.name)}</span>
+      </button>`),
+      ...others.map(f=>`<button class="tree-item" onclick="loadFile(['${f.name}'])">
+        <span class="tree-file">📎</span><span class="tree-name">${esc(f.name)}</span>
+      </button>`),
+      ...fds.map(d=>`<button class="tree-item" id="ti-${d.name}" onclick="navToPath(['${d.name}'])">
+        <span class="tree-folder">📂</span><span class="tree-name">${esc(d.name)}</span>
+      </button>`)
+    ].join('');
+
+    // load first md
+    if(mds.length) loadFile([mds[0].name]);
+    else loadFolder([]);
+  } catch(e){
+    el.innerHTML=`<div class="err" style="margin:.5rem .85rem;font-size:.8rem">⚠ ${esc(e.message)}</div>`;
+    loadFolder([]);
+  }
+}
+
+function updateSbTree(pathStr){
+  document.querySelectorAll('.tree-item').forEach(ti=>{
+    ti.classList.toggle('on',ti.id==='ti-'+pathStr||ti.id==='ti-'+(pathStr.split('/')[0]||''));
+  });
 }
 
 // ── SEARCH ──────────────────────────────────────────────────
-function onSearch(q) {
-  const box = document.getElementById('search-results');
-  if (!q.trim()) { box.style.display='none'; return; }
-  q = q.toLowerCase();
-  const matches = [];
-  mdFiles.forEach(f => {
-    if (f.name.toLowerCase().includes(q)) {
-      matches.push({ type:'File', label:f.name, action:`loadMd('${f.name}')` });
-    }
-    if (allText[f.name]) {
-      const lines = allText[f.name].split('\n');
-      lines.forEach(line => {
-        if (line.toLowerCase().includes(q) && line.trim()) {
-          matches.push({ type:'Match', label: f.name + ' — ' + line.trim().slice(0,80), action:`loadMd('${f.name}')` });
-        }
-      });
-    }
-  });
-  if (!matches.length) { box.innerHTML='<div class="sr-item">No results</div>'; box.style.display='block'; return; }
-  box.innerHTML = matches.slice(0,10).map(m=>
-    `<div class="sr-item" onclick="${m.action};closeSearch()">
-      <span class="sr-type">${m.type}</span>${esc(m.label)}
-    </div>`
-  ).join('');
-  box.style.display = 'block';
-}
-function closeSearch() {
-  document.getElementById('search-results').style.display = 'none';
-  document.getElementById('search-input').value = '';
-}
-
-// ── LOAD ROOT ───────────────────────────────────────────────
-async function loadRoot() {
-  startProg();
-  try {
-    const contents = await ghFetch(`${BASE}/contents`);
-    mdFiles = contents.filter(f=>f.type==='file'&&f.name.endsWith('.md'));
-    const folders = contents.filter(f=>f.type==='dir');
-
-    // sidebar MD files
-    document.getElementById('sb-md-files').innerHTML = mdFiles.length
-      ? mdFiles.map(f=>`
-          <button class="sb-item" id="sbf-${f.name}" onclick="loadMd('${f.name}')">
-            <span class="sb-icon">📄</span>
-            <span style="flex:1;text-align:left">${f.name.replace('.md','')}</span>
-          </button>`).join('')
-      : '<div style="padding:.5rem .85rem;font-size:.8rem;color:var(--text3)">No .md files</div>';
-
-    // sidebar folders
-    document.getElementById('sb-folders').innerHTML = folders.length
-      ? folders.map(f=>`
-          <div class="sb-folder">
-            <a href="${GH}/tree/main/${f.name}" target="_blank">
-              📂 ${f.name}
-            </a>
-          </div>`).join('')
-      : '<div style="padding:.5rem .85rem;font-size:.8rem;color:var(--text3)">No folders</div>';
-
-    // tabs
-    document.getElementById('doc-tabs-bar').innerHTML = mdFiles.map(f=>`
-      <button class="md-tab" id="mdt-${f.name}" onclick="loadMd('${f.name}')">${f.name.replace('.md','')}</button>
-    `).join('');
-
-    if (mdFiles.length) loadMd(mdFiles[0].name);
-    else document.getElementById('doc-body').innerHTML = '<div class="empty">No markdown files in root.</div>';
-
-    // issue count
-    const info = await ghFetch(`${BASE}`);
-    document.getElementById('sb-issues').textContent = info.open_issues_count;
-  } catch(e) {
-    document.getElementById('doc-body').innerHTML = `<div class="err">⚠ ${e.message}</div>`;
-    document.getElementById('sb-md-files').innerHTML = `<div class="err" style="margin:.5rem">⚠ API error</div>`;
-  }
-  endProg();
-}
-
-// ── LOAD SINGLE MD ───────────────────────────────────────────
-async function loadMd(name) {
-  startProg();
-  // update active states
-  document.querySelectorAll('.md-tab').forEach(t=>t.classList.toggle('active', t.id===`mdt-${name}`));
-  document.querySelectorAll('[id^="sbf-"]').forEach(b=>b.classList.toggle('active', b.id===`sbf-${name}`));
-  document.getElementById('bc-file').textContent = name;
-  document.getElementById('doc-title-text').textContent = name.replace('.md','');
-  document.getElementById('doc-body').innerHTML = '<div class="spinner"><span class="spin">↻</span> Loading…</div>';
-  document.getElementById('toc-wrap').innerHTML = '';
-  document.getElementById('doc-comments').innerHTML = '';
-
-  // action buttons
-  document.getElementById('doc-actions').innerHTML = `
-    <button class="btn btn-ghost btn-sm" onclick="copyLink('${GH}/blob/main/${name}')">🔗 Copy Link</button>
-    <a href="${GH}/blob/main/${name}" target="_blank" class="btn btn-ghost btn-sm">Raw ↗</a>
-    <a href="${GH}/edit/main/${name}" target="_blank" class="btn btn-ghost btn-sm">✏ Edit</a>
-    <a href="${GH}/commits/main/${name}" target="_blank" class="btn btn-ghost btn-sm">⌘ History</a>
-  `;
-
-  try {
-    const data = await ghFetch(`${BASE}/contents/${name}`);
-    const text = b64toUtf8(data.content);
-    allText[name] = text;
-
-    // build TOC
-    const headings = [];
+function onSearch(q){
+  const drop=document.getElementById('sdrop');
+  if(!q.trim()){drop.style.display='none';return;}
+  q=q.toLowerCase();
+  const res=[];
+  Object.entries(state.allText).forEach(([name,text])=>{
+    if(name.toLowerCase().includes(q)) res.push({type:'File',label:name,action:`loadFile(['${name}'])`});
     text.split('\n').forEach(line=>{
-      const m2 = line.match(/^## (.+)/);
-      const m3 = line.match(/^### (.+)/);
-      if (m2) headings.push({ level:2, text:m2[1] });
-      else if (m3) headings.push({ level:3, text:m3[1] });
+      if(line.toLowerCase().includes(q)&&line.trim()&&res.length<12){
+        res.push({type:'Text',label:name+' — '+line.trim().slice(0,75),action:`loadFile(['${name}'])`});
+      }
     });
-    if (headings.length > 3) {
-      const tocHtml = headings.map(h=>{
-        const id = h.text.toLowerCase().replace(/[^a-z0-9]+/g,'-');
-        return `<li class="${h.level===3?'toc-h3':''}"><a href="#${id}">${esc(h.text)}</a></li>`;
-      }).join('');
-      document.getElementById('toc-wrap').innerHTML = `
-        <div class="toc-box md-wrap">
-          <div class="toc-title">📋 Contents</div>
-          <ul class="toc-list">${tocHtml}</ul>
-        </div>`;
-    }
-
-    // render markdown — add IDs to headings
-    marked.use({ mangle:false, headerIds:true });
-    const html = marked.parse(text);
-    document.getElementById('doc-body').innerHTML = `<div class="md-body">${html}</div>`;
-
-    // load comments
-    renderComments(`doc:${name}`, 'doc-comments');
-  } catch(e) {
-    document.getElementById('doc-body').innerHTML = `
-      <div class="err">⚠ Could not load ${name}: ${e.message}</div>
-      <div style="margin-top:.75rem"><a href="${GH}/blob/main/${name}" target="_blank" class="btn btn-primary btn-sm">View on GitHub ↗</a></div>`;
-  }
-  endProg();
+  });
+  if(!res.length){drop.innerHTML='<div class="nsd-item">No results</div>';drop.style.display='block';return;}
+  drop.innerHTML=res.slice(0,10).map(r=>
+    `<div class="nsd-item" onclick="${r.action};closeSearch()"><span class="nsd-type">${r.type}</span>${esc(r.label)}</div>`
+  ).join('');
+  drop.style.display='block';
 }
-
-// ── COPY LINK ───────────────────────────────────────────────
-function copyLink(url) {
-  navigator.clipboard.writeText(url).then(()=>toast('Link copied!')).catch(()=>toast('Copy: '+url));
+function closeSearch(){
+  document.getElementById('sdrop').style.display='none';
+  document.getElementById('srch').value='';
 }
 
 // ── LOAD REPOS ──────────────────────────────────────────────
-const LANG_COLORS={JavaScript:'#f1e05a',TypeScript:'#3178c6',Python:'#3572A5',HTML:'#e34c26',CSS:'#563d7c',Rust:'#dea584',Go:'#00ADD8','C++':'#f34b7d',Shell:'#89e051',Markdown:'#083fa1',Vue:'#41b883',Svelte:'#ff3e00','Jupyter Notebook':'#DA5B0B'};
+const LC={JavaScript:'#f1e05a',TypeScript:'#3178c6',Python:'#3572A5',HTML:'#e34c26',CSS:'#563d7c',Rust:'#dea584',Go:'#00ADD8',Shell:'#89e051',Vue:'#41b883',Svelte:'#ff3e00',Markdown:'#083fa1','Jupyter Notebook':'#DA5B0B','C++':'#f34b7d'};
 
-async function loadRepos() {
-  startProg();
-  const el = document.getElementById('repos-list');
-  el.innerHTML = '<div class="spinner"><span class="spin">↻</span></div>';
-  try {
-    const repos = await ghFetch(`https://api.github.com/users/${OWNER}/repos?sort=updated&per_page=50`);
-    const pub = repos.filter(r=>!r.private);
-    document.getElementById('sb-repos').textContent = pub.length;
+async function loadRepos(){
+  pStart();
+  const el=document.getElementById('rp-list');
+  try{
+    const repos=await gFetch(`https://api.github.com/users/${OWNER}/repos?sort=updated&per_page=50`);
+    const pub=repos.filter(r=>!r.private);
+    state.reposLoaded=true;
+    document.getElementById('sb-rpct').textContent=pub.length;
 
-    const stars = pub.reduce((a,r)=>a+r.stargazers_count,0);
-    const langs = [...new Set(pub.map(r=>r.language).filter(Boolean))];
-    const forks = pub.filter(r=>r.fork).length;
-    document.getElementById('repo-stats').innerHTML = `
-      <div class="stat-card"><div class="stat-n">${pub.length}</div><div class="stat-l">Repos</div></div>
-      <div class="stat-card"><div class="stat-n">${stars}</div><div class="stat-l">Total Stars</div></div>
-      <div class="stat-card"><div class="stat-n">${langs.length}</div><div class="stat-l">Languages</div></div>
-      <div class="stat-card"><div class="stat-n">${forks}</div><div class="stat-l">Forks</div></div>
+    const stars=pub.reduce((a,r)=>a+r.stargazers_count,0);
+    const langs=[...new Set(pub.map(r=>r.language).filter(Boolean))];
+    document.getElementById('rp-stats').innerHTML=`
+      <div class="sc"><div class="sn">${pub.length}</div><div class="sl">Repos</div></div>
+      <div class="sc"><div class="sn">${stars}</div><div class="sl">Stars</div></div>
+      <div class="sc"><div class="sn">${langs.length}</div><div class="sl">Languages</div></div>
+      <div class="sc"><div class="sn">${pub.filter(r=>r.open_issues_count>0).length}</div><div class="sl">Active</div></div>
     `;
 
-    el.innerHTML = `<div class="repos-grid">${pub.map(r=>{
-      const lc = LANG_COLORS[r.language]||'#8b949e';
-      const upd = new Date(r.updated_at).toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'});
-      const topics = (r.topics||[]).slice(0,4).map(t=>`<span class="topic-tag">${t}</span>`).join('');
-      return `
-      <div class="repo-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:.5rem">
-          <a href="${r.html_url}" target="_blank" class="repo-name">${r.fork?'🔀 ':''}${esc(r.name)}</a>
-          ${r.stargazers_count?`<span style="font-size:.76rem;color:var(--text3)">⭐ ${r.stargazers_count}</span>`:''}
+    el.innerHTML=`<div class="rg">${pub.map(r=>{
+      const lc=LC[r.language]||'#8b949e';
+      const upd=new Date(r.updated_at).toLocaleDateString('en',{month:'short',day:'numeric',year:'numeric'});
+      const topics=(r.topics||[]).slice(0,4).map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+      return `<div class="rc">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.4rem">
+          <a href="${r.html_url}" target="_blank" class="rc-name">${r.fork?'🔀 ':''}${esc(r.name)}</a>
+          ${r.stargazers_count?`<span style="font-size:.74rem;color:var(--tx3);flex-shrink:0">⭐${r.stargazers_count}</span>`:''}
         </div>
-        <div class="repo-desc">${r.description?esc(r.description):'<em style="color:var(--text3)">No description</em>'}</div>
-        ${topics?`<div class="repo-topics">${topics}</div>`:''}
-        <div class="repo-meta">
-          ${r.language?`<span style="display:flex;align-items:center;gap:.3rem"><span class="lang-dot" style="background:${lc}"></span>${esc(r.language)}</span>`:''}
-          <span title="Last updated">↻ ${upd}</span>
+        <div class="rc-desc">${r.description?esc(r.description):'<em style="color:var(--tx3)">No description</em>'}</div>
+        ${topics?`<div class="tags">${topics}</div>`:''}
+        <div class="rc-meta">
+          ${r.language?`<span style="display:flex;align-items:center;gap:.28rem"><span class="ld" style="background:${lc}"></span>${esc(r.language)}</span>`:''}
+          <span title="Updated">↻ ${upd}</span>
           ${r.open_issues_count?`<span>⊙ ${r.open_issues_count}</span>`:''}
         </div>
-        <div class="repo-actions">
-          <a href="${r.html_url}" target="_blank" class="btn btn-primary btn-sm">View ↗</a>
-          <a href="${r.html_url}/issues" target="_blank" class="btn btn-ghost btn-sm">Issues</a>
-          <a href="${r.html_url}/discussions" target="_blank" class="btn btn-ghost btn-sm">Discuss</a>
-          ${r.clone_url?`<button class="btn btn-ghost btn-sm" onclick="copyLink('${r.clone_url}');event.stopPropagation()">Clone</button>`:''}
+        <div class="rc-acts">
+          <a href="${r.html_url}" target="_blank" class="btn pri sm">View ↗</a>
+          <a href="${r.html_url}/issues" target="_blank" class="btn ghost sm">Issues</a>
+          <a href="${r.html_url}/discussions" target="_blank" class="btn ghost sm">Discuss</a>
+          <button class="btn ghost sm" onclick="copy('${r.clone_url}','Clone URL copied!')">Clone</button>
         </div>
       </div>`;
     }).join('')}</div>`;
-  } catch(e) {
-    el.innerHTML = `<div class="err">⚠ ${e.message}</div>
-      <div style="margin-top:.75rem"><a href="https://github.com/${OWNER}?tab=repositories" target="_blank" class="btn btn-primary btn-sm">View on GitHub ↗</a></div>`;
+  } catch(e){
+    el.innerHTML=`<div class="err">⚠ ${esc(e.message)}</div>
+      <a href="https://github.com/${OWNER}?tab=repositories" target="_blank" class="btn pri sm" style="margin-top:.65rem">View on GitHub ↗</a>`;
   }
-  endProg();
+  pEnd();
 }
 
 // ── COMMENTS ─────────────────────────────────────────────────
-function getC(k){ try{ return JSON.parse(localStorage.getItem('c:'+k)||'[]') }catch{ return [] } }
-function saveC(k,a){ localStorage.setItem('c:'+k, JSON.stringify(a)) }
+function getC(k){try{return JSON.parse(localStorage.getItem('c:'+k)||'[]')}catch{return[]}}
+function saveC(k,a){localStorage.setItem('c:'+k,JSON.stringify(a))}
 
-function renderComments(key, containerId) {
-  const arr = getC(key);
-  const el  = document.getElementById(containerId);
-  if (!el) return;
+function renderCmts(key,containerId){
+  const arr=getC(key);
+  const el=document.getElementById(containerId);
+  if(!el) return;
+  if(key==='engage'){
+    const c=document.getElementById('eng-cnt');
+    if(c) c.textContent=arr.length;
+  }
+  const isFile=key.startsWith('file:');
+  const ghPath=isFile?key.replace('file:',''):'';
+  const ghDisc=ghPath?`${GH}/discussions/new`:`${GH}/discussions/new`;
+  const ghIss=ghPath?`${GH}/issues/new`:`${GH}/issues/new`;
 
-  // update count badge
-  const countEl = document.getElementById('engage-count');
-  if (countEl && key==='engage') countEl.textContent = arr.length;
-
-  const cmtsHtml = arr.length ? arr.map((c,i)=>`
-    <div class="comment" id="cmt-${key}-${i}">
+  const cmtsHtml=arr.length ? arr.map((c,i)=>`
+    <div class="cmt" id="c-${key}-${i}">
       <div class="cmt-head">
         <span class="cmt-author">${esc(c.name||'Anonymous')}</span>
         <span class="cmt-time">${c.time}</span>
       </div>
       <div class="cmt-body">${esc(c.body)}</div>
-      <div class="cmt-footer">
-        <div class="reactions">
+      <div class="cmt-foot">
+        <div class="rxs">
           ${['👍','🎉','❤️','🚀','💡'].map(e=>`
-            <button class="react-btn ${c.rx&&c.rx[e]?'on':''}" onclick="react(${JSON.stringify(key)},${i},'${e}',this)">
-              ${e} <span>${c.rx&&c.rx[e]||0}</span>
+            <button class="rx-btn${c.rx&&c.rx[e]?' on':''}" onclick="react(${JSON.stringify(key)},${i},'${e}',this)">
+              ${e}<span>${c.rx&&c.rx[e]||0}</span>
             </button>`).join('')}
         </div>
-        <button class="cmt-btn" onclick="toggleReply(${JSON.stringify(key)},${i})">↩ Reply</button>
-        <button class="cmt-btn" onclick="delCmt(${JSON.stringify(key)},${i})">🗑</button>
+        <button class="cb" onclick="toggleRf(${JSON.stringify(key)},${i})">↩ Reply</button>
+        <button class="cb" onclick="delCmt(${JSON.stringify(key)},${i})">🗑</button>
       </div>
-      ${(c.replies||[]).length ? `
+      ${(c.replies||[]).length?`
         <div class="reply-thread">
           ${c.replies.map(r=>`
-            <div class="reply-item">
-              <div class="reply-header"><strong>${esc(r.name||'Anonymous')}</strong> · ${r.time}</div>
-              <div class="reply-body">${esc(r.body)}</div>
+            <div class="ri">
+              <div class="ri-h"><strong>${esc(r.name||'Anon')}</strong> · ${r.time}</div>
+              <div class="ri-b">${esc(r.body)}</div>
             </div>`).join('')}
-        </div>` : ''}
-      <div class="reply-form" id="rf-${key}-${i}">
-        <div class="f-row" style="gap:.4rem">
+        </div>`:''}
+      <div class="rf" id="rf-${key}-${i}">
+        <div class="cmf-row" style="gap:.4rem;margin-bottom:.4rem">
           <input class="f-inp" id="rn-${key}-${i}" placeholder="Your name" style="max-width:160px">
         </div>
-        <textarea class="f-inp" id="rb-${key}-${i}" placeholder="Reply…" style="width:100%;min-height:65px;margin:.4rem 0"></textarea>
-        <button class="btn btn-primary btn-sm" onclick="submitReply(${JSON.stringify(key)},${i})">Reply</button>
-        <button class="btn btn-ghost btn-sm" onclick="toggleReply(${JSON.stringify(key)},${i})" style="margin-left:.3rem">Cancel</button>
+        <textarea class="f-inp" id="rb-${key}-${i}" placeholder="Reply…" style="width:100%;min-height:60px;margin-bottom:.4rem"></textarea>
+        <button class="btn pri sm" onclick="submitReply(${JSON.stringify(key)},${i})">Reply</button>
+        <button class="btn ghost sm" onclick="toggleRf(${JSON.stringify(key)},${i})" style="margin-left:.3rem">Cancel</button>
       </div>
-    </div>`).join('') : `<div class="empty" style="text-align:left;padding:1rem 0;color:var(--text3)">No notes yet.</div>`;
+    </div>`).join('')
+    : `<div style="padding:.75rem 0;color:var(--tx3);font-size:.84rem">No notes yet.</div>`;
 
-  const isDoc = key.startsWith('doc:');
-  el.innerHTML = `
-    ${isDoc ? `<div class="comments-title">💬 Comments <span class="cmt-count">${arr.length}</span></div>` : ''}
+  el.innerHTML=`
+    ${isFile?`<div class="cm-hd">💬 Comments <span class="cmt-n">${arr.length}</span></div>`:''}
     ${cmtsHtml}
-    <div class="cmt-form">
-      <div class="cmt-form-head">${isDoc?'Leave a comment':'Write a note'}</div>
-      <div class="cmt-form-body">
-        <div class="f-row"><input class="f-inp" id="${containerId}-name" placeholder="Your name" style="max-width:200px"></div>
-        <textarea class="f-inp" id="${containerId}-body" placeholder="${isDoc?'Comment on this document…':'Share a thought or idea…'}" style="width:100%"></textarea>
+    <div class="cm-form">
+      <div class="cmf-hd">${isFile?'Leave a comment':'Write a note'}</div>
+      <div class="cmf-body">
+        <div class="cmf-row"><input class="f-inp" id="${containerId}-nm" placeholder="Your name" style="max-width:200px"></div>
+        <textarea class="f-inp" id="${containerId}-bd" placeholder="${isFile?'Comment on this file…':'Share a thought…'}" style="width:100%"></textarea>
       </div>
-      <div class="cmt-form-foot">
-        <span class="f-hint">Saved locally · Permanent threads → <a href="${GH}/discussions" target="_blank">GitHub Discussions ↗</a></span>
-        <button class="btn btn-primary btn-sm" onclick="addComment(${JSON.stringify(key)},'${containerId}-name','${containerId}-body')">
-          ${isDoc?'Comment':'Post'}
+      <div class="cmf-foot">
+        <span class="f-hint">Saved locally · Permanent threads → <a href="${ghDisc}" target="_blank">GitHub Discussions ↗</a></span>
+        <button class="btn pri sm" onclick="addCmt(${JSON.stringify(key)},'${containerId}-nm','${containerId}-bd')">
+          ${isFile?'Comment':'Post'}
         </button>
       </div>
     </div>
-    <div class="cmt-gh-links">
-      <a href="${GH}/discussions/new" target="_blank" class="btn btn-ghost btn-sm">⊕ GitHub Discussion</a>
-      <a href="${GH}/issues/new" target="_blank" class="btn btn-ghost btn-sm">⊙ Open Issue</a>
+    <div class="gh-row">
+      <a href="${ghDisc}" target="_blank" class="btn ghost sm">⊕ GitHub Discussion</a>
+      <a href="${ghIss}" target="_blank" class="btn ghost sm">⊙ Open Issue</a>
+      ${ghPath?`<a href="${GH}/blob/main/${ghPath}" target="_blank" class="btn ghost sm">View File on GitHub ↗</a>`:''}
     </div>`;
 }
 
-function addComment(key, nameId, bodyId) {
-  const name = (document.getElementById(nameId)||{}).value||'';
-  const body = (document.getElementById(bodyId)||{}).value||'';
-  if (!body.trim()) return;
-  const arr = getC(key);
-  arr.push({ name:name.trim()||'Anonymous', body:body.trim(), time:new Date().toLocaleString(), rx:{}, replies:[] });
-  saveC(key, arr);
-  const bEl = document.getElementById(bodyId);
-  if (bEl) bEl.value = '';
-  const container = key==='engage' ? 'engage-comments' : 'doc-comments';
-  renderComments(key, container);
-  toast('Comment added!');
+function addCmt(key,nmId,bdId){
+  const nm=(document.getElementById(nmId)||{}).value||'Anonymous';
+  const bd=(document.getElementById(bdId)||{}).value||'';
+  if(!bd.trim()) return;
+  const arr=getC(key);
+  arr.push({name:nm.trim()||'Anonymous',body:bd.trim(),time:new Date().toLocaleString(),rx:{},replies:[]});
+  saveC(key,arr);
+  const bEl=document.getElementById(bdId);
+  if(bEl) bEl.value='';
+  const cont=key==='engage'?'eng-cmts':'file-comments';
+  renderCmts(key,cont);
+  toast('Posted!');
 }
 
-function delCmt(key, idx) {
-  if (!confirm('Delete?')) return;
-  const arr = getC(key); arr.splice(idx,1); saveC(key,arr);
-  const container = key==='engage' ? 'engage-comments' : 'doc-comments';
-  renderComments(key, container);
+function delCmt(key,idx){
+  if(!confirm('Delete?')) return;
+  const arr=getC(key);arr.splice(idx,1);saveC(key,arr);
+  renderCmts(key,key==='engage'?'eng-cmts':'file-comments');
 }
 
-function react(key, idx, emoji, btn) {
-  const arr = getC(key);
-  if (!arr[idx].rx) arr[idx].rx = {};
-  arr[idx].rx[emoji] = (arr[idx].rx[emoji]||0)+1;
-  saveC(key, arr);
-  btn.querySelector('span').textContent = arr[idx].rx[emoji];
+function react(key,idx,emoji,btn){
+  const arr=getC(key);
+  if(!arr[idx].rx) arr[idx].rx={};
+  arr[idx].rx[emoji]=(arr[idx].rx[emoji]||0)+1;
+  saveC(key,arr);
+  btn.querySelector('span').textContent=arr[idx].rx[emoji];
   btn.classList.add('on');
 }
 
-function toggleReply(key, idx) {
-  const rf = document.getElementById(`rf-${key}-${idx}`);
-  if (!rf) return;
-  rf.style.display = rf.style.display==='none'||!rf.style.display ? 'block' : 'none';
+function toggleRf(key,idx){
+  const rf=document.getElementById(`rf-${key}-${idx}`);
+  if(rf) rf.style.display=rf.style.display==='block'?'none':'block';
 }
 
-function submitReply(key, idx) {
-  const name = (document.getElementById(`rn-${key}-${idx}`)||{}).value||'Anonymous';
-  const body = (document.getElementById(`rb-${key}-${idx}`)||{}).value||'';
-  if (!body.trim()) return;
-  const arr = getC(key);
-  if (!arr[idx].replies) arr[idx].replies = [];
-  arr[idx].replies.push({ name:name.trim(), body:body.trim(), time:new Date().toLocaleString() });
-  saveC(key, arr);
-  const container = key==='engage' ? 'engage-comments' : 'doc-comments';
-  renderComments(key, container);
+function submitReply(key,idx){
+  const nm=(document.getElementById(`rn-${key}-${idx}`)||{}).value||'Anonymous';
+  const bd=(document.getElementById(`rb-${key}-${idx}`)||{}).value||'';
+  if(!bd.trim()) return;
+  const arr=getC(key);
+  if(!arr[idx].replies) arr[idx].replies=[];
+  arr[idx].replies.push({name:nm.trim(),body:bd.trim(),time:new Date().toLocaleString()});
+  saveC(key,arr);
+  renderCmts(key,key==='engage'?'eng-cmts':'file-comments');
 }
-
-function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;') }
-
-// ── BACK TO TOP (scroll inside #content) ────────────────────
-document.getElementById('content').addEventListener('scroll', function(){
-  document.getElementById('btt').classList.toggle('show', this.scrollTop > 300);
-});
 
 // ── INIT ────────────────────────────────────────────────────
-loadRoot();
-renderComments('engage','engage-comments');
+(async()=>{
+  buildSbTree();
+  renderCmts('engage','eng-cmts');
+  try{
+    const info=await gFetch(`${API}`);
+    document.getElementById('sb-iss').textContent=info.open_issues_count;
+  } catch{}
+})();
 </script>
 </body>
 </html>
