@@ -228,6 +228,7 @@ img{max-width:100%}
 .toast { background:var(--ink); color:#fff; padding:12px 16px; border-radius:var(--r2); font-size:12px; box-shadow:var(--shadow2); animation:slideIn 0.3s ease forwards; max-width:300px; display:flex; gap:10px; align-items:center; }
 .toast.success { border-left:4px solid var(--green); }
 .toast.error { border-left:4px solid var(--red); }
+.toast.warn { border-left:4px solid var(--gold); }
 .toast.info { border-left:4px solid var(--blue); }
 @keyframes slideIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
 @keyframes slideOut { to{transform:translateX(100%);opacity:0} }
@@ -250,7 +251,7 @@ img{max-width:100%}
     </div>
     <div class="sb-sync">
       <div class="sb-sync-dot"></div>
-      <div class="sb-sync-txt" id="sync-lbl">Ready</div>
+      <div class="sb-sync-txt" id="sync-lbl">Loading...</div>
       <button class="sb-sync-btn" onclick="triggerSync()" title="Sync with GitHub">↻</button>
     </div>
   </div>
@@ -510,7 +511,7 @@ img{max-width:100%}
     <div style="max-width:600px">
       <div class="card card-pad" style="margin-bottom:20px">
         <div class="sh">GitHub Connection</div>
-        <div class="info-banner">To save ideas and files to GitHub, you need a Personal Access Token (classic) with 'repo' scope.</div>
+        <div class="info-banner">To save ideas and files to GitHub, you need a Personal Access Token (classic) with 'repo' scope. Reading data works without a token.</div>
         <div class="form-group">
           <label class="form-label">Personal Access Token</label>
           <input type="password" id="set-token" class="form-input" placeholder="ghp_xxxxxxxxxxxx">
@@ -569,7 +570,6 @@ const GH_BRANCH = 'main';
 const CACHE_KEY = 'rrl_v5_cache';
 const CFG_KEY = 'rrl_v5_cfg';
 
-// FIX #1: Added missing priority and status color mapping!
 const PRI_C = {critical:'#B91C1C', high:'#C2410C', medium:'#A8651A', low:'#4B5563'};
 const STATUS_CLS = {active:'b-active', research:'b-research', concept:'b-concept', paused:'b-paused', archived:'b-archived'};
 const PRI_CLS = {critical:'b-critical', high:'b-high', medium:'b-medium', low:'b-low'};
@@ -580,7 +580,6 @@ const cfgSet = o => localStorage.setItem(CFG_KEY, JSON.stringify({...cfgGet(), .
 const getToken = () => cfgGet().token || '';
 const getSha = () => cfgGet().sha || '';
 
-// FIX #2: Bulletproof cache reading. Stops .filter() TypeError crashes.
 const cacheRead = () => { 
   try { 
     const data = JSON.parse(localStorage.getItem(CACHE_KEY)); 
@@ -597,7 +596,7 @@ let currentPage = 'dashboard';
 let prevPage = 'dashboard';
 let editingId = null;
 let pendingFiles = [];
-let allMdFiles = [];
+let allMdFiles =[];
 window._mdFilesCache = [];
 window._reposCache =[];
 
@@ -621,9 +620,9 @@ function setSyncUI(state, msg) {
   syncState = state;
   const el = document.getElementById('sync-lbl');
   if (!el) return;
-  const MAP = {idle:'Ready', loading:'Loading…', saving:'Saving…', ok:'Synced ✓', error:'Error ✗', 'no-token':'No token'};
+  const MAP = {idle:'Ready', loading:'Loading…', saving:'Saving…', ok:'Synced ✓', error:'Error ✗', 'no-token':'Read-Only'};
   el.textContent = msg || MAP[state] || state;
-  const C = {idle:'rgba(255,255,255,.3)', loading:'#93C5FD', saving:'#FCD34D', ok:'#4ADE80', error:'#FCA5A5', 'no-token':'rgba(255,255,255,.2)'};
+  const C = {idle:'rgba(255,255,255,.3)', loading:'#93C5FD', saving:'#FCD34D', ok:'#4ADE80', error:'#FCA5A5', 'no-token':'#FBBF24'};
   el.style.color = C[state] || 'rgba(255,255,255,.3)';
 }
 
@@ -639,9 +638,10 @@ function ghHeaders() {
 function ghHeadersWrite() { return {...ghHeaders(), 'Content-Type': 'application/json'}; }
 
 async function ghRead() {
-  if (!getToken()) { setSyncUI('no-token'); return null; }
+  // Public repos don't need a token to be read!
   const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}`, {headers: ghHeaders()});
   if (r.status === 404) return {ideas:[], sha: null};
+  if (r.status === 403) throw new Error('Rate Limit Exceeded');
   if (!r.ok) throw new Error('Read Error: ' + r.status);
   const f = await r.json();
   let parsed;
@@ -664,6 +664,7 @@ async function ghWrite(ideas) {
 
 async function ghGetFile(path) {
   const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`, {headers: ghHeaders()});
+  if (r.status === 403) throw new Error('Rate Limit');
   if (!r.ok) return null;
   const f = await r.json();
   let content = '';
@@ -690,7 +691,8 @@ async function ghWriteFile(path, content, sha, msg) {
 async function ghListDir(path) {
   const url = path ? `https://api.github.com/repos/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}` : `https://api.github.com/repos/${GH_REPO}/contents?ref=${GH_BRANCH}`;
   const r = await fetch(url, {headers: ghHeaders()});
-  if (!r.ok) return[];
+  if (r.status === 403) throw new Error('Rate Limit Exceeded');
+  if (!r.ok) return [];
   const d = await r.json();
   return Array.isArray(d) ? d :[];
 }
@@ -735,10 +737,11 @@ async function scanAllMdFiles() {
 function parseYamlFM(md) {
   const meta = {};
   if (!md || !md.startsWith('---')) return {meta, body: md || ''};
-  const end = md.indexOf('\n---', 4);
-  if (end === -1) return {meta, body: md};
-  const yaml = md.slice(4, end);
-  const body = md.slice(end + 4).replace(/^\n/, '');
+  const normalizedMd = md.replace(/\r\n/g, '\n');
+  const end = normalizedMd.indexOf('\n---', 4);
+  if (end === -1) return {meta, body: normalizedMd};
+  const yaml = normalizedMd.slice(4, end);
+  const body = normalizedMd.slice(end + 4).replace(/^\n/, '');
   yaml.split('\n').forEach(line => {
     const c = line.indexOf(':');
     if (c === -1) return;
@@ -764,7 +767,7 @@ function mdFileToIdea(filePath, content) {
   const folderName = parts[1] || '';
   return {
     id: String(meta.id || Math.random().toString(36).substring(2, 10)),
-    title: String(meta.title || folderName.replace(/_/g, ' ')),
+    title: String(meta.title || folderName.replace(/_/g, ' ').replace(/\.md$/i,'')),
     layer: String(meta.layer || layer),
     doctype: String(meta.doctype || 'White Paper'),
     status: String(meta.status || 'concept'),
@@ -788,7 +791,6 @@ function buildWhitePaper(idea) {
   const tags = (idea.tags||[]).join(', ');
   const rel = (idea.related||[]).join(', ');
   const now = new Date().toISOString().slice(0,10);
-  const slug = (idea.title||'').trim().replace(/[^\w\s-]/g,'').replace(/\s+/g,'_').slice(0,55);
   return[
     '---',
     `id: "${idea.id}"`,
@@ -798,7 +800,7 @@ function buildWhitePaper(idea) {
     `status: ${idea.status||'concept'}`,
     `priority: ${idea.priority||'medium'}`,
     `progress: ${idea.progress||0}`,
-    `tags: [${tags}]`,
+    `tags:[${tags}]`,
     `related:[${rel}]`,
     `is_1149: ${idea.is1149?'true':'false'}`,
     idea.solidarity ? `solidarity: "${String(idea.solidarity).replace(/"/g,'\\"').slice(0,200)}"` : null,
@@ -827,26 +829,32 @@ function buildWhitePaper(idea) {
 // REPO SYNC & SAVE
 // ════════════════════════════════════════════
 async function scanRepoForIdeas() {
-  if (!getToken()) return null;
-  setSyncUI('loading', 'Scanning…');
   const found =[];
   for (const lk of LAYER_KEYS) {
     let entries;
     try { entries = await ghListDir(lk); } catch { continue; }
     for (const entry of entries) {
-      if (entry.type !== 'dir') continue;
-      const candidates =[`${lk}/${entry.name}/WHITE_PAPER.md`, `${lk}/${entry.name}/README.md`];
-      for (const wp of candidates) {
-        const file = await ghGetFile(wp);
-        if (!file) continue;
-        const idea = mdFileToIdea(wp, file.content);
-        idea._wpSha = file.sha;
-        found.push(idea);
-        break;
+      if (entry.type === 'file' && entry.name.endsWith('.md')) {
+        const file = await ghGetFile(`${lk}/${entry.name}`);
+        if (file) {
+          const idea = mdFileToIdea(`${lk}/${entry.name}`, file.content);
+          idea._wpSha = file.sha;
+          found.push(idea);
+        }
+      } else if (entry.type === 'dir') {
+        const candidates =[`${lk}/${entry.name}/WHITE_PAPER.md`, `${lk}/${entry.name}/README.md`];
+        for (const wp of candidates) {
+          const file = await ghGetFile(wp);
+          if (file) {
+            const idea = mdFileToIdea(wp, file.content);
+            idea._wpSha = file.sha;
+            found.push(idea);
+            break;
+          }
+        }
       }
     }
   }
-  setSyncUI('ok');
   return found;
 }
 
@@ -855,23 +863,25 @@ async function fullRepoSync(silent = false) {
   if (!silent) toast('Scanning repository folders…', 'info');
   try {
     const fromRepo = await scanRepoForIdeas();
-    if (!fromRepo) { setSyncUI('no-token'); if (!silent) toast('No GitHub token — add in Settings', 'error'); return null; }
+    if (!fromRepo) return null;
     const cached = cacheRead();
     const cachedMap = {};
     cached.forEach(i => { if (i.id) cachedMap[i.id] = i; });
     const merged = fromRepo.map(idea => ({...idea, files: (cachedMap[idea.id]||{}).files||[]}));
     const repoIds = new Set(fromRepo.map(i => i.id));
     cached.forEach(c => { if (!repoIds.has(c.id)) merged.push(c); });
+    
     cacheWrite(merged);
-    await ghWrite(merged);
+    if (getToken()) await ghWrite(merged);
+    
     updateBadges(); renderAll();
     if (!silent) toast(`Loaded ${fromRepo.length} ideas from repo`, 'success');
-    setSyncUI('ok');
-    if (currentPage === 'dashboard') loadDashMdFiles(true);
+    setSyncUI(getToken() ? 'ok' : 'no-token');
+    
     return merged;
   } catch(e) {
-    setSyncUI('error', e.message.slice(0,30));
-    if (!silent) toast('Scan failed: ' + e.message, 'error');
+    if (e.message.includes('Rate Limit')) toast('GitHub API limit reached', 'error');
+    setSyncUI('error');
     return null;
   }
 }
@@ -879,12 +889,26 @@ async function fullRepoSync(silent = false) {
 async function save(ideas) {
   cacheWrite(ideas);
   updateBadges();
+  if (!getToken()) {
+    toast('Saved locally (Read-Only Mode)', 'warn');
+    return;
+  }
   setSyncUI('saving');
   try { await ghWrite(ideas); setSyncUI('ok'); }
   catch(e) { setSyncUI('error'); toast('GitHub sync failed', 'error'); }
 }
 
 async function saveIdea(idea) {
+  if (!getToken()) {
+    toast('No Token: Saved to local browser cache only.', 'warn');
+    const ideas = getIdeas();
+    const idx = ideas.findIndex(i => i.id === idea.id);
+    if (idx !== -1) ideas[idx] = idea; else ideas.push(idea);
+    cacheWrite(ideas);
+    updateBadges();
+    return;
+  }
+
   setSyncUI('saving');
   try {
     const slug = idea.title.trim().replace(/[^\w\s-]/g,'').replace(/\s+/g,'_').slice(0,55);
@@ -1021,7 +1045,6 @@ async function renderDashboard() {
     const L = LAYERS[lk];
     const layerIdeas = ideas.filter(i=>i.layer===lk);
     const count = layerIdeas.length;
-    const activeN = layerIdeas.filter(i=>i.status==='active').length;
     const avg = count ? Math.round(layerIdeas.reduce((s,i)=>s+(i.progress||0),0)/count) : 0;
     return `<div class="mini-row" onclick="nav('layer-${L.num}')">
       <div style="width:30px;height:30px;border-radius:var(--r2);background:${L.color}14;border:1.5px solid ${L.color}40;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono);font-size:9px;font-weight:600;color:${L.color}">${L.num}</div>
@@ -1059,7 +1082,11 @@ async function renderDashboard() {
       </div>`).join('');
   }
 
-  await loadDashMdFiles();
+  if (window._mdFilesCache && window._mdFilesCache.length) {
+    renderDashMdFiles(window._mdFilesCache, document.getElementById('dash-md-files'), document.getElementById('dash-md-count'));
+  } else {
+    loadDashMdFiles();
+  }
 }
 
 async function loadDashMdFiles(force = false) {
@@ -1068,15 +1095,19 @@ async function loadDashMdFiles(force = false) {
   if (!el) return;
   if (!force && window._mdFilesCache.length) { renderDashMdFiles(window._mdFilesCache, el, cnt); return; }
   el.innerHTML = `<div class="spinner"><span class="spin">↻</span> Scanning .md files...</div>`;
-  const files = await scanAllMdFiles();
-  renderDashMdFiles(files, el, cnt);
+  try {
+    const files = await scanAllMdFiles();
+    renderDashMdFiles(files, el, cnt);
+  } catch(e) { el.innerHTML = `<div style="font-size:11px;color:var(--ink3)">Rate limit exceeded. Could not load MD files.</div>`; }
 }
 
 function renderDashMdFiles(files, el, cnt) {
   if (cnt) cnt.textContent = `(${files.length})`;
   el.innerHTML = files.map(f => {
     const L = f.layer ? LAYERS[f.layer] : {color:'#888'};
-    return `<div class="mini-row" onclick="openMdFromDash('${f.path}', '${esc(f.name).replace(/'/g,"\\'")}')">
+    const safePath = f.path.replace(/'/g, "\\'");
+    const safeName = esc(f.name).replace(/'/g, "\\'");
+    return `<div class="mini-row" onclick="openMdFromDash('${safePath}', '${safeName}')">
       <div style="width:26px;height:26px;border-radius:var(--r);background:${L.color}14;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">📄</div>
       <div class="mini-body"><div class="mini-t" style="font-size:11.5px">${esc(f.name)}</div><div class="mini-s" style="font-family:var(--mono);font-size:8.5px">${esc(f.path)}</div></div>
       <div class="mini-r" style="font-size:9px;color:var(--ink3)">${f.size ? fmtSize(f.size) : ''}</div>
@@ -1166,11 +1197,15 @@ function renderLayer(num) {
     
     <div class="sh" style="margin-top:32px">Raw MD Documents in this layer <span style="font-size:9px">(${layerMd.length})</span></div>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">
-      ${layerMd.map(f => `
-        <div class="mini-row" onclick="openMdFromDash('${f.path}','${esc(f.name)}')">
+      ${layerMd.map(f => {
+        const safePath = f.path.replace(/'/g, "\\'");
+        const safeName = esc(f.name).replace(/'/g, "\\'");
+        return `<div class="mini-row" onclick="openMdFromDash('${safePath}','${safeName}')">
           <div style="width:28px;height:28px;background:${L.color}14;border:1px solid ${L.color}30;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px">📄</div>
           <div style="flex:1"><div style="font-weight:500">${esc(f.name)}</div><div style="font-size:9px;color:var(--ink3);font-family:var(--mono)">${esc(f.path)}</div></div>
-        </div>`).join('')}
+        </div>`;
+      }).join('')}
+      ${layerMd.length === 0 ? '<div style="font-size:11px;color:var(--ink3);padding:10px 0">No direct markdown files found in this layer directory.</div>' : ''}
     </div>`;
 }
 
@@ -1204,8 +1239,8 @@ function renderIdeaDetail(id) {
     <div class="pg-title" style="margin-bottom:12px">${esc(idea.title)}</div>
     ${idea.tagline ? `<div style="font-size:16px;color:var(--ink2);margin-bottom:16px;line-height:1.4">${esc(idea.tagline)}</div>` : ''}
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <span class="badge ${STATUS_CLS[idea.status]}">${idea.status}</span>
-      <span class="badge ${PRI_CLS[idea.priority]}">${idea.priority} priority</span>
+      <span class="badge ${STATUS_CLS[idea.status]||'b-paused'}">${idea.status}</span>
+      <span class="badge ${PRI_CLS[idea.priority]||'b-low'}">${idea.priority} priority</span>
       ${idea.is1149 ? `<span class="badge b-1149">1149 Core Protocol</span>` : ''}
       <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="openEditForm('${idea.id}')">✎ Edit</button>
       <button class="btn btn-danger btn-sm" onclick="deleteIdea('${idea.id}')">Delete</button>
@@ -1375,22 +1410,26 @@ async function rbLoadDir(path) {
   crumbs.forEach(c => { cp += (cp?'/':'')+c; breadHtml += ` / <a href="#" onclick="rbLoadDir('${cp}');return false;" style="color:var(--blue)">${c}</a>`; });
   document.getElementById('rb-path').innerHTML = breadHtml;
 
-  const items = await ghListDir(path);
-  if (!items || items.length === 0) { el.innerHTML = 'Empty directory or not found.'; return; }
+  try {
+    const items = await ghListDir(path);
+    if (!items || items.length === 0) { el.innerHTML = 'Empty directory or not found.'; return; }
 
-  items.sort((a,b) => (a.type==='dir'?-1:1) - (b.type==='dir'?-1:1) || a.name.localeCompare(b.name));
-  
-  el.innerHTML = '<div style="display:flex;flex-direction:column;gap:4px">' + items.map(i => {
-    const isDir = i.type === 'dir';
-    const click = isDir ? `rbLoadDir('${i.path}')` : `rbOpenFile('${i.path}', '${esc(i.name).replace(/'/g,"\\'")}')`;
-    return `
-      <div class="mini-row" style="margin:0;padding:6px 10px;border:none;border-bottom:1px solid var(--brd);border-radius:0" onclick="${click}">
-        <div style="font-size:14px;color:var(--ink3)">${isDir ? '📁' : '📄'}</div>
-        <div class="mini-body" style="font-family:var(--mono);font-size:12px;color:${isDir?'var(--blue)':'var(--ink)'}">${esc(i.name)}</div>
-        <div class="mini-r" style="font-size:10px;color:var(--ink3)">${i.size?fmtSize(i.size):''}</div>
-      </div>
-    `;
-  }).join('') + '</div>';
+    items.sort((a,b) => (a.type==='dir'?-1:1) - (b.type==='dir'?-1:1) || a.name.localeCompare(b.name));
+    
+    el.innerHTML = '<div style="display:flex;flex-direction:column;gap:4px">' + items.map(i => {
+      const isDir = i.type === 'dir';
+      const safePath = i.path.replace(/'/g, "\\'");
+      const safeName = esc(i.name).replace(/'/g, "\\'");
+      const click = isDir ? `rbLoadDir('${safePath}')` : `rbOpenFile('${safePath}', '${safeName}')`;
+      return `
+        <div class="mini-row" style="margin:0;padding:6px 10px;border:none;border-bottom:1px solid var(--brd);border-radius:0" onclick="${click}">
+          <div style="font-size:14px;color:var(--ink3)">${isDir ? '📁' : '📄'}</div>
+          <div class="mini-body" style="font-family:var(--mono);font-size:12px;color:${isDir?'var(--blue)':'var(--ink)'}">${esc(i.name)}</div>
+          <div class="mini-r" style="font-size:10px;color:var(--ink3)">${i.size?fmtSize(i.size):''}</div>
+        </div>
+      `;
+    }).join('') + '</div>';
+  } catch(e) { el.innerHTML = `<div style="color:var(--red)">Error loading directory (Rate limit?).</div>`; }
 }
 
 async function rbOpenFile(path, name) {
@@ -1398,16 +1437,18 @@ async function rbOpenFile(path, name) {
   el.innerHTML = `<div class="spinner"><span class="spin">↻</span> Loading file ${esc(name)}...</div>`;
   document.getElementById('rb-path').innerHTML += ` / <span style="color:var(--ink)">${esc(name)}</span>`;
   
-  const file = await ghGetFile(path);
-  if (!file) { el.innerHTML = 'File read error.'; return; }
-  
-  if (path.endsWith('.md')) {
-    el.innerHTML = `<div class="md-content" style="background:var(--surface);padding:20px;border:1px solid var(--brd);border-radius:8px">${md2html(file.content)}</div>`;
-  } else if (path.endsWith('.json') || path.endsWith('.js') || path.endsWith('.html') || path.endsWith('.css')) {
-    el.innerHTML = `<pre style="margin:0"><code style="color:#C8D0E8">${esc(file.content)}</code></pre>`;
-  } else {
-    el.innerHTML = `<div style="padding:20px;text-align:center"><a href="${file.html_url}" target="_blank" class="btn btn-primary">View File on GitHub</a></div>`;
-  }
+  try {
+    const file = await ghGetFile(path);
+    if (!file) { el.innerHTML = 'File read error.'; return; }
+    
+    if (path.endsWith('.md')) {
+      el.innerHTML = `<div class="md-content" style="background:var(--surface);padding:20px;border:1px solid var(--brd);border-radius:8px">${md2html(file.content)}</div>`;
+    } else if (path.endsWith('.json') || path.endsWith('.js') || path.endsWith('.html') || path.endsWith('.css')) {
+      el.innerHTML = `<pre style="margin:0"><code style="color:#C8D0E8">${esc(file.content)}</code></pre>`;
+    } else {
+      el.innerHTML = `<div style="padding:20px;text-align:center"><a href="${file.html_url}" target="_blank" class="btn btn-primary">View File on GitHub</a></div>`;
+    }
+  } catch(e) { el.innerHTML = `<div style="color:var(--red)">Failed to read file (Rate Limit?).</div>`; }
 }
 
 // ════════════════════════════════════════════
@@ -1459,7 +1500,7 @@ function renderGraph() {
   if (!ideas.length) { ctx.fillStyle='var(--ink3)'; ctx.fillText("No ideas to render", 50, 50); return; }
 
   const nodes = ideas.map(i => ({...i, x: w/2 + (Math.random()-0.5)*200, y: h/2 + (Math.random()-0.5)*200, vx:0, vy:0}));
-  const links = [];
+  const links =[];
   nodes.forEach(n => {
     (n.related||[]).forEach(relId => {
       const target = nodes.find(x => x.id === relId);
@@ -1630,11 +1671,29 @@ async function ghLoad() {
   try {
     const r = await ghRead();
     if (!r) return;
+    
+    // Если ideas.json еще нет в репозитории (или он пуст), сканируем все папки на лету
+    if (r.ideas.length === 0 && !r.sha) {
+      const repoIdeas = await scanRepoForIdeas();
+      if (repoIdeas && repoIdeas.length) {
+        cacheWrite(repoIdeas);
+        setSyncUI(getToken() ? 'ok' : 'no-token');
+        return repoIdeas;
+      }
+    }
+    
     cacheWrite(r.ideas);
     if(r.sha) cfgSet({sha: r.sha});
-    setSyncUI('ok');
+    setSyncUI(getToken() ? 'ok' : 'no-token');
     return r.ideas;
-  } catch(e) { setSyncUI('error'); }
+  } catch(e) { 
+    if (e.message.includes('Rate Limit')) {
+      setSyncUI('error', 'API Limit');
+      toast('GitHub API Rate Limit reached. Add Token in Settings.', 'error');
+    } else {
+      setSyncUI('error', 'Sync Failed');
+    }
+  }
 }
 
 window.addEventListener('load', async () => {
@@ -1645,20 +1704,18 @@ window.addEventListener('load', async () => {
   const cached = cacheRead();
   if (cached.length) updateBadges();
   
-  // Triggers immediate render sequence
   handleHash(); 
   
-  if (t) {
-    ghLoad().then(()=> { 
-      updateBadges(); 
-      if(currentPage==='dashboard') renderDashboard(); 
-    });
-    scanAllMdFiles().then(() => { 
-      if(currentPage==='dashboard') loadDashMdFiles(true); 
-    });
-  } else {
-    setSyncUI('no-token');
-  }
+  // Асинхронная загрузка с гитхаба (теперь без блокировок!)
+  ghLoad().then(()=> { 
+    updateBadges(); 
+    renderAll(); 
+  }).catch(console.error);
+  
+  scanAllMdFiles().then(() => { 
+    if(currentPage === 'dashboard') loadDashMdFiles(true); 
+    if(currentPage.startsWith('layer-')) renderLayer(currentPage.replace('layer-',''));
+  }).catch(console.error);
   
   loadRepos(false, true);
 });
