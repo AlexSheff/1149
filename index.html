@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Reality Refactor Lab · 1149</title>
+<title>Reality Refactor Lab · Control Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -39,7 +39,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:13.
 a{color:var(--blue);text-decoration:none}
 a:hover{text-decoration:underline}
 button,input,textarea,select{font-family:var(--sans);font-size:inherit}
-img{max-width:100%}
+img{max-width:100%; border-radius: 6px;}
 #app{display:flex;height:100vh;overflow:hidden}
 #sidebar{width:234px;min-width:234px;height:100vh;background:var(--sidebar);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;transition:width .2s}
 #content{flex:1;min-width:0;height:100vh;overflow-y:auto;background:var(--bg)}
@@ -51,7 +51,7 @@ img{max-width:100%}
 .sb-sync{display:flex;align-items:center;gap:7px;padding:7px 10px;background:rgba(255,255,255,.04);border-radius:var(--r2);margin-top:0}
 .sb-sync-dot{width:6px;height:6px;border-radius:50%;background:#4ADE80;box-shadow:0 0 6px #4ADE80;flex-shrink:0;animation:pulse 2s ease-in-out infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.sb-sync-txt{font-size:8.5px;color:rgba(255,255,255,.3);letter-spacing:1px;flex:1}
+.sb-sync-txt{font-size:8.5px;color:rgba(255,255,255,.3);letter-spacing:1px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .sb-sync-btn{background:none;border:none;color:rgba(255,255,255,.25);cursor:pointer;font-size:13px;padding:0 2px;line-height:1;transition:color .12s}
 .sb-sync-btn:hover{color:rgba(255,255,255,.6)}
 .sb-nav{flex:1;overflow-y:auto;padding:8px 0}
@@ -62,10 +62,6 @@ img{max-width:100%}
 .nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;transition:box-shadow .2s}
 .nav-item.active .nav-dot{box-shadow:0 0 8px currentColor}
 .nav-badge{margin-left:auto;font-size:9px;font-family:var(--mono);color:var(--gold3);background:rgba(212,137,30,.15);padding:1px 7px;border-radius:10px;border:1px solid rgba(212,137,30,.25)}
-.nav-sub{font-size:8px;color:rgba(255,255,255,.18);margin-top:1px;display:block}
-.nav-progress{margin-left:auto;display:flex;align-items:center;gap:5px}
-.nav-pbar{width:28px;height:2px;background:rgba(255,255,255,.1);border-radius:1px;overflow:hidden}
-.nav-pbar-f{height:100%;border-radius:1px}
 .sb-actions{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;gap:6px}
 .sb-btn{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 12px;border-radius:var(--r2);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;border:1px solid;transition:all .14s;font-family:var(--mono);font-weight:500}
 .sb-btn-gold{background:var(--gold);border-color:var(--gold);color:#fff}
@@ -90,7 +86,6 @@ img{max-width:100%}
 .stat-card:hover{transform:translateY(-1px);box-shadow:var(--shadow2);border-color:var(--brd2)}
 .stat-num{font-family:var(--serif);font-size:42px;font-weight:700;color:var(--ac,var(--gold));line-height:1;letter-spacing:-1px}
 .stat-lbl{font-family:var(--mono);font-size:7.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:2px;margin-top:5px}
-.stat-delta{font-size:10px;color:var(--green);margin-top:3px}
 .card{background:var(--surface);border:1px solid var(--brd);border-radius:var(--r3);box-shadow:var(--shadow)}
 .card-pad{padding:18px 20px}
 .badge{display:inline-flex;align-items:center;font-family:var(--mono);font-size:7.5px;letter-spacing:.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;border:1px solid;flex-shrink:0;white-space:nowrap;font-weight:500}
@@ -98,18 +93,12 @@ img{max-width:100%}
 .b-research{color:var(--blue);border-color:var(--blue-brd);background:var(--blue-bg)}
 .b-concept{color:var(--purple);border-color:var(--purple-brd);background:var(--purple-bg)}
 .b-paused{color:var(--gray);border-color:var(--gray-brd);background:var(--gray-bg)}
-.b-archived{color:var(--gray);border-color:var(--gray-brd);background:var(--gray-bg)}
-.b-critical{color:var(--red);border-color:var(--red-brd);background:var(--red-bg)}
-.b-high{color:var(--orange);border-color:var(--orange-brd);background:var(--orange-bg)}
 .b-medium{color:var(--gold);border-color:var(--gold-brd);background:var(--gold-bg)}
-.b-low{color:var(--gray);border-color:var(--gray-brd);background:var(--gray-bg)}
 .b-1149{color:var(--gold2);border-color:var(--gold-brd);background:var(--gold-bg)}
 .tag{font-family:var(--mono);font-size:7px;letter-spacing:.8px;text-transform:uppercase;padding:2px 7px;border-radius:3px;border:1px solid var(--brd2);color:var(--ink3);background:var(--surface2)}
 .tag-group{display:flex;flex-wrap:wrap;gap:3px}
 .pbar{height:3px;background:var(--brd);border-radius:2px;overflow:hidden;margin:9px 0 7px}
 .pbar-f{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--gold3));transition:width .5s ease}
-.pbar-f.paused{background:var(--brd2)}
-.pbar-f.active{background:linear-gradient(90deg,var(--green),#4ADE80)}
 .pbar-sm{height:2px;margin:5px 0 4px}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r2);font-size:11px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;border:1px solid;transition:all .14s;font-family:var(--mono);font-weight:500;white-space:nowrap}
 .btn-primary{background:var(--gold);border-color:var(--gold);color:#fff}
@@ -117,105 +106,56 @@ img{max-width:100%}
 .btn-ghost{background:var(--surface);border-color:var(--brd2);color:var(--ink2)}
 .btn-ghost:hover{border-color:var(--brd3);background:var(--surface2)}
 .btn-blue{background:var(--blue-bg);border-color:var(--blue-brd);color:var(--blue)}
-.btn-blue:hover{background:rgba(26,95,180,.14)}
 .btn-danger{background:var(--surface);border-color:var(--red-brd);color:var(--red)}
-.btn-danger:hover{background:var(--red-bg)}
-.btn-green{background:var(--green-bg);border-color:var(--green-brd);color:var(--green)}
-.btn-green:hover{background:rgba(22,163,74,.14)}
 .btn-sm{padding:5px 11px;font-size:9.5px}
-.btn-xs{padding:3px 8px;font-size:8.5px}
-.filter-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
-.fb{font-family:var(--mono);font-size:8px;letter-spacing:.8px;text-transform:uppercase;padding:5px 11px;border-radius:3px;border:1px solid var(--brd);background:var(--surface);color:var(--ink3);cursor:pointer;transition:all .12s}
-.fb:hover{border-color:var(--brd2);color:var(--ink2);background:var(--surface2)}
-.fb.on{border-color:var(--gold-brd);color:var(--gold);background:var(--gold-bg);font-weight:500}
-.f-sep{width:1px;height:18px;background:var(--brd);margin:0 3px}
 .search-wrap{position:relative;margin-bottom:18px}
-.search-wrap input{padding-left:36px;padding-right:32px}
+.search-wrap input{padding-left:36px;padding-right:32px; width:100%;background:var(--surface);border:1.5px solid var(--brd);border-radius:var(--r2);padding-top:9px;padding-bottom:9px;font-family:var(--sans);font-size:13px;outline:none;}
+.search-wrap input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-bg)}
 .s-ico{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink4);font-size:14px;pointer-events:none}
-.s-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--ink3);cursor:pointer;font-size:15px;line-height:1;padding:2px;display:none}
-.s-clear.vis{display:block}
-.form-group{margin-bottom:18px}
-.form-label{display:block;font-family:var(--mono);font-size:8.5px;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink2);margin-bottom:7px;font-weight:500}
-.form-req{color:var(--gold);margin-left:3px}
-.form-input{width:100%;background:var(--surface);border:1.5px solid var(--brd);border-radius:var(--r2);padding:9px 13px;color:var(--ink);font-family:var(--sans);font-size:13px;transition:border-color .14s,box-shadow .14s;outline:none;line-height:1.5}
-.form-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-bg)}
-.form-input::placeholder{color:var(--ink4)}
-.form-select{appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:30px}
-.form-textarea{resize:vertical;min-height:120px;line-height:1.65;font-family:var(--mono);font-size:12px}
-.form-hint{font-size:10.5px;color:var(--ink3);margin-top:5px;line-height:1.5}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.form-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
-.file-drop{border:1.5px dashed var(--brd2);border-radius:var(--r2);padding:22px;text-align:center;cursor:pointer;transition:all .14s}
-.file-drop:hover,.file-drop.drag-over{border-color:var(--gold);background:var(--gold-bg)}
-.file-drop-ico{font-size:26px;margin-bottom:8px;opacity:.35}
-.file-drop-txt{font-size:12px;color:var(--ink2)}
-.file-drop-sub{font-size:10px;color:var(--ink3);margin-top:4px}
-.file-list{margin-top:10px;display:flex;flex-direction:column;gap:5px}
-.file-item{display:flex;align-items:center;gap:9px;padding:7px 11px;background:var(--surface2);border:1px solid var(--brd);border-radius:var(--r);transition:all .12s}
-.file-item:hover{border-color:var(--brd2)}
-.file-ico{width:26px;height:26px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:var(--brd)}
-.file-name{flex:1;font-size:11px;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.file-size{font-size:9px;color:var(--ink3);flex-shrink:0}
-.file-status{font-size:9px;flex-shrink:0}
-.file-del{background:none;border:none;color:var(--ink4);cursor:pointer;padding:3px 5px;border-radius:3px;font-size:13px;line-height:1;transition:color .12s}
-.file-del:hover{color:var(--red)}
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .idea-card{background:var(--surface);border:1.5px solid var(--brd);border-radius:var(--r3);padding:16px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow);display:flex;flex-direction:column;position:relative;overflow:hidden}
 .idea-card:hover{border-color:var(--gold-brd);box-shadow:var(--shadow2);transform:translateY(-2px)}
 .idea-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--layer-color,var(--gold));opacity:.7}
 .ic-layer{font-family:var(--mono);font-size:7.5px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;font-weight:500}
 .ic-title{font-family:var(--serif);font-size:15px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:4px}
-.ic-doctype{font-family:var(--mono);font-size:7.5px;color:var(--ink3);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
 .ic-tagline{font-size:11.5px;color:var(--ink2);line-height:1.55;margin-bottom:10px;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .ic-foot{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:5px;margin-top:auto}
-.ic-tags{display:flex;flex-wrap:wrap;gap:3px;flex:1}
 .ic-meta{text-align:right;flex-shrink:0}
-.ic-pct{font-family:var(--serif);font-size:18px;font-weight:700;line-height:1}
-.ic-upd{font-family:var(--mono);font-size:7.5px;color:var(--ink3);margin-top:2px}
-.ic-files-ind{font-family:var(--mono);font-size:8.5px;color:var(--ink3);margin-top:7px;display:flex;align-items:center;gap:5px}
-.ic-from-repo{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:7px;color:var(--ink3);letter-spacing:1px;display:flex;align-items:center;gap:3px}
 .mini-row{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--surface);border:1px solid var(--brd);border-radius:var(--r2);margin-bottom:6px;cursor:pointer;transition:all .12s}
 .mini-row:hover{border-color:var(--brd2);background:var(--surface2)}
-.mini-strip{width:3px;min-height:32px;border-radius:2px;flex-shrink:0}
 .mini-body{flex:1;min-width:0}
 .mini-t{font-size:12px;font-weight:500;color:var(--ink);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mini-s{font-size:10px;color:var(--ink3);margin-top:2px}
+.mini-s{font-size:10px;color:var(--ink3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mini-r{flex-shrink:0;text-align:right}
-.md-content{font-size:13.5px;color:var(--ink2);line-height:1.8}
+.md-content{font-size:13.5px;color:var(--ink2);line-height:1.7}
 .md-content h1{font-family:var(--serif);font-size:26px;font-weight:700;color:var(--ink);margin:24px 0 10px;letter-spacing:-.3px;border-bottom:1.5px solid var(--brd);padding-bottom:8px}
 .md-content h2{font-family:var(--serif);font-size:20px;font-weight:600;color:var(--ink);margin:22px 0 10px;letter-spacing:-.2px}
-.md-content h3{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ink);letter-spacing:1.5px;text-transform:uppercase;margin:18px 0 8px;border-bottom:1px solid var(--brd);padding-bottom:5px}
-.md-content h4{font-size:12.5px;font-weight:600;color:var(--ink2);margin:12px 0 5px}
+.md-content h3{font-family:var(--mono);font-size:12px;font-weight:500;color:var(--ink);letter-spacing:1.5px;text-transform:uppercase;margin:18px 0 8px}
 .md-content p{margin-bottom:12px}
 .md-content ul,.md-content ol{padding-left:22px;margin-bottom:12px}
-.md-content li{margin-bottom:4px}
+.md-content li{margin-bottom:6px}
 .md-content pre{background:var(--sidebar);color:#C8D0E8;border:1px solid var(--sidebar3);border-radius:var(--r2);padding:16px 18px;overflow-x:auto;margin:12px 0;font-size:11.5px;line-height:1.65}
-.md-content code{background:var(--surface2);border:1px solid var(--brd2);border-radius:3px;padding:1px 5px;font-size:11.5px;color:var(--orange);font-family:var(--mono)}
-.md-content pre code{background:none;border:none;padding:0;font-size:11.5px;color:#C8D0E8}
-.md-content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px}
-.md-content th{background:var(--surface2);font-family:var(--mono);font-size:8px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink3);padding:8px 11px;border-bottom:2px solid var(--brd2);text-align:left}
-.md-content td{padding:8px 11px;border-bottom:1px solid var(--brd);color:var(--ink2)}
+.md-content code{background:var(--surface2);border:1px solid var(--brd2);border-radius:3px;padding:2px 5px;font-size:11.5px;color:var(--orange);font-family:var(--mono)}
+.md-content pre code{background:none;border:none;padding:0;color:#C8D0E8}
 .md-content blockquote{border-left:3px solid var(--gold);padding:9px 16px;background:var(--gold-bg);border-radius:0 var(--r) var(--r) 0;margin:10px 0;font-style:italic;color:var(--ink2)}
-.md-content strong{color:var(--ink);font-weight:600}
-.md-content a{color:var(--blue)}
-.md-content hr{border:none;border-top:1.5px solid var(--brd);margin:16px 0}
-.md-content input[type=checkbox]{accent-color:var(--gold);margin-right:5px}
-.conn-item{display:flex;align-items:center;gap:10px;padding:10px 13px;background:var(--surface);border:1.5px solid var(--brd);border-radius:var(--r2);margin-bottom:6px;cursor:pointer;transition:all .12s}
-.conn-item:hover{border-color:var(--gold-brd);background:var(--gold-bg)}
-.conn-arrow{font-size:10px;color:var(--gold);flex-shrink:0}
-.conn-name{font-size:12px;font-weight:500;color:var(--ink)}
-.conn-rel{font-family:var(--mono);font-size:8px;color:var(--ink3);text-transform:uppercase;letter-spacing:.8px;margin-top:1px}
+.md-content a{color:var(--blue);text-decoration:none;border-bottom:1px solid transparent;transition:all .15s}
+.md-content a:hover{border-bottom-color:var(--blue)}
+.md-content img { display:block; max-width:100%; height:auto; border-radius:8px; margin: 16px 0; box-shadow: var(--shadow); }
 .back-link{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:9px;color:var(--ink3);letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;margin-bottom:20px;transition:color .12s;border:none;background:none;padding:0}
 .back-link:hover{color:var(--gold)}
 .empty-state{text-align:center;padding:56px 24px}
 .empty-ico{font-size:36px;margin-bottom:14px;opacity:.2}
 .empty-title{font-family:var(--serif);font-size:20px;color:var(--ink3);margin-bottom:7px}
 .empty-sub{font-size:11.5px;color:var(--ink3)}
-.divider{height:1px;background:var(--brd);margin:20px 0}
-.info-banner{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;background:var(--blue-bg);border:1px solid var(--blue-brd);border-radius:var(--r2);font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:16px}
-.warn-banner{background:var(--gold-bg);border-color:var(--gold-brd)}
 .spinner{display:inline-flex;align-items:center;gap:8px;font-size:11px;color:var(--ink3)}
 .spin{animation:spin 1s linear infinite;display:inline-block}
+.file-item{display:flex;align-items:center;gap:9px;padding:9px 11px;background:var(--surface2);border:1px solid var(--brd);border-radius:var(--r);transition:all .12s; margin-bottom: 5px;}
+.file-item:hover{border-color:var(--brd2); background:var(--surface3);}
+.file-ico{width:26px;height:26px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:var(--brd)}
+.file-name{flex:1;font-size:11.5px;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-dl{color:var(--blue); font-size: 11px; font-weight: 500; font-family: var(--mono); padding: 4px 8px; border: 1px solid var(--blue-brd); border-radius: 4px; background: var(--blue-bg); text-transform: uppercase;}
+.file-dl:hover{background: rgba(26,95,180,0.15); text-decoration:none;}
+.layer-readme-box { background: var(--surface); border: 1px solid var(--brd); border-radius: var(--r3); padding: 24px 32px; box-shadow: var(--shadow); margin-bottom: 32px; }
 
 /* Modals & Toasts */
 #modal-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(22,23,42,0.6); z-index:999; justify-content:center; align-items:center; backdrop-filter:blur(2px); }
@@ -228,8 +168,6 @@ img{max-width:100%}
 .toast { background:var(--ink); color:#fff; padding:12px 16px; border-radius:var(--r2); font-size:12px; box-shadow:var(--shadow2); animation:slideIn 0.3s ease forwards; max-width:300px; display:flex; gap:10px; align-items:center; }
 .toast.success { border-left:4px solid var(--green); }
 .toast.error { border-left:4px solid var(--red); }
-.toast.warn { border-left:4px solid var(--gold); }
-.toast.info { border-left:4px solid var(--blue); }
 @keyframes slideIn { from{transform:translateX(100%);opacity:0} to{transform:translateX(0);opacity:1} }
 @keyframes slideOut { to{transform:translateX(100%);opacity:0} }
 
@@ -251,32 +189,27 @@ img{max-width:100%}
     </div>
     <div class="sb-sync">
       <div class="sb-sync-dot"></div>
-      <div class="sb-sync-txt" id="sync-lbl">Loading...</div>
-      <button class="sb-sync-btn" onclick="triggerSync()" title="Sync with GitHub">↻</button>
+      <div class="sb-sync-txt" id="sync-lbl">Scanning Repo...</div>
     </div>
   </div>
   <div class="sb-nav">
     <div class="nav-section">Main</div>
     <div class="nav-item active" data-page="dashboard"><div class="nav-dot" style="background:#94A3B8"></div>Dashboard</div>
-    <div class="nav-item" data-page="ideas"><div class="nav-dot" style="background:#94A3B8"></div>All Ideas <span class="nav-badge" id="nb-ideas">0</span></div>
-    <div class="nav-item" data-page="repos"><div class="nav-dot" style="background:#1A5FB4"></div>GitHub Projects <span class="nav-badge" id="nb-repos">…</span></div>
+    <div class="nav-item" data-page="ideas"><div class="nav-dot" style="background:#94A3B8"></div>All Projects <span class="nav-badge" id="nb-ideas">0</span></div>
     <div class="nav-section" style="margin-top:8px">Architecture Layers</div>
-    <div class="nav-item" data-page="layer-01"><div class="nav-dot" style="background:#7C3AED"></div>01 · Ethical OS <div class="nav-progress"><div class="nav-pbar"><div class="nav-pbar-f" id="np-01" style="background:#7C3AED"></div></div><span class="nb" id="nb-01">0</span></div></div>
-    <div class="nav-item" data-page="layer-02"><div class="nav-dot" style="background:#1A5FB4"></div>02 · Social Protocol <div class="nav-progress"><div class="nav-pbar"><div class="nav-pbar-f" id="np-02" style="background:#1A5FB4"></div></div><span class="nb" id="nb-02">0</span></div></div>
-    <div class="nav-item" data-page="layer-03"><div class="nav-dot" style="background:#059669"></div>03 · Meta Ecosystems <div class="nav-progress"><div class="nav-pbar"><div class="nav-pbar-f" id="np-03" style="background:#059669"></div></div><span class="nb" id="nb-03">0</span></div></div>
-    <div class="nav-item" data-page="layer-04"><div class="nav-dot" style="background:#2563EB"></div>04 · Technical Nodes <div class="nav-progress"><div class="nav-pbar"><div class="nav-pbar-f" id="np-04" style="background:#2563EB"></div></div><span class="nb" id="nb-04">0</span></div></div>
-    <div class="nav-item" data-page="layer-05"><div class="nav-dot" style="background:#D97706"></div>05 · Reality Hardware <div class="nav-progress"><div class="nav-pbar"><div class="nav-pbar-f" id="np-05" style="background:#D97706"></div></div><span class="nb" id="nb-05">0</span></div></div>
-    <div class="nav-item" data-page="layer-06"><div class="nav-dot" style="background:#DB2777"></div>06 · Social Impact <div class="nav-progress"><div class="nav-pbar"><div class="nav-pbar-f" id="np-06" style="background:#DB2777"></div></div><span class="nb" id="nb-06">0</span></div></div>
-    <div class="nav-item" data-page="layer-07"><div class="nav-dot" style="background:#4F46E5"></div>07 · Research Lab <div class="nav-progress"><div class="nav-pbar"><div class="nav-pbar-f" id="np-07" style="background:#4F46E5"></div></div><span class="nb" id="nb-07">0</span></div></div>
-    <div class="nav-item" data-page="layer-08"><div class="nav-dot" style="background:#6B7280"></div>08 · Archive <div class="nav-progress"><div class="nav-pbar"><div class="nav-pbar-f" id="np-08" style="background:#6B7280"></div></div><span class="nb" id="nb-08">0</span></div></div>
+    <div class="nav-item" data-page="layer-01"><div class="nav-dot" style="background:#7C3AED"></div>01 · Ethical OS <span class="nav-badge" id="nb-01">0</span></div>
+    <div class="nav-item" data-page="layer-02"><div class="nav-dot" style="background:#1A5FB4"></div>02 · Social Protocol <span class="nav-badge" id="nb-02">0</span></div>
+    <div class="nav-item" data-page="layer-03"><div class="nav-dot" style="background:#059669"></div>03 · Meta Ecosystems <span class="nav-badge" id="nb-03">0</span></div>
+    <div class="nav-item" data-page="layer-04"><div class="nav-dot" style="background:#2563EB"></div>04 · Technical Nodes <span class="nav-badge" id="nb-04">0</span></div>
+    <div class="nav-item" data-page="layer-05"><div class="nav-dot" style="background:#D97706"></div>05 · Reality Hardware <span class="nav-badge" id="nb-05">0</span></div>
+    <div class="nav-item" data-page="layer-06"><div class="nav-dot" style="background:#DB2777"></div>06 · Social Impact <span class="nav-badge" id="nb-06">0</span></div>
+    <div class="nav-item" data-page="layer-07"><div class="nav-dot" style="background:#4F46E5"></div>07 · Research Lab <span class="nav-badge" id="nb-07">0</span></div>
+    <div class="nav-item" data-page="layer-08"><div class="nav-dot" style="background:#6B7280"></div>08 · Archive <span class="nav-badge" id="nb-08">0</span></div>
     <div class="nav-section" style="margin-top:8px">Tools</div>
-    <div class="nav-item" data-page="repo-browser"><div class="nav-dot" style="background:#0F766E"></div>Repo Browser</div>
-    <div class="nav-item" data-page="graph"><div class="nav-dot" style="background:#94A3B8"></div>Knowledge Graph</div>
-    <div class="nav-item" data-page="settings"><div class="nav-dot" style="background:#94A3B8"></div>Settings</div>
+    <div class="nav-item" data-page="settings"><div class="nav-dot" style="background:#94A3B8"></div>Settings & Token</div>
   </div>
   <div class="sb-actions">
-    <button class="sb-btn sb-btn-gold" onclick="nav('new')">＋ New Idea</button>
-    <button class="sb-btn sb-btn-ghost" onclick="triggerImport()">↑ Import JSON</button>
+    <button class="sb-btn sb-btn-ghost" onclick="forceRescan()">↻ Rescan Repository</button>
   </div>
   <div class="sb-foot">
     <div id="sb-date" style="font-family:var(--mono)">—</div>
@@ -290,74 +223,52 @@ img{max-width:100%}
     <div class="pg-head">
       <div>
         <div class="pg-eyebrow">Reality Refactor Lab</div>
-        <div class="pg-title">Dashboard</div>
-        <div class="pg-sub">Ideas, projects, and all .md files across 8 layers + all AlexSheff repositories</div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">
-        <div id="dash-date-head" style="text-align:right;font-size:11px;color:var(--ink3);line-height:1.8;font-family:var(--mono)"></div>
-        <button class="btn btn-primary btn-sm" onclick="nav('new')">＋ New Idea</button>
+        <div class="pg-title">Control Center</div>
+        <div class="pg-sub">Direct access to repository files, sub-projects, and documentation.</div>
       </div>
     </div>
-    <div id="dash-stats" class="stats-row s5" style="margin-bottom:18px"></div>
-    <div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start">
+    
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start">
       <div>
-        <div class="sh">Architecture Layers <button class="sh-act" onclick="nav('ideas')">View All →</button></div>
-        <div id="dash-layers"></div>
-        <div class="sh" style="margin-top:24px">All Repo MD Files <span id="dash-md-count" style="font-size:9px;color:var(--ink3)"></span></div>
-        <div id="dash-md-files"></div>
+        <div class="sh">Root Repository (README.md)</div>
+        <div class="layer-readme-box" id="dash-readme-box">
+          <div class="spinner"><span class="spin">↻</span> Fetching root README.md...</div>
+        </div>
+
+        <div class="sh" style="margin-top:24px">Architecture Layers Directory</div>
+        <div id="dash-layers" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"></div>
       </div>
       <div>
-        <div class="sh">GitHub Projects <span id="dash-repos-total" style="font-size:9px;color:var(--ink3);font-weight:400"></span> <button class="sh-act" onclick="nav('repos')">All Repos →</button></div>
-        <div id="dash-repos-mini"></div>
-        <div class="sh" style="margin-top:18px">Recent Ideas</div>
-        <div id="dash-recent"></div>
+        <div class="sh">All Detected Projects <span id="dash-proj-total" style="font-size:9px;color:var(--ink3);"></span></div>
+        <div id="dash-recent-projects" style="margin-bottom:20px;"></div>
+        
         <div class="card card-pad" style="margin-top:18px">
-          <div style="font-family:var(--mono);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">License Agreement · CODE 1149</div>
-          <div style="font-style:italic;font-size:12px;color:var(--ink2)">"Who am I in the context of the universe?" —<br>Solidarity is structural, not rhetorical. Ideas do not expire. They wait.</div>
+          <div style="font-family:var(--mono);font-size:8px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);margin-bottom:6px">System Status</div>
+          <div style="font-size:12px;color:var(--ink2)" id="sys-status-text">
+            Tree Scanner Active. Exploring GitHub Repository structure via raw endpoints to prevent API limits.
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ALL IDEAS -->
+  <!-- ALL IDEAS / PROJECTS -->
   <div id="page-ideas" class="page">
     <div class="pg-head">
       <div>
         <div class="pg-eyebrow">Database</div>
-        <div class="pg-title">All Ideas</div>
-        <div class="pg-sub">Complete index of architectural fragments</div>
+        <div class="pg-title">All Discovered Projects</div>
+        <div class="pg-sub">Folders containing README.md or WHITE_PAPER.md across all layers.</div>
       </div>
-      <button class="btn btn-primary btn-sm" onclick="nav('new')">＋ New Idea</button>
     </div>
     <div class="search-wrap">
       <span class="s-ico">🔍</span>
-      <input type="text" id="ideas-search" class="form-input" placeholder="Search ideas, tags, content..." oninput="renderIdeas()">
-      <button class="s-clear" id="ideas-search-clear" onclick="clearSearch()">×</button>
+      <input type="text" id="ideas-search" placeholder="Search projects by name or folder path..." oninput="renderIdeas()">
     </div>
-    <div class="filter-bar" id="ideas-filters"></div>
     <div id="ideas-grid" class="g3"></div>
   </div>
 
-  <!-- GITHUB PROJECTS -->
-  <div id="page-repos" class="page">
-    <div class="pg-head">
-      <div>
-        <div class="pg-eyebrow">Ecosystem</div>
-        <div class="pg-title">GitHub Projects</div>
-        <div class="pg-sub">Public repositories for AlexSheff</div>
-      </div>
-      <button class="btn btn-ghost btn-sm" onclick="loadRepos(true)">↻ Refresh List</button>
-    </div>
-    <div class="search-wrap">
-      <span class="s-ico">🔍</span>
-      <input type="text" id="repos-search" class="form-input" placeholder="Search repos..." oninput="filterRepos()">
-      <button class="s-clear" id="repos-search-clear" onclick="clearReposSearch()">×</button>
-    </div>
-    <div class="filter-bar" id="repos-filters"></div>
-    <div id="repos-grid" class="g3"></div>
-  </div>
-
-  <!-- LAYERS (Auto-populated) -->
+  <!-- LAYERS (Auto-populated dynamically via JS) -->
   <div id="page-layer-01" class="page"></div>
   <div id="page-layer-02" class="page"></div>
   <div id="page-layer-03" class="page"></div>
@@ -367,136 +278,30 @@ img{max-width:100%}
   <div id="page-layer-07" class="page"></div>
   <div id="page-layer-08" class="page"></div>
 
-  <!-- IDEA DETAIL -->
+  <!-- IDEA / PROJECT DETAIL -->
   <div id="page-idea" class="page">
     <button class="back-link" onclick="navBack()">← Back</button>
     <div id="id-head" style="margin-bottom:24px"></div>
-    <div style="display:grid;grid-template-columns:1fr 280px;gap:32px;align-items:start">
+    <div style="display:grid;grid-template-columns:1fr 300px;gap:32px;align-items:start">
       <div>
-        <div id="id-content" class="md-content"></div>
+        <div class="card card-pad" style="background:#fff">
+           <div id="id-content" class="md-content"><div class="spinner"><span class="spin">↻</span> Loading document...</div></div>
+        </div>
       </div>
       <div>
         <div class="card card-pad" style="margin-bottom:16px">
-          <div class="sh">Metadata</div>
-          <div id="id-meta"></div>
+          <div class="sh">Project Location</div>
+          <div id="id-meta" style="font-family:var(--mono);font-size:10px;color:var(--ink2);word-break:break-all;"></div>
         </div>
         <div class="card card-pad">
-          <div class="sh">Attachments & Files</div>
+          <div class="sh">Attachments & Assets</div>
+          <div style="font-size:10.5px;color:var(--ink3);margin-bottom:12px;line-height:1.4">
+            Files discovered in this project's folder or <code>assets/</code> subfolders.
+          </div>
           <div id="id-files"></div>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- NEW / EDIT IDEA FORM -->
-  <div id="page-new" class="page">
-    <button class="back-link" onclick="navBack()">← Cancel</button>
-    <div class="pg-head" style="border-bottom:none;margin-bottom:10px;padding-bottom:0">
-      <div>
-        <div class="pg-title" id="form-title">New Idea</div>
-        <div class="pg-sub">Draft a new architectural fragment</div>
-      </div>
-      <button type="button" class="btn btn-primary" onclick="submitIdea(event)">Save to Repository</button>
-    </div>
-    <form id="idea-form" onsubmit="submitIdea(event)">
-      <div class="card card-pad" style="margin-bottom:16px">
-        <div class="form-group">
-          <label class="form-label">Title <span class="form-req">*</span></label>
-          <input type="text" id="f-title" class="form-input" required placeholder="e.g. Core Protocols">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Tagline</label>
-          <input type="text" id="f-tagline" class="form-input" placeholder="One sentence summary...">
-        </div>
-        <div class="form-row3">
-          <div class="form-group">
-            <label class="form-label">Architecture Layer <span class="form-req">*</span></label>
-            <select id="f-layer" class="form-input form-select" required></select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Status <span class="form-req">*</span></label>
-            <select id="f-status" class="form-input form-select" required>
-              <option value="concept">Concept</option>
-              <option value="research">In Research</option>
-              <option value="active">Active Development</option>
-              <option value="paused">Paused</option>
-              <option value="archived">Archived</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Priority</label>
-            <select id="f-priority" class="form-input form-select">
-              <option value="low">Low</option>
-              <option value="medium" selected>Medium</option>
-              <option value="high">High</option>
-              <option value="critical">Critical</option>
-            </select>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Tags (comma separated)</label>
-            <input type="text" id="f-tags" class="form-input" placeholder="ai, ethics, web3...">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Progress (0-100%)</label>
-            <input type="number" id="f-progress" class="form-input" min="0" max="100" value="0">
-          </div>
-        </div>
-      </div>
-
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
-        <div>
-          <div class="sh">White Paper (Markdown)</div>
-          <div class="form-group">
-            <textarea id="f-whitepaper" class="form-input form-textarea" style="min-height:300px" placeholder="# Introduction..."></textarea>
-          </div>
-          <div class="sh">Technical Specification</div>
-          <div class="form-group">
-            <textarea id="f-techspec" class="form-input form-textarea" placeholder="Tech stack, API, logic..."></textarea>
-          </div>
-        </div>
-        <div>
-          <div class="sh">Live Preview</div>
-          <div class="card card-pad md-content" id="form-preview" style="min-height:430px;background:var(--bg);border-color:var(--brd2)"></div>
-        </div>
-      </div>
-
-      <div class="card card-pad" style="margin-top:16px">
-        <div class="sh">Attachments & Assets</div>
-        <div class="file-drop" id="f-dropzone">
-          <div class="file-drop-ico">📄</div>
-          <div class="file-drop-txt">Click or drag files here to attach</div>
-          <div class="file-drop-sub">Images, PDFs, etc. Saved to GitHub /assets/</div>
-          <input type="file" id="f-file-input" multiple style="display:none">
-        </div>
-        <div class="file-list" id="f-files"></div>
-      </div>
-    </form>
-  </div>
-
-  <!-- REPO BROWSER -->
-  <div id="page-repo-browser" class="page">
-    <div class="pg-head">
-      <div>
-        <div class="pg-eyebrow">Repository</div>
-        <div class="pg-title">Files Explorer</div>
-        <div class="pg-sub">Browse raw code and documents in AlexSheff/1149</div>
-      </div>
-    </div>
-    <div class="card">
-      <div style="padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--brd);font-family:var(--mono);font-size:11px;display:flex;gap:5px" id="rb-path"></div>
-      <div id="rb-content" style="padding:16px;min-height:400px;font-size:13px"></div>
-    </div>
-  </div>
-
-  <!-- GRAPH -->
-  <div id="page-graph" class="page" style="padding:0;overflow:hidden;position:relative;display:none;flex-direction:column">
-    <div style="position:absolute;top:20px;left:30px;z-index:10;pointer-events:none">
-      <div class="pg-title">Knowledge Graph</div>
-      <div class="pg-sub">Visual topology of the 1149 architecture</div>
-    </div>
-    <canvas id="kg-canvas" style="width:100%;height:100%;background:var(--bg);display:block"></canvas>
   </div>
 
   <!-- SETTINGS -->
@@ -504,459 +309,234 @@ img{max-width:100%}
     <div class="pg-head">
       <div>
         <div class="pg-eyebrow">System</div>
-        <div class="pg-title">Settings & Sync</div>
-        <div class="pg-sub">Manage GitHub connection and local storage</div>
+        <div class="pg-title">Settings & Access</div>
+        <div class="pg-sub">Manage GitHub token for higher rate limits if needed.</div>
       </div>
     </div>
     <div style="max-width:600px">
       <div class="card card-pad" style="margin-bottom:20px">
-        <div class="sh">GitHub Connection</div>
-        <div class="info-banner">To save ideas and files to GitHub, you need a Personal Access Token (classic) with 'repo' scope. Reading data works without a token.</div>
-        <div class="form-group">
-          <label class="form-label">Personal Access Token</label>
-          <input type="password" id="set-token" class="form-input" placeholder="ghp_xxxxxxxxxxxx">
+        <div class="sh">GitHub Connection (Optional)</div>
+        <div style="font-size:12px;color:var(--ink2);margin-bottom:12px;line-height:1.6">
+          The dashboard uses the open GitHub API to scan the repository. An unauthenticated IP can make 60 requests per hour. If you hit this limit, generate a <b>Personal Access Token (classic)</b> on GitHub (no specific scopes needed for public repos) and paste it here.
         </div>
-        <button class="btn btn-primary" onclick="saveToken()">Save Token</button>
-        <button class="btn btn-ghost" onclick="testConnection()" style="margin-left:8px">Test Connection</button>
+        <div style="margin-bottom:18px">
+          <input type="password" id="set-token" style="width:100%;background:var(--surface2);border:1px solid var(--brd);border-radius:var(--r2);padding:9px 13px;" placeholder="ghp_xxxxxxxxxxxx">
+        </div>
+        <button class="btn btn-primary" onclick="saveToken()">Save Token Locally</button>
       </div>
-
-      <div class="card card-pad" style="margin-bottom:20px">
-        <div class="sh">Data Management</div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap">
-          <button class="btn btn-ghost" onclick="triggerSync()">Pull Latest (Sync)</button>
-          <button class="btn btn-ghost" onclick="triggerExport()">↓ Export JSON</button>
-          <button class="btn btn-ghost" onclick="triggerImport()">↑ Import JSON</button>
-          <button class="btn btn-blue" onclick="seedDefaultIdeas()">Seed Demo Data</button>
-          <button class="btn btn-danger" onclick="confirmClearAll()">Clear Local Cache</button>
-        </div>
+      <div class="card card-pad">
+        <div class="sh">Danger Zone</div>
+        <button class="btn btn-danger" onclick="clearCache()">Clear Local Cache</button>
       </div>
     </div>
   </div>
 </div>
 </div>
 
-<div id="modal-overlay" onclick="closeModalOutside(event)">
-  <div class="modal">
-    <div class="modal-title" id="modal-title"></div>
-    <div class="modal-body" id="modal-body"></div>
-    <div class="modal-actions" id="modal-actions"></div>
-  </div>
-</div>
 <div id="toast-container"></div>
-<input type="file" id="import-input" accept=".json" style="display:none" onchange="handleImport(event)">
 
 <script>
 'use strict';
 
 // ════════════════════════════════════════════
-// CONFIG & STORAGE
+// CONFIGURATION
 // ════════════════════════════════════════════
+const GH_OWNER = 'AlexSheff';
+const GH_REPO = 'AlexSheff/1149';
+const GH_BRANCH = 'main';
+
 const LAYERS = {
-  '01_Ethical_OS': {num:'01',label:'Ethical OS', color:'#7C3AED',desc:'Core rules and ethical protocols — the "license agreement" of the system'},
-  '02_Social_Protocol': {num:'02',label:'Social Protocol', color:'#1A5FB4',desc:'Global interface for human interaction and citizenship frameworks'},
-  '03_Meta_Ecosystems': {num:'03',label:'Meta Ecosystems', color:'#059669',desc:'Primary environments for consciousness defragmentation'},
-  '04_Technical_Nodes': {num:'04',label:'Technical Nodes', color:'#2563EB',desc:'Tools for digital sovereignty, AI, and cryptographic infrastructure'},
-  '05_Reality_Hardware':{num:'05',label:'Reality Hardware',color:'#D97706',desc:'Physical and economic interfaces between digital vision and material world'},
-  '06_Social_Impact': {num:'06',label:'Social Impact', color:'#DB2777',desc:'Communities, cultural filters, and solidarity-in-practice structures'},
-  '07_Research_Lab': {num:'07',label:'Research Lab', color:'#4F46E5',desc:'Future hypotheses, speculative research, frontier thinking'},
-  '08_Archive': {num:'08',label:'Archive', color:'#6B7280',desc:'Personal logbook, verified data, and historical record'},
+  '01_Ethical_OS': {num:'01',label:'Ethical OS', color:'#7C3AED',desc:'Core rules and ethical protocols'},
+  '02_Social_Protocol': {num:'02',label:'Social Protocol', color:'#1A5FB4',desc:'Global interface for human interaction'},
+  '03_Meta_Ecosystems': {num:'03',label:'Meta Ecosystems', color:'#059669',desc:'Primary environments'},
+  '04_Technical_Nodes': {num:'04',label:'Technical Nodes', color:'#2563EB',desc:'Tools for digital sovereignty, AI, crypto'},
+  '05_Reality_Hardware':{num:'05',label:'Reality Hardware',color:'#D97706',desc:'Physical and economic interfaces'},
+  '06_Social_Impact': {num:'06',label:'Social Impact', color:'#DB2777',desc:'Communities and cultural filters'},
+  '07_Research_Lab': {num:'07',label:'Research Lab', color:'#4F46E5',desc:'Future hypotheses, speculative research'},
+  '08_Archive': {num:'08',label:'Archive', color:'#6B7280',desc:'Personal logbook and historical record'},
 };
 const LAYER_KEYS = Object.keys(LAYERS);
 
-const GH_OWNER = 'AlexSheff';
-const GH_REPO = 'AlexSheff/1149';
-const GH_FILE = 'data/ideas.json';
-const GH_BRANCH = 'main';
-const CACHE_KEY = 'rrl_v5_cache';
-const CFG_KEY = 'rrl_v5_cfg';
-
-const PRI_C = {critical:'#B91C1C', high:'#C2410C', medium:'#A8651A', low:'#4B5563'};
-const STATUS_CLS = {active:'b-active', research:'b-research', concept:'b-concept', paused:'b-paused', archived:'b-archived'};
-const PRI_CLS = {critical:'b-critical', high:'b-high', medium:'b-medium', low:'b-low'};
-const LANG_COLORS = {JavaScript:'#f1e05a',TypeScript:'#3178c6',Python:'#3572A5',HTML:'#e34c26',CSS:'#563d7c',Rust:'#dea584',Go:'#00ADD8','C++':'#f34b7d',Shell:'#89e051',Markdown:'#083fa1',Vue:'#41b883',Svelte:'#ff3e00','Jupyter Notebook':'#DA5B0B'};
-
-const cfgGet = () => { try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch { return {}; } };
-const cfgSet = o => localStorage.setItem(CFG_KEY, JSON.stringify({...cfgGet(), ...o}));
-const getToken = () => cfgGet().token || '';
-const getSha = () => cfgGet().sha || '';
-
-const cacheRead = () => { 
-  try { 
-    const data = JSON.parse(localStorage.getItem(CACHE_KEY)); 
-    if (Array.isArray(data)) return data;
-    if (data && typeof data === 'object' && Array.isArray(data.ideas)) return data.ideas;
-  } catch(e) {} 
-  return[]; 
-};
-const cacheWrite = d => { try { localStorage.setItem(CACHE_KEY, JSON.stringify(d)); } catch(e) {} };
-const getIdeas = () => cacheRead() ||[];
-
-// Global States
+// Global State
+let repoTree =[];      // 100% of files in repo
+let discoveredIdeas =[]; // Folders containing README.md or WHITE_PAPER.md
 let currentPage = 'dashboard';
 let prevPage = 'dashboard';
-let editingId = null;
-let pendingFiles = [];
-let allMdFiles =[];
-window._mdFilesCache = [];
-window._reposCache =[];
 
-// Base64 Helpers
-function b64utf8(b64) {
-  const bin = atob(b64.replace(/[\r\n]/g, ''));
-  const u8 = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
-  return new TextDecoder('utf-8').decode(u8);
-}
-function strToB64(s) {
-  const u8 = new TextEncoder().encode(s);
-  let bin = ''; u8.forEach(b => bin += String.fromCharCode(b));
-  return btoa(bin);
-}
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+// Utils
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const fmtSize = bytes => {
+  if (!bytes) return '0 B';
+  const k = 1024, sizes =['B', 'KB', 'MB'];
+  const i = Math.floor(Math.log(bytes)/Math.log(k));
+  return parseFloat((bytes/Math.pow(k,i)).toFixed(1))+' '+sizes[i];
+};
+const btoaSafe = str => btoa(encodeURIComponent(str)).replace(/[^a-zA-Z0-9]/g, '').slice(0, 12);
 
-// UI Sync
-let syncState = 'idle';
+// UI Sync & Toasts
 function setSyncUI(state, msg) {
-  syncState = state;
   const el = document.getElementById('sync-lbl');
   if (!el) return;
-  const MAP = {idle:'Ready', loading:'Loading…', saving:'Saving…', ok:'Synced ✓', error:'Error ✗', 'no-token':'Read-Only'};
-  el.textContent = msg || MAP[state] || state;
-  const C = {idle:'rgba(255,255,255,.3)', loading:'#93C5FD', saving:'#FCD34D', ok:'#4ADE80', error:'#FCA5A5', 'no-token':'#FBBF24'};
+  el.textContent = msg || state;
+  const C = {idle:'rgba(255,255,255,.3)', loading:'#93C5FD', ok:'#4ADE80', error:'#FCA5A5'};
   el.style.color = C[state] || 'rgba(255,255,255,.3)';
 }
+function toast(msg, type='info') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = msg;
+  c.appendChild(t);
+  setTimeout(() => { t.style.animation = 'slideOut 0.3s ease forwards'; setTimeout(()=>t.remove(),300); }, 3000);
+}
+
+// Token Management
+const getToken = () => localStorage.getItem('rrl_token') || '';
+function saveToken() {
+  const t = document.getElementById('set-token').value.trim();
+  localStorage.setItem('rrl_token', t);
+  toast('Token saved', 'success');
+  forceRescan();
+}
+function clearCache() {
+  localStorage.removeItem('rrl_tree_cache');
+  localStorage.removeItem('rrl_token');
+  window.location.reload();
+}
 
 // ════════════════════════════════════════════
-// GITHUB API
+// GITHUB API: THE "ONE REQUEST" TREE SCANNER
 // ════════════════════════════════════════════
-function ghHeaders() {
+function getFetchOpts() {
   const h = {'Accept': 'application/vnd.github.v3+json'};
   const t = getToken();
-  if (t) h['Authorization'] = 'token ' + t;
-  return h;
-}
-function ghHeadersWrite() { return {...ghHeaders(), 'Content-Type': 'application/json'}; }
-
-async function ghRead() {
-  // Public repos don't need a token to be read!
-  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}?ref=${GH_BRANCH}`, {headers: ghHeaders()});
-  if (r.status === 404) return {ideas:[], sha: null};
-  if (r.status === 403) throw new Error('Rate Limit Exceeded');
-  if (!r.ok) throw new Error('Read Error: ' + r.status);
-  const f = await r.json();
-  let parsed;
-  try { parsed = JSON.parse(b64utf8(f.content)); } catch { parsed =[]; }
-  return {ideas: Array.isArray(parsed) ? parsed : (parsed.ideas ||[]), sha: f.sha};
+  if (t) h['Authorization'] = `token ${t}`;
+  return {headers: h};
 }
 
-async function ghWrite(ideas) {
-  if (!getToken()) throw new Error('No GitHub token');
-  const body = JSON.stringify({version:5, updated: new Date().toISOString(), ideas}, null, 2);
-  const payload = {message:`ideas: update (${ideas.length}) ${new Date().toISOString().slice(0,10)}`, content: strToB64(body), branch: GH_BRANCH};
-  const sha = getSha();
-  if (sha) payload.sha = sha;
-  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_FILE}`, {method:'PUT', headers: ghHeadersWrite(), body: JSON.stringify(payload)});
-  if (!r.ok) throw new Error('Write Error: ' + r.status);
-  const data = await r.json();
-  cfgSet({sha: data.content.sha});
-  return data;
-}
-
-async function ghGetFile(path) {
-  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`, {headers: ghHeaders()});
-  if (r.status === 403) throw new Error('Rate Limit');
-  if (!r.ok) return null;
-  const f = await r.json();
-  let content = '';
-  try { content = b64utf8(f.content); } catch {}
-  return {content, sha: f.sha, path: f.path, name: f.name, html_url: f.html_url};
-}
-
-async function ghGetSha(path) {
-  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}`, {headers: ghHeaders()});
-  if (!r.ok) return null;
-  const d = await r.json();
-  return d.sha || null;
-}
-
-async function ghWriteFile(path, content, sha, msg) {
-  if (!getToken()) return null;
-  const payload = {message: msg || `docs: update ${path.split('/').pop()}`, content: strToB64(content), branch: GH_BRANCH};
-  if (sha) payload.sha = sha;
-  const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${path}`, {method:'PUT', headers: ghHeadersWrite(), body: JSON.stringify(payload)});
-  if (!r.ok) throw new Error('WriteFile Error: ' + r.status);
-  return r.json();
-}
-
-async function ghListDir(path) {
-  const url = path ? `https://api.github.com/repos/${GH_REPO}/contents/${path}?ref=${GH_BRANCH}` : `https://api.github.com/repos/${GH_REPO}/contents?ref=${GH_BRANCH}`;
-  const r = await fetch(url, {headers: ghHeaders()});
-  if (r.status === 403) throw new Error('Rate Limit Exceeded');
-  if (!r.ok) return [];
-  const d = await r.json();
-  return Array.isArray(d) ? d :[];
-}
-
-async function scanAllMdFiles() {
-  const files =[];
+// Скачиваем сырой файл минуя лимиты GitHub API (используем raw.githubusercontent.com)
+async function fetchRawMarkdown(path) {
   try {
-    const root = await ghListDir('');
-    for (const f of root) {
-      if (f.type === 'file' && /\.md$/i.test(f.name)) {
-        files.push({path: f.name, name: f.name, layer: null, size: f.size, sha: f.sha});
-      }
-    }
-  } catch {}
-  for (const lk of LAYER_KEYS) {
-    try {
-      const entries = await ghListDir(lk);
-      for (const entry of entries) {
-        if (entry.type === 'file' && /\.md$/i.test(entry.name)) {
-          files.push({path: `${lk}/${entry.name}`, name: entry.name, layer: lk, size: entry.size, sha: entry.sha});
-        } else if (entry.type === 'dir') {
-          try {
-            const sub = await ghListDir(`${lk}/${entry.name}`);
-            for (const sf of sub) {
-              if (sf.type === 'file' && /\.md$/i.test(sf.name)) {
-                files.push({path: `${lk}/${entry.name}/${sf.name}`, name: sf.name, folder: entry.name, layer: lk, size: sf.size, sha: sf.sha});
-              }
-            }
-          } catch {}
-        }
-      }
-    } catch {}
-  }
-  allMdFiles = files;
-  window._mdFilesCache = files;
-  return files;
+    const r = await fetch(`https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${path}`);
+    if (!r.ok) return null;
+    return await r.text();
+  } catch(e) { return null; }
 }
 
-// ════════════════════════════════════════════
-// PARSERS
-// ════════════════════════════════════════════
-function parseYamlFM(md) {
-  const meta = {};
-  if (!md || !md.startsWith('---')) return {meta, body: md || ''};
-  const normalizedMd = md.replace(/\r\n/g, '\n');
-  const end = normalizedMd.indexOf('\n---', 4);
-  if (end === -1) return {meta, body: normalizedMd};
-  const yaml = normalizedMd.slice(4, end);
-  const body = normalizedMd.slice(end + 4).replace(/^\n/, '');
-  yaml.split('\n').forEach(line => {
-    const c = line.indexOf(':');
-    if (c === -1) return;
-    const key = line.slice(0, c).trim();
-    let val = line.slice(c + 1).trim();
-    if (val.startsWith('[') && val.endsWith(']')) {
-      val = val.slice(1, -1).split(',').map(s => s.trim().replace(/^["']|["']$/g, '')).filter(Boolean);
-    } else {
-      val = val.replace(/^["']|["']$/g, '');
-      if (val === 'true') val = true;
-      else if (val === 'false') val = false;
-      else if (!isNaN(val) && val !== '') val = Number(val);
-    }
-    meta[key] = val;
-  });
-  return {meta, body};
-}
-
-function mdFileToIdea(filePath, content) {
-  const {meta, body} = parseYamlFM(content);
-  const parts = filePath.split('/');
-  const layer = parts[0] || meta.layer || '';
-  const folderName = parts[1] || '';
-  return {
-    id: String(meta.id || Math.random().toString(36).substring(2, 10)),
-    title: String(meta.title || folderName.replace(/_/g, ' ').replace(/\.md$/i,'')),
-    layer: String(meta.layer || layer),
-    doctype: String(meta.doctype || 'White Paper'),
-    status: String(meta.status || 'concept'),
-    priority: String(meta.priority || 'medium'),
-    progress: Number(meta.progress || 0),
-    tagline: String(meta.tagline || ''),
-    tags: Array.isArray(meta.tags) ? meta.tags : (meta.tags ? [meta.tags] :[]),
-    related: Array.isArray(meta.related) ? meta.related.map(String) :[],
-    is1149: meta.is_1149 === true || meta.is_1149 === 'true',
-    whitepaper: body.split('\n## Technical Specification')[0].trim(),
-    techspec: body.includes('\n## Technical Specification') ? body.split('\n## Technical Specification')[1].trim() : (meta.techspec || ''),
-    solidarity: String(meta.solidarity || ''),
-    updated: String(meta.updated || new Date().toISOString().slice(0, 10)),
-    files:[],
-    _ghPath: filePath,
-    _wpSha: null,
-  };
-}
-
-function buildWhitePaper(idea) {
-  const tags = (idea.tags||[]).join(', ');
-  const rel = (idea.related||[]).join(', ');
-  const now = new Date().toISOString().slice(0,10);
-  return[
-    '---',
-    `id: "${idea.id}"`,
-    `title: "${String(idea.title||'').replace(/"/g,'\\"')}"`,
-    `layer: "${idea.layer||''}"`,
-    `doctype: "${idea.doctype||'White Paper'}"`,
-    `status: ${idea.status||'concept'}`,
-    `priority: ${idea.priority||'medium'}`,
-    `progress: ${idea.progress||0}`,
-    `tags:[${tags}]`,
-    `related:[${rel}]`,
-    `is_1149: ${idea.is1149?'true':'false'}`,
-    idea.solidarity ? `solidarity: "${String(idea.solidarity).replace(/"/g,'\\"').slice(0,200)}"` : null,
-    `updated: ${now}`,
-    `author: Founder Alex`,
-    `tagline: "${String(idea.tagline||'').replace(/"/g,'\\"')}"`,
-    '---',
-    '',
-    `# ${idea.title||''} — White Paper`,
-    '',
-    idea.tagline ? `> *${idea.tagline}*` : null,
-    '',
-    '---',
-    '',
-    idea.whitepaper || '',
-    '',
-    idea.techspec && idea.techspec.trim().length > 5 ? '\n## Technical Specification\n\n' + idea.techspec : null,
-    '',
-    '---',
-    '',
-    `*White Paper · Reality Refactor Lab · 1149*`,
-  ].filter(l => l !== null).join('\n');
-}
-
-// ════════════════════════════════════════════
-// REPO SYNC & SAVE
-// ════════════════════════════════════════════
-async function scanRepoForIdeas() {
-  const found =[];
-  for (const lk of LAYER_KEYS) {
-    let entries;
-    try { entries = await ghListDir(lk); } catch { continue; }
-    for (const entry of entries) {
-      if (entry.type === 'file' && entry.name.endsWith('.md')) {
-        const file = await ghGetFile(`${lk}/${entry.name}`);
-        if (file) {
-          const idea = mdFileToIdea(`${lk}/${entry.name}`, file.content);
-          idea._wpSha = file.sha;
-          found.push(idea);
-        }
-      } else if (entry.type === 'dir') {
-        const candidates =[`${lk}/${entry.name}/WHITE_PAPER.md`, `${lk}/${entry.name}/README.md`];
-        for (const wp of candidates) {
-          const file = await ghGetFile(wp);
-          if (file) {
-            const idea = mdFileToIdea(wp, file.content);
-            idea._wpSha = file.sha;
-            found.push(idea);
-            break;
-          }
-        }
-      }
-    }
-  }
-  return found;
-}
-
-async function fullRepoSync(silent = false) {
-  setSyncUI('loading', 'Scanning…');
-  if (!silent) toast('Scanning repository folders…', 'info');
-  try {
-    const fromRepo = await scanRepoForIdeas();
-    if (!fromRepo) return null;
-    const cached = cacheRead();
-    const cachedMap = {};
-    cached.forEach(i => { if (i.id) cachedMap[i.id] = i; });
-    const merged = fromRepo.map(idea => ({...idea, files: (cachedMap[idea.id]||{}).files||[]}));
-    const repoIds = new Set(fromRepo.map(i => i.id));
-    cached.forEach(c => { if (!repoIds.has(c.id)) merged.push(c); });
-    
-    cacheWrite(merged);
-    if (getToken()) await ghWrite(merged);
-    
-    updateBadges(); renderAll();
-    if (!silent) toast(`Loaded ${fromRepo.length} ideas from repo`, 'success');
-    setSyncUI(getToken() ? 'ok' : 'no-token');
-    
-    return merged;
-  } catch(e) {
-    if (e.message.includes('Rate Limit')) toast('GitHub API limit reached', 'error');
-    setSyncUI('error');
-    return null;
-  }
-}
-
-async function save(ideas) {
-  cacheWrite(ideas);
-  updateBadges();
-  if (!getToken()) {
-    toast('Saved locally (Read-Only Mode)', 'warn');
-    return;
-  }
-  setSyncUI('saving');
-  try { await ghWrite(ideas); setSyncUI('ok'); }
-  catch(e) { setSyncUI('error'); toast('GitHub sync failed', 'error'); }
-}
-
-async function saveIdea(idea) {
-  if (!getToken()) {
-    toast('No Token: Saved to local browser cache only.', 'warn');
-    const ideas = getIdeas();
-    const idx = ideas.findIndex(i => i.id === idea.id);
-    if (idx !== -1) ideas[idx] = idea; else ideas.push(idea);
-    cacheWrite(ideas);
-    updateBadges();
-    return;
-  }
-
-  setSyncUI('saving');
-  try {
-    const slug = idea.title.trim().replace(/[^\w\s-]/g,'').replace(/\s+/g,'_').slice(0,55);
-    const folder = idea._ghPath ? idea._ghPath.replace(/\/(WHITE_PAPER|README)\.md$/,'') : `${idea.layer||'01_Ethical_OS'}/${slug}`;
-    const wpMd = buildWhitePaper(idea);
-    const p = `${folder}/WHITE_PAPER.md`;
-    const sha = idea._wpSha || await ghGetSha(p);
-    const res = await ghWriteFile(p, wpMd, sha, `idea: ${idea.title}`);
-    if (res?.content?.sha) idea._wpSha = res.content.sha;
-    idea._ghPath = p;
-  } catch(e) { toast('MD write failed', 'error'); }
-
-  if (idea.files && idea.files.some(f => !f._repoPath)) await uploadAttachments(idea);
-
-  const ideas = getIdeas();
-  const idx = ideas.findIndex(i => i.id === idea.id);
-  if (idx !== -1) ideas[idx] = idea; else ideas.push(idea);
-  await save(ideas);
-}
-
-async function uploadAttachments(idea) {
-  if (!getToken()) return;
-  const slug = idea.title.trim().replace(/[^\w\s-]/g,'').replace(/\s+/g,'_').slice(0,55);
-  const folder = idea._ghPath ? idea._ghPath.replace(/\/(WHITE_PAPER|README)\.md$/,'') : `${idea.layer||'01_Ethical_OS'}/${slug}`;
+async function fetchRepoTree() {
+  setSyncUI('loading', 'Scanning Tree API...');
   
-  for (const f of (idea.files ||[])) {
-    if (!f.data || f._repoPath) continue;
-    try {
-      const base64 = f.data.split(',')[1];
-      if (!base64) continue;
-      const safeName = f.name.replace(/[^\w.-]/g, '_');
-      const filePath = `${folder}/assets/${safeName}`;
-      const existSha = await ghGetSha(filePath);
-      const payload = {message: `attach: ${f.name}`, content: base64, branch: GH_BRANCH};
-      if (existSha) payload.sha = existSha;
-      const r = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${filePath}`, {method:'PUT', headers: ghHeadersWrite(), body: JSON.stringify(payload)});
-      if (r.ok) {
-        f._repoPath = filePath;
-        f._repoUrl = `https://github.com/${GH_REPO}/blob/${GH_BRANCH}/${filePath}`;
-        f.data = null;
-        toast(`Uploaded: ${f.name}`, 'success');
-      }
-    } catch(e) {}
+  // 1. Попробуем кэш (живет 5 минут)
+  try {
+    const cached = JSON.parse(localStorage.getItem('rrl_tree_cache'));
+    if (cached && cached.time > Date.now() - 300000 && cached.tree) {
+      setSyncUI('ok', 'Loaded from Cache');
+      return cached.tree;
+    }
+  } catch(e) {}
+
+  // 2. Делаем 1 запрос, чтобы получить ВЕСЬ репозиторий со всеми подпапками
+  try {
+    const r = await fetch(`https://api.github.com/repos/${GH_REPO}/git/trees/${GH_BRANCH}?recursive=1`, getFetchOpts());
+    if (r.status === 403) throw new Error("GitHub API Limit Exceeded. Add Token in Settings.");
+    if (!r.ok) throw new Error("Failed to read repository tree.");
+    
+    const data = await r.json();
+    const blobs = data.tree.filter(t => t.type === 'blob'); // только файлы
+    
+    localStorage.setItem('rrl_tree_cache', JSON.stringify({time: Date.now(), tree: blobs}));
+    setSyncUI('ok', 'Repository Synced');
+    return blobs;
+  } catch(e) {
+    setSyncUI('error', 'API Rate Limit');
+    toast(e.message, 'error');
+    // Вернем хоть старый кэш если есть
+    try { return JSON.parse(localStorage.getItem('rrl_tree_cache')).tree || []; } catch(err) { return[]; }
   }
 }
 
+function forceRescan() {
+  localStorage.removeItem('rrl_tree_cache');
+  initEngine();
+}
+
 // ════════════════════════════════════════════
-// ROUTING & UI RENDER
+// ENGINE: BUILDING THE DATABASE FROM TREE
+// ════════════════════════════════════════════
+function buildDatabase() {
+  discoveredIdeas =[];
+  
+  // Ищем все markdown файлы
+  const mdFiles = repoTree.filter(f => f.path.toLowerCase().endsWith('.md'));
+  
+  mdFiles.forEach(f => {
+    const parts = f.path.split('/');
+    if (parts.length < 2) return; // Root README (не проект)
+    
+    const layerKey = parts[0];
+    if (!LAYERS[layerKey]) return; // Не в слое архитектуры
+    
+    const isLayerRootReadme = (parts.length === 2 && f.path.toLowerCase().endsWith('readme.md'));
+    if (isLayerRootReadme) return; // README самого слоя обрабатывается отдельно
+    
+    const isProjectReadme = f.path.toLowerCase().endsWith('readme.md') || f.path.toLowerCase().endsWith('white_paper.md');
+    
+    if (isProjectReadme) {
+      // Имя папки становится именем проекта
+      const folderName = parts[parts.length - 2].replace(/_/g, ' ');
+      const folderPath = parts.slice(0, -1).join('/');
+      
+      discoveredIdeas.push({
+        id: btoaSafe(folderPath),
+        title: folderName,
+        layer: layerKey,
+        path: f.path,
+        folder: folderPath,
+        size: f.size
+      });
+    }
+  });
+
+  // Обновляем бейджи в меню
+  document.getElementById('nb-ideas').textContent = discoveredIdeas.length;
+  LAYER_KEYS.forEach(lk => {
+    const L = LAYERS[lk];
+    const n = discoveredIdeas.filter(i=>i.layer===lk).length;
+    const nb = document.getElementById(`nb-${L.num}`);
+    if (nb) nb.textContent = n;
+  });
+}
+
+// ════════════════════════════════════════════
+// MARKDOWN RENDERER (С ПУТЯМИ ДЛЯ КАРТИНОК)
+// ════════════════════════════════════════════
+function md2html(md, basePath = '') {
+  if (!md) return '';
+  const rawBase = `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/`;
+  
+  return md
+    // Замена локальных путей картинок на сырые ссылки гитхаба
+    .replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, path) => {
+      if (path.startsWith('http')) return match;
+      const cleanPath = path.replace(/^\.\//, ''); // убираем ./
+      const fullPath = basePath ? `${basePath}/${cleanPath}` : cleanPath;
+      return `<img alt="${alt}" src="${rawBase}${fullPath}">`;
+    })
+    // Базовый маркдаун
+    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+    .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
+    .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
+    .replace(/\*(.*)\*/gim, '<em>$1</em>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, "<a href='$2' target='_blank'>$1</a>")
+    .replace(/\n$/gim, '<br>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+}
+
+// ════════════════════════════════════════════
+// ROUTING
 // ════════════════════════════════════════════
 function nav(page, id = null) {
   document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
@@ -974,7 +554,10 @@ function nav(page, id = null) {
   if (id) window.location.hash = `${page}/${id}`;
   else window.location.hash = page;
 
-  renderAll();
+  if (page === 'dashboard') renderDashboard();
+  else if (page === 'ideas') renderIdeas();
+  else if (page.startsWith('layer-')) renderLayer(page.replace('layer-',''));
+  else if (page === 'idea') renderIdeaDetail(id);
 }
 
 function navBack() { nav(prevPage === 'dashboard' || prevPage.startsWith('layer-') ? prevPage : 'ideas'); }
@@ -984,740 +567,179 @@ function handleHash() {
   if (h[0]) nav(h[0], h[1]); else nav('dashboard');
 }
 
-function renderAll() {
-  if (currentPage === 'dashboard') { renderDashboard(); }
-  else if (currentPage === 'ideas') { renderIdeas(); }
-  else if (currentPage === 'repos') { renderRepos(); }
-  else if (currentPage.startsWith('layer-')) { renderLayer(currentPage.replace('layer-','')); }
-  else if (currentPage === 'idea') { const id = window.location.hash.split('/')[1]; if(id) renderIdeaDetail(id); }
-  else if (currentPage === 'new') { if (!editingId && !document.getElementById('f-title').value) openNewForm(); }
-  else if (currentPage === 'repo-browser') { if (!window.rbInitiated) initRepoBrowser(); window.rbInitiated = true; }
-  else if (currentPage === 'graph') { setTimeout(renderGraph, 100); }
-}
-
-function updateBadges() {
-  const ideas = getIdeas();
-  document.getElementById('nb-ideas').textContent = ideas.length;
-  LAYER_KEYS.forEach(lk => {
-    const L = LAYERS[lk];
-    const n = ideas.filter(i=>i.layer===lk).length;
-    const nb = document.getElementById(`nb-${L.num}`);
-    const np = document.getElementById(`np-${L.num}`);
-    if (nb) nb.textContent = n;
-    if (np) np.style.width = n > 0 ? `${Math.min(100, n*10)}%` : '0';
-  });
-}
-
-function fmtSize(bytes) {
-  if (!bytes) return '0 B';
-  const k = 1024;
-  const sizes =['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-}
-function fmtDate(s) { 
-  if (!s) return '—';
-  const d = new Date(s);
-  return isNaN(d) ? '—' : d.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); 
-}
-
 // ════════════════════════════════════════════
-// DASHBOARD
+// RENDER: DASHBOARD
 // ════════════════════════════════════════════
 async function renderDashboard() {
-  const ideas = getIdeas();
   const now = new Date();
-  document.getElementById('dash-date-head').innerHTML = now.toLocaleDateString('en-US',{weekday:'long'})+'<br>'+now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('sb-date').textContent = now.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
 
-  const active = ideas.filter(i=>i.status==='active').length;
-  const research = ideas.filter(i=>i.status==='research').length;
-  const is1149 = ideas.filter(i=>i.is1149).length;
-  const avgProg = ideas.length ? Math.round(ideas.reduce((s,i)=>s+(i.progress||0),0)/ideas.length) : 0;
+  // Рендер корневого README проекта (AlexSheff/1149/README.md)
+  const rmBox = document.getElementById('dash-readme-box');
+  if (rmBox.innerHTML.includes('Fetching')) {
+    const rawMd = await fetchRawMarkdown('README.md');
+    rmBox.innerHTML = rawMd ? md2html(rawMd) : '<div style="color:var(--ink3)">Root README.md not found in repository.</div>';
+  }
 
-  document.getElementById('dash-stats').innerHTML = `
-    <div class="stat-card" style="--ac:#7C3AED" onclick="nav('ideas')"><div class="stat-num">${ideas.length}</div><div class="stat-lbl">Total Ideas</div></div>
-    <div class="stat-card" style="--ac:#059669" onclick="nav('ideas')"><div class="stat-num">${active}</div><div class="stat-lbl">Active</div></div>
-    <div class="stat-card" style="--ac:#2563EB" onclick="nav('ideas')"><div class="stat-num">${research}</div><div class="stat-lbl">In Research</div></div>
-    <div class="stat-card" style="--ac:#D97706"><div class="stat-num">${is1149}</div><div class="stat-lbl">1149 Thread</div></div>
-    <div class="stat-card" style="--ac:#16A34A"><div class="stat-num">${avgProg}</div><div class="stat-lbl">Avg Progress</div><div class="stat-delta">overall health</div></div>`;
-
+  // Рендер слоев
   document.getElementById('dash-layers').innerHTML = LAYER_KEYS.map(lk => {
     const L = LAYERS[lk];
-    const layerIdeas = ideas.filter(i=>i.layer===lk);
-    const count = layerIdeas.length;
-    const avg = count ? Math.round(layerIdeas.reduce((s,i)=>s+(i.progress||0),0)/count) : 0;
+    const count = discoveredIdeas.filter(i=>i.layer===lk).length;
     return `<div class="mini-row" onclick="nav('layer-${L.num}')">
       <div style="width:30px;height:30px;border-radius:var(--r2);background:${L.color}14;border:1.5px solid ${L.color}40;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:var(--mono);font-size:9px;font-weight:600;color:${L.color}">${L.num}</div>
-      <div class="mini-body"><div class="mini-t">${L.label}</div><div class="mini-s">${L.desc.slice(0,40)}…</div><div class="pbar pbar-sm"><div class="pbar-f" style="width:${avg}%;background:${L.color}99"></div></div></div>
-      <div class="mini-r"><div style="font-size:14px;font-weight:600;color:var(--ink);font-family:var(--serif)">${count}</div><div style="font-size:9px;color:var(--ink3);font-family:var(--mono)">${avg}%</div></div>
+      <div class="mini-body"><div class="mini-t">${L.label}</div><div class="mini-s">${count} projects</div></div>
     </div>`;
   }).join('');
 
-  const dr = document.getElementById('dash-recent');
-  const recent = [...ideas].sort((a,b) => new Date(b.updated)-new Date(a.updated)).slice(0,6);
-  dr.innerHTML = recent.length ? recent.map(i => {
-    const L = LAYERS[i.layer] || {color:'#888',label:i.layer};
+  // Последние проекты
+  document.getElementById('dash-proj-total').textContent = `(${discoveredIdeas.length})`;
+  document.getElementById('dash-recent-projects').innerHTML = discoveredIdeas.slice(0, 10).map(i => {
+    const L = LAYERS[i.layer];
     return `<div class="mini-row" onclick="nav('idea','${i.id}')">
       <div class="mini-strip" style="background:${L.color}"></div>
-      <div class="mini-body"><div class="mini-t">${esc(i.title)}</div><div class="mini-s">${L.label} · ${fmtDate(i.updated)}</div></div>
-      <div class="mini-r"><span class="badge ${STATUS_CLS[i.status]||'b-paused'}">${i.status}</span></div>
-    </div>`;
-  }).join('') : `<div class="empty-state" style="padding:24px 0"><div class="empty-ico">◈</div><div class="empty-sub">No ideas yet.</div></div>`;
-
-  const drm = document.getElementById('dash-repos-mini');
-  const repos = window._reposCache ||[];
-  const drmTotal = document.getElementById('dash-repos-total');
-  if (drmTotal) drmTotal.textContent = `(${repos.length})`;
-  if (drm) {
-    drm.innerHTML = repos.slice(0,6).map(r => `
-      <div class="mini-row" onclick="window.open('${r.html_url}','_blank')">
-        <div class="mini-body">
-          <div class="mini-t">${r.fork?'🔀 ':''}${esc(r.name)}</div>
-          <div class="mini-s">${r.description ? esc(r.description).slice(0,65)+'…' : (r.language||'—')}</div>
-        </div>
-        <div class="mini-r">
-          ${r.language ? `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${LANG_COLORS[r.language]||'#888'};margin-right:4px"></span>` : ''}
-          <span style="font-size:9px;color:var(--ink3)">⭐${r.stargazers_count}</span>
-        </div>
-      </div>`).join('');
-  }
-
-  if (window._mdFilesCache && window._mdFilesCache.length) {
-    renderDashMdFiles(window._mdFilesCache, document.getElementById('dash-md-files'), document.getElementById('dash-md-count'));
-  } else {
-    loadDashMdFiles();
-  }
-}
-
-async function loadDashMdFiles(force = false) {
-  const el = document.getElementById('dash-md-files');
-  const cnt = document.getElementById('dash-md-count');
-  if (!el) return;
-  if (!force && window._mdFilesCache.length) { renderDashMdFiles(window._mdFilesCache, el, cnt); return; }
-  el.innerHTML = `<div class="spinner"><span class="spin">↻</span> Scanning .md files...</div>`;
-  try {
-    const files = await scanAllMdFiles();
-    renderDashMdFiles(files, el, cnt);
-  } catch(e) { el.innerHTML = `<div style="font-size:11px;color:var(--ink3)">Rate limit exceeded. Could not load MD files.</div>`; }
-}
-
-function renderDashMdFiles(files, el, cnt) {
-  if (cnt) cnt.textContent = `(${files.length})`;
-  el.innerHTML = files.map(f => {
-    const L = f.layer ? LAYERS[f.layer] : {color:'#888'};
-    const safePath = f.path.replace(/'/g, "\\'");
-    const safeName = esc(f.name).replace(/'/g, "\\'");
-    return `<div class="mini-row" onclick="openMdFromDash('${safePath}', '${safeName}')">
-      <div style="width:26px;height:26px;border-radius:var(--r);background:${L.color}14;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">📄</div>
-      <div class="mini-body"><div class="mini-t" style="font-size:11.5px">${esc(f.name)}</div><div class="mini-s" style="font-family:var(--mono);font-size:8.5px">${esc(f.path)}</div></div>
-      <div class="mini-r" style="font-size:9px;color:var(--ink3)">${f.size ? fmtSize(f.size) : ''}</div>
+      <div class="mini-body"><div class="mini-t">${esc(i.title)}</div><div class="mini-s" style="font-family:var(--mono);font-size:8px">${esc(i.folder)}</div></div>
     </div>`;
   }).join('');
 }
 
-function openMdFromDash(path, name) {
-  rbOpenFile(path, name);
-  nav('repo-browser');
-}
-
 // ════════════════════════════════════════════
-// IDEAS & LAYERS
+// RENDER: ALL IDEAS / PROJECTS
 // ════════════════════════════════════════════
-let currentIdeaFilter = 'all';
-
-function ideaCardHtml(i) {
-  const L = LAYERS[i.layer] || {label:'Unknown',color:'#888'};
-  const tags = (i.tags||[]).slice(0,3).map(t=>`<span class="tag">${esc(t)}</span>`).join('');
-  return `<div class="idea-card" style="--layer-color:${L.color}" onclick="nav('idea','${i.id}')">
-    ${i._ghPath ? `<div class="ic-from-repo">📄 GitHub</div>` : ''}
-    <div class="ic-layer" style="color:${L.color}">${L.label}</div>
-    <div class="ic-title">${esc(i.title)}</div>
-    <div class="ic-doctype">${esc(i.doctype)} · <span style="color:${PRI_C[i.priority]||'#888'}">${i.priority}</span></div>
-    <div class="ic-tagline">${esc(i.tagline||i.whitepaper?.slice(0,80)||'')}</div>
-    <div class="ic-foot">
-      <div class="ic-tags">${tags}</div>
-      <div class="ic-meta">
-        <div class="ic-pct" style="color:${L.color}">${i.progress||0}%</div>
-        <div class="ic-upd">${fmtDate(i.updated)}</div>
-      </div>
-    </div>
-  </div>`;
-}
-
 function renderIdeas() {
   const q = (document.getElementById('ideas-search')?.value||'').toLowerCase();
-  const clr = document.getElementById('ideas-search-clear');
-  if (clr) q ? clr.classList.add('vis') : clr.classList.remove('vis');
   
-  document.getElementById('ideas-filters').innerHTML = `
-    <button class="fb ${currentIdeaFilter==='all'?'on':''}" onclick="setIdeaFilter('all')">All Ideas</button>
-    <div class="f-sep"></div>
-    <button class="fb ${currentIdeaFilter==='active'?'on':''}" onclick="setIdeaFilter('active')">Active</button>
-    <button class="fb ${currentIdeaFilter==='research'?'on':''}" onclick="setIdeaFilter('research')">Research</button>
-    <button class="fb ${currentIdeaFilter==='1149'?'on':''}" onclick="setIdeaFilter('1149')">1149 Core</button>
-  `;
-
-  let arr = getIdeas();
-  if (currentIdeaFilter !== 'all') {
-    if (currentIdeaFilter === '1149') arr = arr.filter(i => i.is1149);
-    else arr = arr.filter(i => i.status === currentIdeaFilter);
-  }
+  let arr = discoveredIdeas;
   if (q) {
-    arr = arr.filter(i => (i.title||'').toLowerCase().includes(q) || (i.tagline||'').toLowerCase().includes(q) || (i.tags||[]).join(' ').toLowerCase().includes(q));
+    arr = arr.filter(i => i.title.toLowerCase().includes(q) || i.folder.toLowerCase().includes(q));
   }
 
   document.getElementById('ideas-grid').innerHTML = arr.length 
-    ? arr.map(ideaCardHtml).join('') 
-    : `<div class="empty-state" style="grid-column:1/-1"><div class="empty-ico">◈</div><div class="empty-title">No matching ideas found</div></div>`;
+    ? arr.map(i => {
+        const L = LAYERS[i.layer];
+        return `<div class="idea-card" style="--layer-color:${L.color}" onclick="nav('idea','${i.id}')">
+          <div class="ic-layer" style="color:${L.color}">${L.label}</div>
+          <div class="ic-title" style="margin-bottom:12px">${esc(i.title)}</div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--ink3);word-break:break-all;line-height:1.4">${esc(i.path)}</div>
+        </div>`;
+      }).join('') 
+    : `<div class="empty-state" style="grid-column:1/-1"><div class="empty-ico">◈</div><div class="empty-title">No matching projects found</div></div>`;
 }
 
-function setIdeaFilter(f) { currentIdeaFilter = f; renderIdeas(); }
-function clearSearch() { document.getElementById('ideas-search').value = ''; renderIdeas(); }
-
-function renderLayer(num) {
+// ════════════════════════════════════════════
+// RENDER: LAYER PAGE (Shows Layer README!)
+// ════════════════════════════════════════════
+async function renderLayer(num) {
   const lk = LAYER_KEYS.find(k => LAYERS[k].num === num);
   if (!lk) return;
   const L = LAYERS[lk];
-  const ideas = getIdeas().filter(i => i.layer === lk);
-  const layerMd = allMdFiles.filter(f => f.layer === lk);
-
+  const projs = discoveredIdeas.filter(i => i.layer === lk);
+  
   const el = document.getElementById(`page-layer-${num}`);
+  
+  // Skeleton
   el.innerHTML = `
     <div class="pg-head">
       <div>
-        <div class="pg-eyebrow" style="color:${L.color}">${L.num} · Reality Refactor Lab</div>
+        <div class="pg-eyebrow" style="color:${L.color}">${L.num} · Architecture Layer</div>
         <div class="pg-title">${L.label}</div>
         <div class="pg-sub">${L.desc}</div>
       </div>
-      <div style="display:flex;gap:8px;align-items:flex-end">
-        <button class="btn btn-primary btn-sm" onclick="nav('new'); setTimeout(()=>document.getElementById('f-layer').value='${lk}',50)">＋ Add to Layer</button>
-      </div>
     </div>
-    ${ideas.length ? `<div class="g3">${ideas.map(ideaCardHtml).join('')}</div>` : `<div class="empty-state"><div class="empty-ico">◈</div><div class="empty-sub">Empty Layer</div></div>`}
-    
-    <div class="sh" style="margin-top:32px">Raw MD Documents in this layer <span style="font-size:9px">(${layerMd.length})</span></div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">
-      ${layerMd.map(f => {
-        const safePath = f.path.replace(/'/g, "\\'");
-        const safeName = esc(f.name).replace(/'/g, "\\'");
-        return `<div class="mini-row" onclick="openMdFromDash('${safePath}','${safeName}')">
-          <div style="width:28px;height:28px;background:${L.color}14;border:1px solid ${L.color}30;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:14px">📄</div>
-          <div style="flex:1"><div style="font-weight:500">${esc(f.name)}</div><div style="font-size:9px;color:var(--ink3);font-family:var(--mono)">${esc(f.path)}</div></div>
-        </div>`;
-      }).join('')}
-      ${layerMd.length === 0 ? '<div style="font-size:11px;color:var(--ink3);padding:10px 0">No direct markdown files found in this layer directory.</div>' : ''}
-    </div>`;
+    <div class="sh">Layer Documentation</div>
+    <div class="layer-readme-box" id="lr-readme-${num}">
+       <div class="spinner"><span class="spin">↻</span> Loading ${lk}/README.md...</div>
+    </div>
+    <div class="sh" style="margin-top:32px">Sub-Projects (${projs.length})</div>
+    <div class="g3">
+      ${projs.length ? projs.map(i => `
+        <div class="idea-card" style="--layer-color:${L.color}" onclick="nav('idea','${i.id}')">
+          <div class="ic-title">${esc(i.title)}</div>
+          <div style="font-family:var(--mono);font-size:8px;color:var(--ink3);margin-top:auto">${esc(i.folder)}</div>
+        </div>
+      `).join('') : '<div style="font-size:11px;color:var(--ink3)">No sub-projects discovered in this layer.</div>'}
+    </div>
+  `;
+
+  // Fetch the specific layer README
+  const rawMd = await fetchRawMarkdown(`${lk}/README.md`);
+  const rEl = document.getElementById(`lr-readme-${num}`);
+  if (rawMd) {
+    rEl.innerHTML = `<div class="md-content">${md2html(rawMd, lk)}</div>`;
+  } else {
+    rEl.innerHTML = `<div style="font-size:12px;color:var(--ink3);text-align:center">No root README.md found in folder <code>${lk}/</code></div>`;
+  }
 }
 
 // ════════════════════════════════════════════
-// IDEA DETAIL
+// RENDER: IDEA DETAIL (Shows README + Attachments)
 // ════════════════════════════════════════════
-function md2html(md) {
-  if (!md) return '';
-  return md
-    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-    .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-    .replace(/^\> (.*$)/gim, '<blockquote>$1</blockquote>')
-    .replace(/\*\*(.*)\*\*/gim, '<strong>$1</strong>')
-    .replace(/\*(.*)\*/gim, '<em>$1</em>')
-    .replace(/!\[(.*?)\]\((.*?)\)/gim, "<img alt='$1' src='$2' style='max-width:100%;border-radius:8px' />")
-    .replace(/\[(.*?)\]\((.*?)\)/gim, "<a href='$2' target='_blank'>$1</a>")
-    .replace(/\n$/gim, '<br />')
-    .replace(/`([^`]+)`/g, '<code>$1</code>')
-    .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-}
-
-function renderIdeaDetail(id) {
-  const idea = getIdeas().find(i => i.id === id);
+async function renderIdeaDetail(id) {
+  const idea = discoveredIdeas.find(i => i.id === id);
   if (!idea) { nav('dashboard'); return; }
   
-  const L = LAYERS[idea.layer] || {label:'Unknown Layer', color:'#888'};
+  const L = LAYERS[idea.layer];
   
   document.getElementById('id-head').innerHTML = `
-    <div class="pg-eyebrow" style="color:${L.color}">${L.label} · ${idea.doctype||'White Paper'}</div>
-    <div class="pg-title" style="margin-bottom:12px">${esc(idea.title)}</div>
-    ${idea.tagline ? `<div style="font-size:16px;color:var(--ink2);margin-bottom:16px;line-height:1.4">${esc(idea.tagline)}</div>` : ''}
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <span class="badge ${STATUS_CLS[idea.status]||'b-paused'}">${idea.status}</span>
-      <span class="badge ${PRI_CLS[idea.priority]||'b-low'}">${idea.priority} priority</span>
-      ${idea.is1149 ? `<span class="badge b-1149">1149 Core Protocol</span>` : ''}
-      <button class="btn btn-ghost btn-sm" style="margin-left:auto" onclick="openEditForm('${idea.id}')">✎ Edit</button>
-      <button class="btn btn-danger btn-sm" onclick="deleteIdea('${idea.id}')">Delete</button>
-    </div>
+    <div class="pg-eyebrow" style="color:${L.color}">${L.label} · Sub-Project</div>
+    <div class="pg-title">${esc(idea.title)}</div>
   `;
-
-  let html = '';
-  if (idea.whitepaper) html += md2html(idea.whitepaper);
-  if (idea.techspec) html += `<hr><h2>Technical Specification</h2>${md2html(idea.techspec)}`;
-  if (idea.solidarity) html += `<hr><h2>Solidarity & Ethics</h2><blockquote>${md2html(idea.solidarity)}</blockquote>`;
-  document.getElementById('id-content').innerHTML = html || '<div class="empty-state">No content written yet.</div>';
-
-  document.getElementById('id-meta').innerHTML = `
-    <div style="margin-bottom:12px"><div style="font-family:var(--mono);font-size:8px;color:var(--ink3);text-transform:uppercase">Progress</div>
-    <div class="pbar"><div class="pbar-f ${idea.status==='active'?'active':''}" style="width:${idea.progress||0}%"></div></div>
-    <div style="text-align:right;font-size:10px;font-family:var(--mono);font-weight:600">${idea.progress||0}%</div></div>
-    ${idea.tags?.length ? `<div style="margin-bottom:12px"><div style="font-family:var(--mono);font-size:8px;color:var(--ink3);text-transform:uppercase;margin-bottom:4px">Tags</div><div class="tag-group">${idea.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div></div>` : ''}
-    <div style="font-family:var(--mono);font-size:8px;color:var(--ink3)">Updated: ${fmtDate(idea.updated)}</div>
-    ${idea._ghPath ? `<div style="font-family:var(--mono);font-size:8px;color:var(--ink3);margin-top:4px">Path: ${idea._ghPath}</div>` : ''}
-  `;
-
-  const files = idea.files ||[];
-  document.getElementById('id-files').innerHTML = files.length ? files.map(f => `
-    <div class="file-item">
-      <div class="file-ico">📄</div>
-      <div class="file-name">${esc(f.name)}</div>
-      ${f._repoUrl ? `<a href="${f._repoUrl}" target="_blank" class="file-del" style="color:var(--blue)">⤓</a>` : ''}
-    </div>`).join('') : '<div style="font-size:11px;color:var(--ink3)">No attached files</div>';
-}
-
-// ════════════════════════════════════════════
-// FORM HANDLERS
-// ════════════════════════════════════════════
-function openNewForm() {
-  editingId = null;
-  document.getElementById('idea-form').reset();
-  document.getElementById('f-layer').innerHTML = LAYER_KEYS.map(k => `<option value="${k}">${LAYERS[k].num} · ${LAYERS[k].label}</option>`).join('');
-  document.getElementById('form-title').textContent = 'New Idea';
-  pendingFiles =[];
-  renderFileList();
-  updateFormPreview();
-  nav('new');
-}
-
-function openEditForm(id) {
-  const idea = getIdeas().find(i => i.id === id);
-  if (!idea) return;
-  editingId = id;
-  document.getElementById('f-layer').innerHTML = LAYER_KEYS.map(k => `<option value="${k}">${LAYERS[k].num} · ${LAYERS[k].label}</option>`).join('');
+  document.getElementById('id-meta').innerHTML = `<code>${idea.folder}/</code>`;
   
-  document.getElementById('f-title').value = idea.title || '';
-  document.getElementById('f-tagline').value = idea.tagline || '';
-  document.getElementById('f-layer').value = idea.layer || LAYER_KEYS[0];
-  document.getElementById('f-status').value = idea.status || 'concept';
-  document.getElementById('f-priority').value = idea.priority || 'medium';
-  document.getElementById('f-progress').value = idea.progress || 0;
-  document.getElementById('f-tags').value = (idea.tags||[]).join(', ');
-  document.getElementById('f-whitepaper').value = idea.whitepaper || '';
-  document.getElementById('f-techspec').value = idea.techspec || '';
+  const contentEl = document.getElementById('id-content');
+  contentEl.innerHTML = `<div class="spinner"><span class="spin">↻</span> Loading markdown...</div>`;
   
-  document.getElementById('form-title').textContent = 'Edit Idea';
-  pendingFiles = [...(idea.files||[])];
-  renderFileList();
-  updateFormPreview();
-  nav('new');
-}
-
-function updateFormPreview() {
-  const v = document.getElementById('f-whitepaper').value;
-  document.getElementById('form-preview').innerHTML = md2html(v) || '<div style="color:var(--ink4);font-style:italic">Preview will appear here...</div>';
-}
-
-async function submitIdea(e) {
-  e.preventDefault();
-  if (!document.getElementById('f-title').value) {
-    toast('Title is required', 'error');
-    return;
-  }
-  const idea = {
-    id: editingId || Math.random().toString(36).slice(2,10),
-    title: document.getElementById('f-title').value,
-    tagline: document.getElementById('f-tagline').value,
-    layer: document.getElementById('f-layer').value,
-    status: document.getElementById('f-status').value,
-    priority: document.getElementById('f-priority').value,
-    progress: parseInt(document.getElementById('f-progress').value) || 0,
-    tags: document.getElementById('f-tags').value.split(',').map(s=>s.trim()).filter(Boolean),
-    whitepaper: document.getElementById('f-whitepaper').value,
-    techspec: document.getElementById('f-techspec').value,
-    updated: new Date().toISOString(),
-    files: pendingFiles,
-    is1149: false
-  };
-
-  if (editingId) {
-    const existing = getIdeas().find(i => i.id === editingId);
-    if (existing) { idea._ghPath = existing._ghPath; idea._wpSha = existing._wpSha; idea.is1149 = existing.is1149; }
-  }
-
-  await saveIdea(idea);
-  nav('idea', idea.id);
-}
-
-function deleteIdea(id) {
-  if (!confirm("Delete this idea? (Will only remove from local cache and ideas.json)")) return;
-  const ideas = getIdeas().filter(i => i.id !== id);
-  save(ideas);
-  nav('ideas');
-}
-
-// ════════════════════════════════════════════
-// ATTACHMENTS (Drag & Drop)
-// ════════════════════════════════════════════
-const dropZone = document.getElementById('f-dropzone');
-const fileInput = document.getElementById('f-file-input');
-
-if (dropZone && fileInput) {
-  dropZone.addEventListener('click', () => fileInput.click());
-  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-  dropZone.addEventListener('drop', e => {
-    e.preventDefault(); dropZone.classList.remove('drag-over');
-    handleFiles(e.dataTransfer.files);
-  });
-  fileInput.addEventListener('change', e => handleFiles(e.target.files));
-}
-
-function handleFiles(files) {
-  Array.from(files).forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => {
-      pendingFiles.push({ id: Math.random().toString(36).slice(2), name: file.name, size: file.size, type: file.type, data: e.target.result });
-      renderFileList();
-    };
-    reader.readAsDataURL(file);
-  });
-}
-
-function renderFileList() {
-  document.getElementById('f-files').innerHTML = pendingFiles.map(f => `
-    <div class="file-item">
-      <div class="file-ico">📄</div>
-      <div class="file-name">${esc(f.name)}</div>
-      <div class="file-size">${fmtSize(f.size)}</div>
-      <button type="button" class="file-del" onclick="removeFile('${f.id}')">×</button>
-    </div>`).join('');
-}
-function removeFile(id) { pendingFiles = pendingFiles.filter(f => f.id !== id); renderFileList(); }
-
-// ════════════════════════════════════════════
-// REPO BROWSER
-// ════════════════════════════════════════════
-let rbCurrentPath = '';
-
-function initRepoBrowser() {
-  rbLoadDir('');
-}
-
-async function rbLoadDir(path) {
-  rbCurrentPath = path;
-  const el = document.getElementById('rb-content');
-  el.innerHTML = `<div class="spinner"><span class="spin">↻</span> Loading directory...</div>`;
+  // Render Attachments (Any non-md file inside the idea's folder!)
+  const attachFiles = repoTree.filter(f => f.path.startsWith(idea.folder + '/') && !f.path.toLowerCase().endsWith('.md'));
+  const attachEl = document.getElementById('id-files');
   
-  const crumbs = path ? path.split('/') :[];
-  let breadHtml = `<a href="#" onclick="rbLoadDir('');return false;" style="color:var(--blue)">1149 (root)</a>`;
-  let cp = '';
-  crumbs.forEach(c => { cp += (cp?'/':'')+c; breadHtml += ` / <a href="#" onclick="rbLoadDir('${cp}');return false;" style="color:var(--blue)">${c}</a>`; });
-  document.getElementById('rb-path').innerHTML = breadHtml;
-
-  try {
-    const items = await ghListDir(path);
-    if (!items || items.length === 0) { el.innerHTML = 'Empty directory or not found.'; return; }
-
-    items.sort((a,b) => (a.type==='dir'?-1:1) - (b.type==='dir'?-1:1) || a.name.localeCompare(b.name));
-    
-    el.innerHTML = '<div style="display:flex;flex-direction:column;gap:4px">' + items.map(i => {
-      const isDir = i.type === 'dir';
-      const safePath = i.path.replace(/'/g, "\\'");
-      const safeName = esc(i.name).replace(/'/g, "\\'");
-      const click = isDir ? `rbLoadDir('${safePath}')` : `rbOpenFile('${safePath}', '${safeName}')`;
+  if (attachFiles.length === 0) {
+    attachEl.innerHTML = '<div style="font-size:11px;color:var(--ink4)">No files found in directory.</div>';
+  } else {
+    attachEl.innerHTML = attachFiles.map(f => {
+      const name = f.path.split('/').pop();
+      const rawUrl = `https://raw.githubusercontent.com/${GH_REPO}/${GH_BRANCH}/${f.path}`;
       return `
-        <div class="mini-row" style="margin:0;padding:6px 10px;border:none;border-bottom:1px solid var(--brd);border-radius:0" onclick="${click}">
-          <div style="font-size:14px;color:var(--ink3)">${isDir ? '📁' : '📄'}</div>
-          <div class="mini-body" style="font-family:var(--mono);font-size:12px;color:${isDir?'var(--blue)':'var(--ink)'}">${esc(i.name)}</div>
-          <div class="mini-r" style="font-size:10px;color:var(--ink3)">${i.size?fmtSize(i.size):''}</div>
+        <div class="file-item">
+          <div class="file-ico">📄</div>
+          <div class="file-name" title="${esc(f.path)}">${esc(name)}</div>
+          <a href="${rawUrl}" target="_blank" class="file-dl">View</a>
         </div>
       `;
-    }).join('') + '</div>';
-  } catch(e) { el.innerHTML = `<div style="color:var(--red)">Error loading directory (Rate limit?).</div>`; }
+    }).join('');
+  }
+
+  // Fetch actual Markdown Content
+  const rawMd = await fetchRawMarkdown(idea.path);
+  if (rawMd) {
+    // Вырезаем yaml front-matter если он есть, чтобы не мусорить на экране
+    const cleanMd = rawMd.replace(/^---[\s\S]+?---\n/, '');
+    contentEl.innerHTML = md2html(cleanMd, idea.folder);
+  } else {
+    contentEl.innerHTML = '<div style="color:var(--red)">Failed to load document content.</div>';
+  }
 }
 
-async function rbOpenFile(path, name) {
-  const el = document.getElementById('rb-content');
-  el.innerHTML = `<div class="spinner"><span class="spin">↻</span> Loading file ${esc(name)}...</div>`;
-  document.getElementById('rb-path').innerHTML += ` / <span style="color:var(--ink)">${esc(name)}</span>`;
+// ════════════════════════════════════════════
+// INIT ENGINE
+// ════════════════════════════════════════════
+async function initEngine() {
+  repoTree = await fetchRepoTree();
+  if (repoTree.length) {
+    buildDatabase();
+  }
   
-  try {
-    const file = await ghGetFile(path);
-    if (!file) { el.innerHTML = 'File read error.'; return; }
-    
-    if (path.endsWith('.md')) {
-      el.innerHTML = `<div class="md-content" style="background:var(--surface);padding:20px;border:1px solid var(--brd);border-radius:8px">${md2html(file.content)}</div>`;
-    } else if (path.endsWith('.json') || path.endsWith('.js') || path.endsWith('.html') || path.endsWith('.css')) {
-      el.innerHTML = `<pre style="margin:0"><code style="color:#C8D0E8">${esc(file.content)}</code></pre>`;
-    } else {
-      el.innerHTML = `<div style="padding:20px;text-align:center"><a href="${file.html_url}" target="_blank" class="btn btn-primary">View File on GitHub</a></div>`;
-    }
-  } catch(e) { el.innerHTML = `<div style="color:var(--red)">Failed to read file (Rate Limit?).</div>`; }
-}
-
-// ════════════════════════════════════════════
-// GITHUB PROJECTS
-// ════════════════════════════════════════════
-async function loadRepos(force = false, silent = false) {
-  if (!force && window._reposCache.length) { if(currentPage==='repos') renderRepos(); return; }
-  try {
-    const r = await fetch(`https://api.github.com/users/${GH_OWNER}/repos?per_page=100&sort=updated`);
-    if (r.ok) {
-      window._reposCache = await r.json();
-      if (currentPage === 'repos') renderRepos();
-      if (currentPage === 'dashboard') renderDashboard();
-      if (!silent) toast('Repos refreshed', 'success');
-    }
-  } catch(e) {}
-}
-
-function renderRepos() {
-  const q = (document.getElementById('repos-search')?.value||'').toLowerCase();
-  const arr = window._reposCache.filter(r => r.name.toLowerCase().includes(q) || (r.description||'').toLowerCase().includes(q));
-  document.getElementById('repos-grid').innerHTML = arr.map(r => `
-    <div class="card card-pad" style="cursor:pointer;transition:all .15s" onclick="window.open('${r.html_url}','_blank')" onmouseover="this.style.borderColor='var(--blue-brd)'" onmouseout="this.style.borderColor='var(--brd)'">
-      <div style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--blue);margin-bottom:6px">${r.name}</div>
-      <div style="font-size:11px;color:var(--ink2);line-height:1.5;margin-bottom:12px;min-height:33px">${esc(r.description)||'No description provided'}</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--ink3)">
-        <div>${r.language ? `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${LANG_COLORS[r.language]||'#888'};margin-right:4px"></span>${r.language}` : ''}</div>
-        <div>⭐ ${r.stargazers_count} · ⑂ ${r.forks_count}</div>
-      </div>
-    </div>
-  `).join('');
-}
-function filterRepos() { renderRepos(); }
-function clearReposSearch() { document.getElementById('repos-search').value=''; renderRepos(); }
-
-// ════════════════════════════════════════════
-// KNOWLEDGE GRAPH
-// ════════════════════════════════════════════
-let graphSim = null;
-function renderGraph() {
-  const canvas = document.getElementById('kg-canvas');
-  if (!canvas || currentPage !== 'graph') return;
-  const ctx = canvas.getContext('2d');
-  const w = canvas.parentElement.clientWidth;
-  const h = canvas.parentElement.clientHeight;
-  canvas.width = w; canvas.height = h;
-
-  const ideas = getIdeas();
-  if (!ideas.length) { ctx.fillStyle='var(--ink3)'; ctx.fillText("No ideas to render", 50, 50); return; }
-
-  const nodes = ideas.map(i => ({...i, x: w/2 + (Math.random()-0.5)*200, y: h/2 + (Math.random()-0.5)*200, vx:0, vy:0}));
-  const links =[];
-  nodes.forEach(n => {
-    (n.related||[]).forEach(relId => {
-      const target = nodes.find(x => x.id === relId);
-      if (target) links.push({source:n, target});
-    });
-  });
-
-  if (graphSim) cancelAnimationFrame(graphSim);
-
-  function simulate() {
-    nodes.forEach(n => {
-      n.vx += (w/2 - n.x) * 0.0005; 
-      n.vy += (h/2 - n.y) * 0.0005;
-      nodes.forEach(n2 => {
-        if(n===n2) return;
-        const dx = n.x - n2.x, dy = n.y - n2.y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        if(dist < 80 && dist > 0) {
-          n.vx += (dx/dist)*0.5; n.vy += (dy/dist)*0.5;
-        }
-      });
-    });
-    links.forEach(l => {
-      const dx = l.target.x - l.source.x, dy = l.target.y - l.source.y;
-      const dist = Math.sqrt(dx*dx + dy*dy);
-      const f = (dist - 120) * 0.01;
-      l.source.vx += dx*f; l.source.vy += dy*f;
-      l.target.vx -= dx*f; l.target.vy -= dy*f;
-    });
-
-    ctx.clearRect(0,0,w,h);
-    
-    ctx.strokeStyle = 'rgba(168,101,26,0.15)';
-    ctx.lineWidth = 1;
-    links.forEach(l => {
-      ctx.beginPath(); ctx.moveTo(l.source.x, l.source.y); ctx.lineTo(l.target.x, l.target.y); ctx.stroke();
-    });
-
-    nodes.forEach(n => {
-      n.vx *= 0.85; n.vy *= 0.85;
-      n.x += n.vx; n.y += n.vy;
-      
-      const L = LAYERS[n.layer] || {color:'#888'};
-      ctx.beginPath(); ctx.arc(n.x, n.y, 6, 0, Math.PI*2);
-      ctx.fillStyle = L.color; ctx.fill();
-      ctx.fillStyle = 'var(--ink2)'; ctx.font = '9px var(--mono)';
-      ctx.fillText(n.title.slice(0,15), n.x+8, n.y+3);
-    });
-
-    if (currentPage === 'graph') graphSim = requestAnimationFrame(simulate);
-  }
-  simulate();
-}
-
-// ════════════════════════════════════════════
-// SETTINGS & SYSTEM
-// ════════════════════════════════════════════
-function saveToken() {
-  const t = document.getElementById('set-token').value.trim();
-  cfgSet({token: t});
-  toast('Token saved locally', 'success');
-  testConnection();
-}
-
-async function testConnection() {
-  if (!getToken()) { toast('No token set', 'error'); return; }
-  try {
-    const r = await fetch(`https://api.github.com/repos/${GH_REPO}`, {headers: ghHeaders()});
-    if (r.ok) toast('Connection successful!', 'success');
-    else toast('Connection failed: ' + r.status, 'error');
-  } catch(e) { toast('Error: ' + e.message, 'error'); }
-}
-
-function triggerSync() { fullRepoSync(false); }
-
-function triggerExport() {
-  const data = JSON.stringify({version:5, updated:new Date().toISOString(), ideas: getIdeas()}, null, 2);
-  const blob = new Blob([data], {type: 'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = '1149_backup.json';
-  a.click(); URL.revokeObjectURL(url);
-}
-
-function triggerImport() { document.getElementById('import-input').click(); }
-function handleImport(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async (ev) => {
-    try {
-      const data = JSON.parse(ev.target.result);
-      if (data.ideas && Array.isArray(data.ideas)) {
-        await save(data.ideas);
-        toast('Data imported successfully!', 'success');
-        renderAll();
-      } else {
-        toast('Invalid JSON format (missing ideas array)', 'error');
-      }
-    } catch(err) { toast('Invalid JSON file', 'error'); }
-  };
-  reader.readAsText(file);
-}
-
-function confirmClearAll() {
-  if (confirm('Clear local cache completely? This will wipe unsynced changes.')) {
-    localStorage.removeItem(CACHE_KEY);
-    localStorage.removeItem(CFG_KEY);
-    window.location.reload();
-  }
-}
-
-async function seedDefaultIdeas() {
-  const demoData =[
-    {id:'d1', title:'Ethical Core Protocol v1', layer:'01_Ethical_OS', doctype:'White Paper', status:'active', priority:'critical', progress:85, is1149:true, tags:['ethics','ai','system'], whitepaper:'Initial draft of ethical constraints.', updated:new Date().toISOString()},
-    {id:'d2', title:'Holographic Social Interfaces', layer:'02_Social_Protocol', doctype:'Concept', status:'research', priority:'medium', progress:20, is1149:false, tags:['ui','social'], whitepaper:'Exploring AR/VR interfaces for social sync.', updated:new Date().toISOString()}
-  ];
-  await save(demoData);
-  toast('Demo data injected', 'success');
-  renderAll();
-}
-
-// ════════════════════════════════════════════
-// UTILS: MODALS & TOASTS
-// ════════════════════════════════════════════
-function showModal(title, body, actionsHtml) {
-  document.getElementById('modal-title').innerHTML = title;
-  document.getElementById('modal-body').innerHTML = body;
-  document.getElementById('modal-actions').innerHTML = actionsHtml || `<button class="btn btn-primary" onclick="closeModal()">Close</button>`;
-  document.getElementById('modal-overlay').classList.add('active');
-}
-function closeModal() { document.getElementById('modal-overlay').classList.remove('active'); }
-function closeModalOutside(e) { if(e.target.id === 'modal-overlay') closeModal(); }
-
-function toast(msg, type='info') {
-  const c = document.getElementById('toast-container');
-  const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  t.innerHTML = msg;
-  c.appendChild(t);
-  setTimeout(() => {
-    t.style.animation = 'slideOut 0.3s ease forwards';
-    setTimeout(() => t.remove(), 300);
-  }, 3000);
-}
-
-// ════════════════════════════════════════════
-// INIT & EVENT LISTENERS
-// ════════════════════════════════════════════
-document.querySelectorAll('.nav-item[data-page]').forEach(el => {
-  el.addEventListener('click', () => nav(el.dataset.page));
-});
-
-document.addEventListener('input', e => {
-  if (e.target && e.target.id === 'f-whitepaper') updateFormPreview();
-});
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closeModal();
-  if ((e.ctrlKey||e.metaKey) && e.key === 'n') { e.preventDefault(); nav('new'); }
-  if ((e.ctrlKey||e.metaKey) && e.key === 's' && currentPage==='new') { 
-    e.preventDefault(); 
-    document.getElementById('idea-form')?.requestSubmit(); 
-  }
-});
-
-async function ghLoad() {
-  setSyncUI('loading');
-  try {
-    const r = await ghRead();
-    if (!r) return;
-    
-    // Если ideas.json еще нет в репозитории (или он пуст), сканируем все папки на лету
-    if (r.ideas.length === 0 && !r.sha) {
-      const repoIdeas = await scanRepoForIdeas();
-      if (repoIdeas && repoIdeas.length) {
-        cacheWrite(repoIdeas);
-        setSyncUI(getToken() ? 'ok' : 'no-token');
-        return repoIdeas;
-      }
-    }
-    
-    cacheWrite(r.ideas);
-    if(r.sha) cfgSet({sha: r.sha});
-    setSyncUI(getToken() ? 'ok' : 'no-token');
-    return r.ideas;
-  } catch(e) { 
-    if (e.message.includes('Rate Limit')) {
-      setSyncUI('error', 'API Limit');
-      toast('GitHub API Rate Limit reached. Add Token in Settings.', 'error');
-    } else {
-      setSyncUI('error', 'Sync Failed');
-    }
-  }
-}
-
-window.addEventListener('load', async () => {
-  document.getElementById('sb-date').textContent = new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'});
   const t = getToken();
   if (t) document.getElementById('set-token').value = t;
-  
-  const cached = cacheRead();
-  if (cached.length) updateBadges();
-  
-  handleHash(); 
-  
-  // Асинхронная загрузка с гитхаба (теперь без блокировок!)
-  ghLoad().then(()=> { 
-    updateBadges(); 
-    renderAll(); 
-  }).catch(console.error);
-  
-  scanAllMdFiles().then(() => { 
-    if(currentPage === 'dashboard') loadDashMdFiles(true); 
-    if(currentPage.startsWith('layer-')) renderLayer(currentPage.replace('layer-',''));
-  }).catch(console.error);
-  
-  loadRepos(false, true);
+
+  handleHash();
+}
+
+// Старт
+window.addEventListener('load', initEngine);
+
+// Привязка слушателей меню
+document.querySelectorAll('.nav-item[data-page]').forEach(el => {
+  el.addEventListener('click', () => nav(el.dataset.page));
 });
 
 </script>
