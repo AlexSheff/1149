@@ -1929,9 +1929,23 @@ function renderIdeaDetail(id) {
     });
   }
 
-  html += `</div></div>`;
+  html += `</div></div>`<div class="sh" style="margin-top:40px">💬 Discussions</div>
+<div class="giscus" 
+     data-repo="AlexSheff/1149"
+     data-repo-id="R_kgDORoJ6Tw"
+     data-category="Ideas"
+     data-category-id="DIC_kwDORoJ6T84C4gFE"
+     data-mapping="specific"
+     data-term="${esc(i.title)}"
+     data-strict="0"
+     data-reactions-enabled="1"
+     data-theme="preferred_color_scheme"
+     data-lang="ru"
+     crossorigin="anonymous"
+     async></div>;
   const dd = document.getElementById('idea-detail');
   if (dd) dd.innerHTML = html;
+   
 }
 
 // ════════════════════════════════════════════
@@ -2452,6 +2466,42 @@ document.addEventListener('keydown', e => {
   loadRepos(false, true);
 
 })();
+</script>
+   <script src="https://giscus.app/client.js"
+        data-repo="AlexSheff/1149"
+        data-repo-id="R_kgDORoJ6Tw"
+        data-category="Ideas"
+        data-category-id="DIC_kwDORoJ6T84C4gFE"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="dark"
+        data-lang="en"
+        crossorigin="anonymous"
+        async>
+</script>
+   <!-- ==================== GISCUS — ОБСУЖДЕНИЯ ==================== -->
+<div id="giscus-wrapper" style="margin: 60px 0 40px; padding-top: 40px; border-top: 2px solid var(--brd);">
+  <div class="sh">💬 Обсуждения и отзывы сообщества</div>
+  <div class="giscus"></div>
+</div>
+
+<script src="https://giscus.app/client.js"
+        data-repo="AlexSheff/1149"
+        data-repo-id="R_kgDORoJ6Tw"
+        data-category="Ideas"
+        data-category-id="DIC_kwDORoJ6T84C4gFE"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="preferred_color_scheme"
+        data-lang="ru"
+        crossorigin="anonymous"
+        async>
 </script>
 </body>
 </html>
