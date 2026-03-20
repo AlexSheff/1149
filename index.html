@@ -1187,9 +1187,12 @@ async function scanRepoForIdeas() {
       const file = await ghGetFile(path);
       if (!file) continue;
       const {meta} = parseYamlFM(file.content);
-      // Only treat as idea if it has a YAML front matter with id or title
-      if (!meta.id && !meta.title) continue;
+      // Accept if has YAML id/title OR is a well-known doc name (README, WHITE_PAPER)
+      const isNamedDoc = /^(readme|white_paper|index)\.md$/i.test(entry.name);
+      if (!meta.id && !meta.title && !isNamedDoc) continue;
       const idea = mdFileToIdea(path, file.content);
+      // Use layer label as fallback title for un-fronted README files
+      if (!idea.title || idea.title === lk) idea.title = LAYERS[lk]?.label || lk;
       idea._wpSha = file.sha;
       foundPaths.add(path);
       found.push(idea);
@@ -2025,31 +2028,39 @@ function renderIdeaDetail(id) {
 async function loadIdeaRepoAssets(ideaId, folder) {
   const el = document.getElementById(`detail-repo-assets-${ideaId}`);
   if (!el) return;
-  try {
-    const items = await ghListDir(`${folder}/assets`);
-    if (!items || !items.length) {
-      el.innerHTML = '<span style="color:var(--ink4);font-size:10px">No files in repo assets/</span>';
-      return;
-    }
-    const iconMap = {pdf:'📄',doc:'📝',docx:'📝',png:'🖼',jpg:'🖼',jpeg:'🖼',gif:'🖼',svg:'🖼',mp3:'🎵',mp4:'🎬',mp4:'🎬',json:'📋',md:'📄',txt:'📝',zip:'📦',csv:'📊'};
-    el.innerHTML = items.map(f => {
-      const ext = (f.name.split('.').pop()||'').toLowerCase();
-      const ico = iconMap[ext] || '📎';
-      const url = `https://github.com/${GH_REPO}/blob/main/${f.path}`;
-      const rawUrl = `https://raw.githubusercontent.com/${GH_REPO}/main/${f.path}`;
-      return `<div class="file-item">
-        <div class="file-ico">${ico}</div>
-        <div class="file-name">${esc(f.name)}</div>
-        <span class="file-size">${fmtSize(f.size||0)}</span>
-        <span class="file-status" style="font-size:9px;color:var(--green)">✓ Repo</span>
-        <a href="${url}" target="_blank" class="btn btn-ghost btn-xs">GitHub ↗</a>
-        <a href="${rawUrl}" target="_blank" class="btn btn-ghost btn-xs" download="${esc(f.name)}">↓ Raw</a>
-      </div>`;
-    }).join('');
-  } catch {
-    // 404 = no assets folder — that's fine
-    el.innerHTML = '<span style="color:var(--ink4);font-size:10px">No assets folder found</span>';
+  // Search both 'assets/' and 'uploads/' — different naming conventions
+  const ASSET_FOLDERS = ['uploads', 'assets', 'files', 'attachments'];
+  const iconMap = {pdf:'📄',doc:'📝',docx:'📝',png:'🖼',jpg:'🖼',jpeg:'🖼',gif:'🖼',svg:'🖼',mp3:'🎵',mp4:'🎬',json:'📋',md:'📄',txt:'📝',zip:'📦',csv:'📊',xlsx:'📊',pptx:'📊'};
+
+  let allItems = [];
+  for (const dirName of ASSET_FOLDERS) {
+    try {
+      const items = await ghListDir(`${folder}/${dirName}`);
+      if (items && items.length) {
+        allItems = allItems.concat(items.map(f => ({...f, _dir: dirName})));
+      }
+    } catch { /* folder doesn't exist — skip */ }
   }
+
+  if (!allItems.length) {
+    el.innerHTML = '<span style="color:var(--ink4);font-size:10px">No attached files found (checked: uploads/, assets/)</span>';
+    return;
+  }
+
+  el.innerHTML = allItems.map(f => {
+    const ext = (f.name.split('.').pop()||'').toLowerCase();
+    const ico = iconMap[ext] || '📎';
+    const url = `https://github.com/${GH_REPO}/blob/main/${f.path}`;
+    const rawUrl = `https://raw.githubusercontent.com/${GH_REPO}/main/${f.path}`;
+    return `<div class="file-item">
+      <div class="file-ico">${ico}</div>
+      <div class="file-name">${esc(f.name)}</div>
+      <span class="file-size">${fmtSize(f.size||0)}</span>
+      <span class="file-status" style="font-size:9px;color:var(--green)">✓ ${f._dir}/</span>
+      <a href="${url}" target="_blank" class="btn btn-ghost btn-xs">GitHub ↗</a>
+      <a href="${rawUrl}" download="${esc(f.name)}" class="btn btn-ghost btn-xs">↓ Raw</a>
+    </div>`;
+  }).join('');
 }
 
 // ════════════════════════════════════════════
