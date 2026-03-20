@@ -1,6 +1,6 @@
 {
   "version": 5,
-  "updated": "2026-03-19T13:09:56.759Z",
+  "updated": "2026-03-20T05:10:37.052Z",
   "ideas": [
     {
       "id": "3003",
@@ -510,6 +510,29 @@
       "updated": "2026-03-19",
       "files": [],
       "_wpSha": "7c6a7d385c32480115f478c190bf2550d7aa9277"
+    },
+    {
+      "id": "8010",
+      "title": "# Human First: Core Principles",
+      "tagline": "\"The Human is an individual whose value is not determined by gender, origin or position.\"",
+      "layer": "01_Ethical_OS",
+      "status": "concept",
+      "priority": "medium",
+      "doctype": "",
+      "progress": 0,
+      "tags": [
+        "human",
+        "rules",
+        "core"
+      ],
+      "related": [],
+      "whitepaper": "# Human First: Core Principles\n\nThis document outlines the fundamental beliefs that guide how we interact, collaborate, and build together. We are committed to keeping the human element at the center of everything we do.\n\n## Our Foundation\n\n### 1. We work with people, not resources.\nEvery person we engage with—whether a team member, contributor, or user—is a unique individual with their own feelings, experiences, and inherent dignity. We value the person behind the profile picture.\n\n### 2. A person’s worth is not defined by labels.\nGender identity, origin, role, job title, or any other single attribute does not determine a person's value. We see the whole human being, not just a category. A person is an individual whose worth is inherent and not subject to definition by any external marker.\n\n### 3. We lead with empathy and respect.\nWe actively listen, seek to understand perspectives different from our own, and treat everyone with kindness, regardless of their background or seniority.\n\n### 4. We create a safe and inclusive space.\nEveryone has the right to be heard, to express themselves authentically, and to contribute without fear of discrimination, harassment, or dismissal.\n\n### 5. We focus on the human behind the screen.\nIn every code review, comment, meeting, or decision, we remember there is a person on the other side. We communicate thoughtfully and assume good intent.\n\n### 6. We celebrate uniqueness.\nOur differences in thought, experience, culture, and identity make us stronger and more innovative. We actively welcome and include diverse voices.\n\n### 7. We are accountable to each other.\nMaintaining this human-centric culture is a shared responsibility. We support each other in upholding these principles and address shortcomings with care and a focus on growth.\n\n---\n\n*These principles are inspired by a simple truth: before we are colleagues, contributors, or creators, we are human.*",
+      "techspec": "",
+      "solidarity": "",
+      "is1149": false,
+      "updated": "2026-03-20",
+      "files": [],
+      "_wpSha": "a99172e094b6dc723b5a19e864ed71e9eb903d01"
     }
   ]
 }
