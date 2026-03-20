@@ -13,9 +13,9 @@ updated: 2026-03-16
 author: Founder
 ---
 
-# Philippines Relocation Log
+# Philippines Relocation Log Example
 
-> *1.8+ years in Dumaguete — documented relocation, deliberate rootedness, and local integration.*
+> *13+ years in Dumaguete — documented relocation, deliberate rootedness, and local integration.*
 
 ---
 
@@ -46,7 +46,7 @@ This distinction matters:
 
 | Period | Focus |
 |--------|-------|
-| 2024 Q1–Q2 | Arrival, infrastructure, initial UU community connection |
+| 2013 Q1–Q2 | Arrival, infrastructure, initial UU community connection |
 | 2024 Q3–Q4 | UUCP Film Festival S1, City Quest conceptual development |
 | 2025 | City Quest Miro board, repository structure, UUCP S2 |
 | 2026 Q1 | UUCP S3 underway, City Quest Dumaguete pilot scoping, this repository |
@@ -55,10 +55,10 @@ This distinction matters:
 
 ## Current Active Threads in Dumaguete
 
-- **UUCP Film Festival Season 3** — programming with Elena Vasquez
-- **City Quest Dumaguete pilot** — scope definition with Carlos Dimaculangan, 3 local business partners
-- **Good Project Corp** — governance charter with Sofia Bernardo and Diana Chua
-- **UU Community** — ongoing civic programming participation
+- **UUCP Film Festival Season 3**
+- **Good Project Corp** 
+- **UU Community**
+- **The Guardians**
 
 ---
 
