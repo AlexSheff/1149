@@ -418,6 +418,7 @@ img { max-width: 100% }
 /* number badge for sidebar */
 .nb { font-family: var(--mono); font-size: 9px; color: rgba(255,255,255,.25); letter-spacing: .5px }
 /* responsive */
+@media(max-width: 1400px) { .s5 { grid-template-columns: repeat(3, 1fr) } }
 @media(max-width: 1100px) { .g3 { grid-template-columns: 1fr 1fr } .s4, .s5 { grid-template-columns: 1fr 1fr } .g-side { grid-template-columns: 1fr } }
 @media(max-width: 800px) { #sidebar { width: 56px; min-width: 56px } .sb-head, .sb-actions, .sb-foot, .nav-section, .nav-badge, .nav-progress, .nav-sub { display: none } .nav-item { justify-content: center; padding: 12px; border-left: none; border-bottom: 2px solid transparent } .nav-item.active { border-bottom-color: var(--gold3) } .nav-dot { display: none } .page { padding: 18px 14px } .g2, .form-row, .form-row3 { grid-template-columns: 1fr } }
 </style>
@@ -1171,9 +1172,30 @@ async function scanRepoForIdeas() {
   if (!getToken()) return null;
   setSyncUI('loading', 'Scanning…');
   const found = [];
+  const foundPaths = new Set(); // prevent duplicates
+
   for (const lk of LAYER_KEYS) {
     let entries;
     try { entries = await ghListDir(lk); } catch { continue; }
+
+    // ── Bug 3 fix: also pick up MD files sitting directly in the layer folder ──
+    for (const entry of entries) {
+      if (entry.type !== 'file') continue;
+      if (!/\.md$/i.test(entry.name)) continue;
+      const path = `${lk}/${entry.name}`;
+      if (foundPaths.has(path)) continue;
+      const file = await ghGetFile(path);
+      if (!file) continue;
+      const {meta} = parseYamlFM(file.content);
+      // Only treat as idea if it has a YAML front matter with id or title
+      if (!meta.id && !meta.title) continue;
+      const idea = mdFileToIdea(path, file.content);
+      idea._wpSha = file.sha;
+      foundPaths.add(path);
+      found.push(idea);
+    }
+
+    // ── Original: scan subdirectories ──
     for (const entry of entries) {
       if (entry.type !== 'dir') continue;
       const candidates = [`${lk}/${entry.name}/WHITE_PAPER.md`, `${lk}/${entry.name}/README.md`];
@@ -1184,10 +1206,12 @@ async function scanRepoForIdeas() {
         } catch {}
       }
       for (const wp of candidates) {
+        if (foundPaths.has(wp)) continue;
         const file = await ghGetFile(wp);
         if (!file) continue;
         const idea = mdFileToIdea(wp, file.content);
         idea._wpSha = file.sha;
+        foundPaths.add(wp);
         found.push(idea);
         break; // take first match per folder
       }
@@ -1228,7 +1252,19 @@ async function fullRepoSync(silent) {
 // MARKDOWN GENERATORS
 // ════════════════════════════════════════════
 function ideaSlug(t) { return (t||'').trim().replace(/[^\w\s-]/g,'').replace(/\s+/g,'_').replace(/_+/g,'_').slice(0,55); }
-function ideaFolder(idea) { return idea._ghPath ? idea._ghPath.replace(/\/(WHITE_PAPER|README)\.md$/,'') : `${idea.layer||'01_Ethical_OS'}/${ideaSlug(idea.title)}`; }
+function ideaFolder(idea) {
+  if (!idea._ghPath) return `${idea.layer||'01_Ethical_OS'}/${ideaSlug(idea.title)}`;
+  // Strip known MD filenames to get folder path
+  // Handles: layer/folder/WHITE_PAPER.md  →  layer/folder
+  //          layer/README.md              →  layer  (layer-root file)
+  const stripped = idea._ghPath.replace(/\/(WHITE_PAPER|README|TECH_SPEC)\.md$/i, '');
+  // If stripped == layer key (no subfolder), return idea path as-is for storage
+  // but use slug-based path so assets go in layer/slug/assets
+  if (LAYER_KEYS.includes(stripped)) {
+    return `${stripped}/${ideaSlug(idea.title)}`;
+  }
+  return stripped;
+}
 
 function buildWhitePaper(idea) {
   const tags = (idea.tags||[]).join(', ');
@@ -1601,29 +1637,48 @@ function renderDashMdFiles(files, el, cnt) {
     el.innerHTML = `<div style="font-size:11px;color:var(--ink3);padding:8px 0">No .md files found. Add a GitHub token in Settings to browse private content.</div>`;
     return;
   }
-  // Build path registry for safe onclick
-  window._mdPaths = {};
-  el.innerHTML = files.map((f, idx) => {
-    const L = f.layer ? layerInfo(f.layer) : null;
-    const isIdea = f.name === 'WHITE_PAPER.md' || f.name === 'README.md';
-    window._mdPaths[idx] = {path: f.path, name: f.name};
-    return `<div class="mini-row" onclick="openMdFromDash(${idx})">
-      <div style="width:26px;height:26px;border-radius:var(--r);background:${L?L.color+'14':'var(--brd)'};display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">📄</div>
-      <div class="mini-body">
-        <div class="mini-t" style="font-size:11.5px">${esc(f.name)}</div>
-        <div class="mini-s" style="font-family:var(--mono);font-size:8.5px">${esc(f.path)}</div>
-      </div>
-      <div class="mini-r" style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
-        ${L ? `<div style="font-size:8px;color:${L.color};font-family:var(--mono)">${L.num}</div>` : ''}
-        ${isIdea ? `<button class="btn btn-xs btn-green" onclick="event.stopPropagation();importFromPath(window._mdPaths[${idx}].path)">Import</button>` : ''}
-      </div>
-    </div>`;
-  }).join('');
+  // Group by layer
+  const byLayer = {};
+  files.forEach(f => {
+    const key = f.layer || 'root';
+    if (!byLayer[key]) byLayer[key] = [];
+    byLayer[key].push(f);
+  });
+  const PREVIEW = 4; // files shown before collapse
+  let html = '';
+  Object.entries(byLayer).forEach(([lk, layerFiles]) => {
+    const L = lk !== 'root' ? layerInfo(lk) : null;
+    const label = L ? `${L.num} · ${L.label}` : 'Root';
+    const color = L ? L.color : 'var(--ink3)';
+    html += `<div style="margin-bottom:10px">
+      <div style="font-family:var(--mono);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:${color};margin-bottom:5px;display:flex;align-items:center;gap:7px">
+        ${label} <span style="color:var(--ink4)">(${layerFiles.length})</span>
+      </div>`;
+    layerFiles.slice(0, PREVIEW).forEach((f, idx) => {
+      const isIdea = f.name === 'WHITE_PAPER.md' || f.name === 'README.md';
+      window._mdPaths = window._mdPaths || {};
+      const key = `${lk}-${idx}`;
+      window._mdPaths[key] = {path: f.path, name: f.name};
+      html += `<div class="rb-item" style="padding:6px 10px;margin-bottom:3px" onclick="openMdFromDash('${key}')">
+        <span class="rb-ico" style="font-size:12px">📄</span>
+        <span class="rb-name" style="font-size:11px">${esc(f.name)}</span>
+        <span class="rb-meta" style="font-size:8.5px">${esc(f.folder||'')}</span>
+        ${isIdea ? `<button class="btn btn-xs btn-green" onclick="event.stopPropagation();importFromPath(window._mdPaths['${key}'].path)" style="font-size:8px;padding:2px 6px">Import</button>` : ''}
+      </div>`;
+    });
+    if (layerFiles.length > PREVIEW) {
+      html += `<button class="btn btn-ghost btn-xs" style="width:100%;margin-top:3px;font-size:9px" onclick="nav('repo-browser')">
+        + ${layerFiles.length - PREVIEW} more — browse in Repo Browser →
+      </button>`;
+    }
+    html += `</div>`;
+  });
+  el.innerHTML = html;
 }
 
 // Navigate to repo-browser then open file (called from dashboard MD list)
-async function openMdFromDash(idx) {
-  const entry = (window._mdPaths || {})[idx];
+async function openMdFromDash(key) {
+  const entry = (window._mdPaths || {})[key];
   if (!entry) return;
   nav('repo-browser');
   setTimeout(() => rbOpenFile(entry.path, entry.name), 150);
@@ -1915,24 +1970,31 @@ function renderIdeaDetail(id) {
   if (i.solidarity) html += `<div class="sh">Solidarity Mechanism</div>
     <div class="solidarity-box"><div class="solidarity-label">Structural Design</div><div class="solidarity-text">${esc(i.solidarity)}</div></div>`;
 
-  // Files
-  if (i.files && i.files.length) {
-    html += `<div class="sh" style="margin-top:18px">Attachments (${i.files.length})</div><div class="file-list">`;
+  // Files — local + repo
+  const hasLocalFiles = i.files && i.files.length > 0;
+  const folder = ideaFolder(i);
+  // Placeholder for repo assets (loaded async below)
+  html += `<div class="sh" style="margin-top:18px">Attachments</div>
+    <div id="detail-files-${id}" class="file-list">`;
+  if (hasLocalFiles) {
     i.files.forEach((f, idx) => {
       const iconMap = {pdf:'📄',doc:'📝',docx:'📝',png:'🖼',jpg:'🖼',jpeg:'🖼',gif:'🖼',svg:'🖼',mp3:'🎵',mp4:'🎬',json:'📋',md:'📄',txt:'📝'};
-      const ico = iconMap[f.name.split('.').pop().toLowerCase()] || '📎';
+      const ico = iconMap[(f.name.split('.').pop()||'').toLowerCase()] || '📎';
       const repoLink = f._repoUrl ? `<a href="${f._repoUrl}" target="_blank" class="btn btn-ghost btn-xs">GitHub ↗</a>` : '';
       html += `<div class="file-item">
         <div class="file-ico">${ico}</div>
         <div class="file-name">${esc(f.name)}</div>
-        <span class="file-size">${fmtSize(f.size)}</span>
-        <span class="file-status">${f._repoPath ? '✓ Repo' : '💾 Local'}</span>
+        <span class="file-size">${fmtSize(f.size||0)}</span>
+        <span class="file-status" style="font-size:9px;color:${f._repoPath?'var(--green)':'var(--ink3)'}">${f._repoPath?'✓ Repo':'💾 Local'}</span>
         ${repoLink}
         ${f.data ? `<button class="btn btn-ghost btn-xs" onclick="downloadFile('${id}',${idx})">↓</button>` : ''}
       </div>`;
     });
-    html += `</div>`;
   }
+  html += `<div id="detail-repo-assets-${id}" style="color:var(--ink3);font-size:10.5px;font-family:var(--mono)">
+    ${i._ghPath ? '<span class="spinner"><span class="spin">↻</span> Checking repo assets…</span>' : 'No GitHub path — save with token to enable repo storage.'}
+  </div>
+  </div>`;
 
   // Related
   if (related.length) {
@@ -1950,6 +2012,44 @@ function renderIdeaDetail(id) {
   html += `</div></div>`;
   const dd = document.getElementById('idea-detail');
   if (dd) dd.innerHTML = html;
+
+  // Async: load repo assets from assets/ folder
+  if (i._ghPath) {
+    loadIdeaRepoAssets(id, folder);
+  }
+}
+
+// ════════════════════════════════════════════
+// LOAD REPO ASSETS (for idea detail page)
+// ════════════════════════════════════════════
+async function loadIdeaRepoAssets(ideaId, folder) {
+  const el = document.getElementById(`detail-repo-assets-${ideaId}`);
+  if (!el) return;
+  try {
+    const items = await ghListDir(`${folder}/assets`);
+    if (!items || !items.length) {
+      el.innerHTML = '<span style="color:var(--ink4);font-size:10px">No files in repo assets/</span>';
+      return;
+    }
+    const iconMap = {pdf:'📄',doc:'📝',docx:'📝',png:'🖼',jpg:'🖼',jpeg:'🖼',gif:'🖼',svg:'🖼',mp3:'🎵',mp4:'🎬',mp4:'🎬',json:'📋',md:'📄',txt:'📝',zip:'📦',csv:'📊'};
+    el.innerHTML = items.map(f => {
+      const ext = (f.name.split('.').pop()||'').toLowerCase();
+      const ico = iconMap[ext] || '📎';
+      const url = `https://github.com/${GH_REPO}/blob/main/${f.path}`;
+      const rawUrl = `https://raw.githubusercontent.com/${GH_REPO}/main/${f.path}`;
+      return `<div class="file-item">
+        <div class="file-ico">${ico}</div>
+        <div class="file-name">${esc(f.name)}</div>
+        <span class="file-size">${fmtSize(f.size||0)}</span>
+        <span class="file-status" style="font-size:9px;color:var(--green)">✓ Repo</span>
+        <a href="${url}" target="_blank" class="btn btn-ghost btn-xs">GitHub ↗</a>
+        <a href="${rawUrl}" target="_blank" class="btn btn-ghost btn-xs" download="${esc(f.name)}">↓ Raw</a>
+      </div>`;
+    }).join('');
+  } catch {
+    // 404 = no assets folder — that's fine
+    el.innerHTML = '<span style="color:var(--ink4);font-size:10px">No assets folder found</span>';
+  }
 }
 
 // ════════════════════════════════════════════
@@ -2129,21 +2229,20 @@ async function rbLoadDir(path) {
     if (!items || !items.length) { el.innerHTML = `<div class="empty-state"><div class="empty-ico">📂</div><div class="empty-title">Empty Directory</div></div>`; return; }
     const dirs  = items.filter(i=>i.type==='dir').sort((a,b)=>a.name.localeCompare(b.name));
     const files = items.filter(i=>i.type==='file').sort((a,b)=>a.name.localeCompare(b.name));
+    // Use registry to avoid path injection in onclick
+    window._rbItems = {};
     el.innerHTML = [...dirs,...files].map((item, idx) => {
       const isMd = item.type==='file' && /\.md$/i.test(item.name);
       const ico = item.type==='dir' ? '📁' : isMd ? '📄' : item.name.endsWith('.json') ? '📊' : ['js','ts','py'].includes(item.name.split('.').pop()?.toLowerCase()||'') ? '⚙' : '📎';
-      const dataPath = (item.path||item.name).replace(/'/g, "\\'");
-      const dataName = item.name.replace(/'/g, "\\'");
-      const act = item.type==='dir'
-        ? `rbEnterDir('${dataName}', '${dataPath}')`
-        : `rbOpenFile('${dataPath}', '${dataName}')`;
-      const importPath = (item.path||item.name).replace(/'/g, "\\'");
+      const fullPath = item.path || item.name;
+      window._rbItems[idx] = {type: item.type, name: item.name, path: fullPath, isMd};
+      const act = item.type==='dir' ? `rbEnterIdx(${idx})` : `rbOpenIdx(${idx})`;
       return `<div class="rb-item" onclick="${act}">
         <span class="rb-ico">${ico}</span>
         <span class="rb-name">${esc(item.name)}</span>
         <span class="rb-meta">${item.type==='dir' ? 'folder' : (item.size ? fmtSize(item.size) : item.name.split('.').pop()?.toUpperCase()||'')}</span>
-        ${isMd ? `<button class="btn btn-xs btn-green" onclick="event.stopPropagation();importFromPath('${importPath}')">⊕ Import Idea</button>` : ''}
-        <a href="https://github.com/${GH_REPO}/blob/main/${dataPath}" target="_blank" class="btn btn-xs btn-ghost" onclick="event.stopPropagation()">GitHub ↗</a>
+        ${isMd ? `<button class="btn btn-xs btn-green" onclick="event.stopPropagation();importFromPath(window._rbItems[${idx}].path)">⊕ Import Idea</button>` : ''}
+        <a href="https://github.com/${GH_REPO}/blob/main/${esc(fullPath)}" target="_blank" class="btn btn-xs btn-ghost" onclick="event.stopPropagation()">GitHub ↗</a>
       </div>`;
     }).join('');
   } catch(e) {
@@ -2152,6 +2251,8 @@ async function rbLoadDir(path) {
 }
 
 async function rbEnterDir(name, path) { rbCrumbs.push({name, path}); rbRenderCrumbs(); await rbLoadDir(path); }
+function rbEnterIdx(idx) { const it = (window._rbItems||{})[idx]; if (it) rbEnterDir(it.name, it.path); }
+function rbOpenIdx(idx)  { const it = (window._rbItems||{})[idx]; if (it) rbOpenFile(it.path, it.name); }
 
 async function rbOpenFile(path, name) {
   const el = document.getElementById('rb-content'); if (!el) return;
